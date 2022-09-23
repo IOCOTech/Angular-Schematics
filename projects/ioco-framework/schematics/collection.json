@@ -1,0 +1,9 @@
+{
+    "$schema": "../../../node_modules/@angular-devkit/schematics/collection-schema.json",
+    "schematics": {
+        "ng-add": {
+            "description": "Add IOCO framework to your projects",
+            "factory": "./ng-add/index$ngAdd"
+        }
+    }
+}

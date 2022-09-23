@@ -3,5 +3,39 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
+    "ioco-framework": {
+      "projectType": "library",
+      "root": "projects/ioco-framework",
+      "sourceRoot": "projects/ioco-framework/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ioco-framework/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ioco-framework/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ioco-framework/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ioco-framework/src/test.ts",
+            "tsConfig": "projects/ioco-framework/tsconfig.spec.json",
+            "karmaConfig": "projects/ioco-framework/karma.conf.js"
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": "17db4255-a7a5-4096-a2a9-0e1b807fb2e6"
   }
 }
