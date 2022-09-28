@@ -1,16 +1,21 @@
 {
   "name": "ioco-framework",
-  "version": "0.0.3",
+  "version": "0.0.24",
   "scripts": {
     "build": "tsc -p tsconfig.schematics.json",
-    "postbuild": "copyfiles schematics/collection.json schematics/*/schema schematics/ng-add/dialog-boxes/** ../../dist/ioco-framework"
+    "postbuild": "copyfiles schematics/collection.json schematics/dialog-boxes/** ../../dist/ioco-framework"
   },
   "publishConfig": {
     "registry": "http://localhost:4873/"
   },
+  "ng-add": {
+    "save": "true"
+  },
+  "schematics": "./schematics/collection.json",
   "peerDependencies": {
     "@angular/common": "^14.0.0",
-    "@angular/core": "^14.0.0"
+    "@angular/core": "^14.0.0",
+    "@angular/material": "^14.2.2"
   },
   "dependencies": {
     "tslib": "^2.3.0"

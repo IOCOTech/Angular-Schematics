@@ -3,7 +3,11 @@
     "schematics": {
         "ng-add": {
             "description": "Add IOCO framework to your projects",
-            "factory": "./ng-add/index$ngAdd"
+            "factory": "./ng-add/index#ngAdd"
+        },
+        "dialog-boxes": {
+            "description": "Adds IOCO default dialog boxes",
+            "factory": "./dialog-boxes/index#addDialogBoxes"
         }
     }
 }

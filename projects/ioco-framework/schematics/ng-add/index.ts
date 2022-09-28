@@ -1,37 +1,59 @@
-import { normalize } from '@angular-devkit/core';
-import { apply, chain, externalSchematic, MergeStrategy, mergeWith, move, Rule, SchematicContext, SchematicsException, Tree, url } from '@angular-devkit/schematics';
-import { getWorkspacePath, getWorkspace } from '@schematics/angular/utility/workspace'
+import { Rule, SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
+import { RunSchematicTask } from "@angular-devkit/schematics/tasks";
+// import { addImportToModule } from '@schematics/angular/utility/ast-utils';
+// import { applyToUpdateRecorder } from '@schematics/angular/utility/change';
+// import * as ts from 'typescript';
 
 export function ngAdd(): Rule {
     return (tree: Tree, context: SchematicContext) => {
         context.logger.info('Adding IOCO Framework.....');
-        const workspace = getWorkspace(host);
 
         const modulePath = 'src/app/app.module.ts'
-        const confirmationDialogTemplatePath = '/src/app/dialog-boxes/confirmation-dialog'
         if (!tree.exists(modulePath)) {
             throw new SchematicsException(`the file ${modulePath} doesn't exist`)
         }
 
-        // const recorderHelpers = tree.beginUpdate(modulePath);
+        // const recorder = tree.beginUpdate(modulePath);
 
-        // // applyToUpdateRecorder(recorderHelpers)
+        // const text = tree.read(modulePath);
 
-        
+        // if (text === null) {
+        //     throw new SchematicsException(`The file ${modulePath} doesn't exists...`);
+        // }
+
+        // const source = ts.createSourceFile(
+        //     modulePath,
+        //     text.toString(),
+        //     ts.ScriptTarget.Latest,
+        //     true
+        // ) as any;
+
+        // applyToUpdateRecorder(recorder,
+        //     addImportToModule(source, modulePath, 'SuperUiLibModule', 'super-ui-lib')
+        // );
+
+        // tree.commitUpdate(recorder);
+
+        // context.logger.info('Installing dependencies...');
+        //context.addTask(new NodePackageInstallTask());
+        context.addTask(new RunSchematicTask('dialog-boxes', {}));
+        context.addTask(new RunSchematicTask('@angular/material', 'ng-add', {
+            typography: true,
+            animations: "true"
+        }));
+        // context.addTask(new NodePackageInstallTask({ packageName: '@angular/material' }));        
+        // context.addTask(new NodePackageInstallTask({ packageName: '@angular/flex-layout' }));
+        // context.addTask(new NodePackageInstallTask({ packageName: '@angular/cdk' }));
 
 
-        const confirmationDialogTemplate = apply(
-            url('./dialog-boxes'),
-            [
-                move(normalize(confirmationDialogTemplatePath))
-            ]
-        )
+        // const rule = chain([
+        //     generateRepo(name),
+        //     merged
+        // ]);
 
-        // Keep so we can run it at the end
-        // context.addTask(new NodePackageInstallTask())
-        return chain([
-            externalSchematic('@schematics/angular', 'component', {}),
-            mergeWith(confirmationDialogTemplate, MergeStrategy.Overwrite)
-        ])
+        // return rule(tree, _context) as Rule;
+
+        return tree
+
     }
 }
