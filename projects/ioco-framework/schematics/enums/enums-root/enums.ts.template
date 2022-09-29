@@ -1,0 +1,13 @@
+import { Countries } from './separated-enums/countries.enum.ts.template';
+import { Environments } from './separated-enums/environments.enum.ts.template';
+import { ErrorSeverityLevel } from './separated-enums/error-severity-level.enum.ts.template';
+import { MaterialIcons } from './separated-enums/material-icons.enum.ts.template';
+import { Nationality } from './separated-enums/nationality.enum.ts.template';
+
+export class Enums {
+    static Countries = Countries;
+    static Environments = Environments;
+    static ErrorSeverityLevel = ErrorSeverityLevel;
+    static MaterialIcons = MaterialIcons;
+    static Nationality = Nationality;
+}

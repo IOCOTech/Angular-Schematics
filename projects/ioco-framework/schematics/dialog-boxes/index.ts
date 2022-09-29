@@ -19,15 +19,16 @@ export function addDialogBoxes(): Rule {
         const errorDialogRule = generateErrorDialogRule();
 
         const modelsForDialogsRule = generateModelsRule()
-        
+
         return chain([
             externalSchematic('@schematics/angular', 'component', { name: `${confirmationDialogPath}/${confirmationDialogName}` }),
+            externalSchematic('@schematics/angular', 'component', { name: `${errorDialogPath}/${errorDialogName}` }),
             mergeWith(confirmationDialogRule, MergeStrategy.Overwrite),
             mergeWith(errorDialogRule, MergeStrategy.Overwrite),
             mergeWith(modelsForDialogsRule, MergeStrategy.Overwrite)
         ]);
     }
-} 
+}
 
 function generateConfirmationDialogRule(): Source {
 

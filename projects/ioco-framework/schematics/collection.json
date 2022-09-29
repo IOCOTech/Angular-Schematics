@@ -5,9 +5,37 @@
             "description": "Add IOCO framework to your projects",
             "factory": "./ng-add/index#ngAdd"
         },
+        "components": {
+            "description": "Adds IOCO default components",
+            "factory": "./components/index#addComponents"
+        },
         "dialog-boxes": {
             "description": "Adds IOCO default dialog boxes",
             "factory": "./dialog-boxes/index#addDialogBoxes"
+        },
+        "enums": {
+            "description": "Adds IOCO default enums",
+            "factory": "./enums/index#addEnums"
+        },
+        "helpers": {
+            "description": "Adds IOCO default helpers",
+            "factory": "./helpers/index#addHelpers"
+        },
+        "interceptors": {
+            "description": "Adds IOCO default interceptors",
+            "factory": "./interceptors/index#addInterceptors"
+        },
+        "material-design": {
+            "description": "Adds material-design module to project",
+            "factory": "./modules/index#addMaterialDesign"
+        },
+        "msal": {
+            "description": "Adds microsoft authentication library module to project",
+            "factory": "./modules/index#addMSAL"
+        },
+        "mock-data": {
+            "description": "Adds IOCO default mock-data",
+            "factory": "./mock-data/index#addMockData"
         }
     }
 }

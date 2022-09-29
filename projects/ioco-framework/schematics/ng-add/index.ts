@@ -1,5 +1,5 @@
 import { Rule, SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
-import { RunSchematicTask } from "@angular-devkit/schematics/tasks";
+import { NodePackageInstallTask, RunSchematicTask } from "@angular-devkit/schematics/tasks";
 // import { addImportToModule } from '@schematics/angular/utility/ast-utils';
 // import { applyToUpdateRecorder } from '@schematics/angular/utility/change';
 // import * as ts from 'typescript';
@@ -34,16 +34,23 @@ export function ngAdd(): Rule {
 
         // tree.commitUpdate(recorder);
 
-        // context.logger.info('Installing dependencies...');
-        //context.addTask(new NodePackageInstallTask());
+        context.addTask(new RunSchematicTask('components', {}));
         context.addTask(new RunSchematicTask('dialog-boxes', {}));
+        context.addTask(new RunSchematicTask('enums', {}));
+        context.addTask(new RunSchematicTask('helpers', {}));
+        context.addTask(new RunSchematicTask('interceptors', {}));
+        context.addTask(new RunSchematicTask('material-design', {}));
+        context.addTask(new RunSchematicTask('msal', {}));
+        context.addTask(new RunSchematicTask('mock-data', {}));
         context.addTask(new RunSchematicTask('@angular/material', 'ng-add', {
             typography: true,
             animations: "true"
         }));
-        // context.addTask(new NodePackageInstallTask({ packageName: '@angular/material' }));        
-        // context.addTask(new NodePackageInstallTask({ packageName: '@angular/flex-layout' }));
-        // context.addTask(new NodePackageInstallTask({ packageName: '@angular/cdk' }));
+        context.addTask(new NodePackageInstallTask({ packageName: '@angular/flex-layout' }));
+        context.addTask(new NodePackageInstallTask({ packageName: '@angular/cdk' }));
+        context.addTask(new NodePackageInstallTask({ packageName: '@azure/msal-browser' }));
+        context.addTask(new NodePackageInstallTask({ packageName: '@azure/msal-angular@latest' }));
+        context.addTask(new RunSchematicTask('@angular-eslint/schematics', 'ng-add', {}));    
 
 
         // const rule = chain([

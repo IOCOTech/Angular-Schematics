@@ -1,9 +1,9 @@
 {
   "name": "ioco-framework",
-  "version": "0.0.24",
+  "version": "0.0.35",
   "scripts": {
     "build": "tsc -p tsconfig.schematics.json",
-    "postbuild": "copyfiles schematics/collection.json schematics/dialog-boxes/** ../../dist/ioco-framework"
+    "postbuild": "copyfiles schematics/collection.json schematics/dialog-boxes/** schematics/components/** schematics/enums/enums-root/** schematics/helpers/helpers-root/** schematics/interceptors/interceptors-root/** schematics/modules/material-design/** schematics/modules/microsoft-authentication-library/** ../../dist/ioco-framework"
   },
   "publishConfig": {
     "registry": "http://localhost:4873/"
@@ -15,7 +15,10 @@
   "peerDependencies": {
     "@angular/common": "^14.0.0",
     "@angular/core": "^14.0.0",
-    "@angular/material": "^14.2.2"
+    "@angular/material": "latest",
+    "@angular/flex-layout": "latest",
+    "@angular/cdk": "latest",
+    "@angular-eslint/schematics": "latest"
   },
   "dependencies": {
     "tslib": "^2.3.0"
