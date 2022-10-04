@@ -36,6 +36,10 @@
         "mock-data": {
             "description": "Adds IOCO default mock-data",
             "factory": "./mock-data/index#addMockData"
+        },
+        "services": {
+            "description": "Adds IOCO default services",
+            "factory": "./services/index#addServices"
         }
     }
 }

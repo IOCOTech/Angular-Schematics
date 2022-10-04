@@ -42,15 +42,32 @@ export function ngAdd(): Rule {
         context.addTask(new RunSchematicTask('material-design', {}));
         context.addTask(new RunSchematicTask('msal', {}));
         context.addTask(new RunSchematicTask('mock-data', {}));
+        context.addTask(new RunSchematicTask('services', {}));
+
+        context.logger.info('Adding Angular Material.....');
         context.addTask(new RunSchematicTask('@angular/material', 'ng-add', {
+            theme: "custom",
             typography: true,
             animations: "true"
         }));
+        context.logger.info('Adding Flex Layout.....');
         context.addTask(new NodePackageInstallTask({ packageName: '@angular/flex-layout' }));
         context.addTask(new NodePackageInstallTask({ packageName: '@angular/cdk' }));
+        context.logger.info('Adding Microsoft Authentication Library.....');
         context.addTask(new NodePackageInstallTask({ packageName: '@azure/msal-browser' }));
         context.addTask(new NodePackageInstallTask({ packageName: '@azure/msal-angular@latest' }));
+        context.logger.info('Adding Application insights.....');
+        context.addTask(new NodePackageInstallTask({ packageName: '@microsoft/applicationinsights-web' }));
+        context.logger.info('Adding ESLint.....');
         context.addTask(new RunSchematicTask('@angular-eslint/schematics', 'ng-add', {}));    
+        context.logger.info('Adding DevDependencies.....');
+        context.addTask(new NodePackageInstallTask({ packageName: 'concurrently --save-dev' } ));
+        context.addTask(new NodePackageInstallTask({ packageName: 'dev-error-reporter --save-dev' } ));
+        context.addTask(new NodePackageInstallTask({ packageName: 'json-concat --save-dev' } ));
+        context.addTask(new NodePackageInstallTask({ packageName: 'json-server --save-dev' } ));
+        context.addTask(new NodePackageInstallTask({ packageName: 'karma-junit-reporter --save-dev' } ));
+        context.addTask(new NodePackageInstallTask({ packageName: 'onchange --save-dev' } ));
+        context.addTask(new NodePackageInstallTask({ packageName: 'typescript-json-schema --save-dev' } ));
 
 
         // const rule = chain([
