@@ -13,6 +13,10 @@
             "description": "Adds IOCO default dialog boxes",
             "factory": "./dialog-boxes/index#addDialogBoxes"
         },
+        "endpoints": {
+            "description": "Adds IOCO default endpoint configuration",
+            "factory": "./endpoints/index#addEndpoints"
+        },
         "enums": {
             "description": "Adds IOCO default enums",
             "factory": "./enums/index#addEnums"
@@ -40,6 +44,10 @@
         "services": {
             "description": "Adds IOCO default services",
             "factory": "./services/index#addServices"
+        },
+        "unit-test-helpers": {
+            "description": "Adds IOCO default unit test helpers",
+            "factory": "./unit-test-helpers/index#addUnitTestHelpers"
         }
     }
 }

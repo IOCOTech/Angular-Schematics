@@ -1,6 +1,6 @@
 import { AbstractServiceUser } from './user.service.abstract.ts.template';
 import { Observable } from 'rxjs';
-import { ModelUser } from '../../models/users/user-details.model';
+import { ModelUser } from '../../models/user/user-details.model';
 import { HttpClient } from '@angular/common/http';
 import { AbstractEndpoints } from 'src/environments/endpoints/endpoints.abstract';
 

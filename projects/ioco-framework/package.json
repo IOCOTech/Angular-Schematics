@@ -1,9 +1,9 @@
 {
   "name": "ioco-framework",
-  "version": "0.0.42",
+  "version": "0.0.75",
   "scripts": {
     "build": "tsc -p tsconfig.schematics.json",
-    "postbuild": "copyfiles schematics/collection.json schematics/dialog-boxes/** schematics/components/** schematics/enums/enums-root/** schematics/helpers/helpers-root/** schematics/interceptors/interceptors-root/** schematics/modules/material-design/** schematics/modules/microsoft-authentication-library/** schematics/services/** ../../dist/ioco-framework"
+    "postbuild": "copyfiles schematics/collection.json schematics/dialog-boxes/** schematics/components/** schematics/endpoints/endpoints-root/** schematics/enums/enums-root/** schematics/helpers/helpers-root/** schematics/interceptors/interceptors-root/** schematics/modules/material-design/** schematics/modules/microsoft-authentication-library/** schematics/services/** ../../dist/ioco-framework"
   },
   "publishConfig": {
     "registry": "http://localhost:4873/"
