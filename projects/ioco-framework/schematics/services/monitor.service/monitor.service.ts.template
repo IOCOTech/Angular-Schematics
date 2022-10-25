@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ServiceConfig } from '../config.service/config.service';
+import { ServiceConfig } from '../config/config.service';
 import {
   ApplicationInsights,
   IEventTelemetry,

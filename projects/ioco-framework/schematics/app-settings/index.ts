@@ -1,28 +1,28 @@
 import { normalize } from '@angular-devkit/core';
 import { apply, applyTemplates, chain, MergeStrategy, mergeWith, move, Rule, Source, strings, url } from '@angular-devkit/schematics';
 
-const endpointsPath = 'endpoints'
+const appSettingsPath = 'app-settings'
 
-export function addEndpoints(): Rule {
+export function addAppSettings(): Rule {
     return () => {
 
-        console.log("Adding endpoints")
-        const endpointsRule = generateEndpointsRule();
+        console.log("Adding app settings")
+        const appSettingsRule = generateAppSettingsRule();
         
         return chain([
-            mergeWith(endpointsRule, MergeStrategy.Overwrite)
+            mergeWith(appSettingsRule, MergeStrategy.Overwrite)
         ]);
     }
 }
 
-function generateEndpointsRule(): Source {
+function generateAppSettingsRule(): Source {
     return apply(
-        url('./endpoints-root'),
+        url('./app-settings-root'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
             }),
-            move(normalize(`src/environments/${endpointsPath}`)),
+            move(normalize(`src/environments/${appSettingsPath}`)),
         ]
     )
 }

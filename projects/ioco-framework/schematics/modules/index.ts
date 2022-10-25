@@ -3,6 +3,7 @@ import { apply, applyTemplates, chain, externalSchematic, MergeStrategy, mergeWi
 
 const materialDesignPath = 'modules/material-design';
 const msalPath = 'modules/microsoft-authentication-library';
+const msalEnvironementPath = 'msal'
 
 export function addMaterialDesign(): Rule {
     return () => {
@@ -34,10 +35,12 @@ export function addMSAL(): Rule {
 
         console.log("Adding Microsoft Authentication Library")
         const MSALRule = generateMSALRule();
+        const MSALEnvironmentRule = generateMsalEnvironmentRule();
         
         return chain([
             externalSchematic('@schematics/angular', 'module', { name: `${msalPath}` }),
             mergeWith(MSALRule, MergeStrategy.Overwrite),
+            mergeWith(MSALEnvironmentRule, MergeStrategy.Overwrite)
         ]);
     }
 }
@@ -50,6 +53,18 @@ function generateMSALRule(): Source {
                 dasherize: strings.dasherize,
             }),
             move(normalize(`src/app/${msalPath}`)),
+        ]
+    )
+}
+
+function generateMsalEnvironmentRule(): Source {
+    return apply(
+        url('./msal.environment'),
+        [
+            applyTemplates({
+                dasherize: strings.dasherize,
+            }),
+            move(normalize(`src/environments/${msalEnvironementPath}`)),
         ]
     )
 }

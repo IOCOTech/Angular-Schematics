@@ -1,8 +1,8 @@
-import { Countries } from './separated-enums/countries.enum.ts.template';
-import { Environments } from './separated-enums/environments.enum.ts.template';
-import { ErrorSeverityLevel } from './separated-enums/error-severity-level.enum.ts.template';
-import { MaterialIcons } from './separated-enums/material-icons.enum.ts.template';
-import { Nationality } from './separated-enums/nationality.enum.ts.template';
+import { Countries } from './separated-enums/countries.enum';
+import { Environments } from './separated-enums/environments.enum';
+import { ErrorSeverityLevel } from './separated-enums/error-severity-level.enum';
+import { MaterialIcons } from './separated-enums/material-icons.enum';
+import { Nationality } from './separated-enums/nationality.enum';
 
 export class Enums {
     static Countries = Countries;

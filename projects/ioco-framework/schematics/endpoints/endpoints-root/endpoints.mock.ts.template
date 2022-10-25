@@ -1,4 +1,4 @@
-import { AbstractEndpoints, IAuthorizationEndpoints, IUserEndpoints } from './endpoints.abstract.ts.template';
+import { AbstractEndpoints, IAuthorizationEndpoints, IUserEndpoints } from './endpoints.abstract';
 import { ServiceConfig } from 'src/app/services/config/config.service';
 
 export class EndpointsMock implements AbstractEndpoints {

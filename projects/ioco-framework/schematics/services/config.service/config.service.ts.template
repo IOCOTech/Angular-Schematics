@@ -1,11 +1,6 @@
 import { HttpClient, HttpBackend } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {
-  IConfig,
-  IAuthenticationConfig,
-  InitializeConfig,
-  ILogging,
-} from 'src/environments/config/config.interface';
+import { IConfig } from 'src/environments/config/config.interface';
 import { AppSettings } from 'src/environments/app-settings/app-settings';
 import { Enums } from 'src/app/enums/enums';
 import { firstValueFrom } from 'rxjs';
@@ -26,6 +21,7 @@ export class ServiceConfig extends IConfig {
     This will bypass the HTTP_INTERCEPTORS, while getting config file.
     */
   constructor(private readonly httpHandler: HttpBackend) {
+    super();
     this.http = new HttpClient(httpHandler);
   }
   // This method must return a promise for the APP_INITIALIZER to work correctly

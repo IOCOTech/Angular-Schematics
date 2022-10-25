@@ -1,5 +1,5 @@
-import { AbstractEndpoints, IAuthorizationEndpoints, IUserEndpoints } from './endpoints.abstract.ts.template';
-import { ServiceConfig } from 'src/app/services/config.service/config.service';
+import { AbstractEndpoints, IAuthorizationEndpoints, IUserEndpoints } from './endpoints.abstract';
+import { ServiceConfig } from 'src/app/services/config/config.service';
 
 export class Endpoints implements AbstractEndpoints {
 

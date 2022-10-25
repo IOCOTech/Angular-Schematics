@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { ServiceConfig } from './config.service.ts.template.template';
+import { ServiceConfig } from './config.service';
 
 
 export function FactoryServiceConfig(serviceConfig: ServiceConfig, router: Router): () => Promise<unknown> {
@@ -9,6 +9,7 @@ export function FactoryServiceConfig(serviceConfig: ServiceConfig, router: Route
         serviceConfig.loadConfig()
             .then(() => {
                 // Add any logic that should load after loading config before starting the application
+                res(true);
             });
     });
     // For the app initializer the factory needs tot return a function that returns a promise

@@ -1,28 +1,29 @@
 import { normalize } from '@angular-devkit/core';
 import { apply, applyTemplates, chain, MergeStrategy, mergeWith, move, Rule, Source, strings, url } from '@angular-devkit/schematics';
 
-const endpointsPath = 'endpoints'
+const webConfigPath = 'src';
 
-export function addEndpoints(): Rule {
+export function addWebConfig(): Rule {
     return () => {
 
-        console.log("Adding endpoints")
-        const endpointsRule = generateEndpointsRule();
+        console.log("Adding web config")
+        const webConfigRule = generateWebConfigRule();
         
         return chain([
-            mergeWith(endpointsRule, MergeStrategy.Overwrite)
+            mergeWith(webConfigRule, MergeStrategy.Overwrite),
         ]);
     }
 }
 
-function generateEndpointsRule(): Source {
+function generateWebConfigRule(): Source {
     return apply(
-        url('./endpoints-root'),
+        url('./web-config-root'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
             }),
-            move(normalize(`src/environments/${endpointsPath}`)),
+            move(normalize(`${webConfigPath}`)),
         ]
     )
 }
+

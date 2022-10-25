@@ -3,7 +3,7 @@
 // import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 // import { ServiceAuthentication } from './authentication.service';
 
-// describe('Service Authentictaion', () => {
+// describe('Service Authentication', () => {
 
 //     let serviceAuth: ServiceAuthentication;
 //     let httpTestingController: HttpTestingController;

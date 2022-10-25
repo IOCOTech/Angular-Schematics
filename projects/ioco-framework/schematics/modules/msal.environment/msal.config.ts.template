@@ -1,0 +1,55 @@
+import { MsalGuardConfiguration, MsalInterceptorConfiguration } from '@azure/msal-angular';
+import { BrowserCacheLocation, InteractionType, IPublicClientApplication, PublicClientApplication } from '@azure/msal-browser';
+import { NavigationRoutes } from 'src/app/helpers/navigation.routes.helper';
+import { ServiceConfig } from 'src/app/services/config/config.service';
+
+export const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
+
+// export const protectedResourceMap: [string, string[]][] = [
+//     ['https://graph.microsoft.com/v1.0/me', ['user.read']]
+// ];
+// TODO: Update knownAuthorities to read from config
+export function MSALInstanceFactory(serviceConfig: ServiceConfig): IPublicClientApplication {
+  return new PublicClientApplication({
+    auth: {
+      clientId: serviceConfig.authentication.clientId,
+      authority: serviceConfig.authentication.authority,
+      navigateToLoginRequestUrl: serviceConfig.authentication.navigateToLoginRequestUrl,
+      knownAuthorities: ['organization.b2clogin.com'],
+      redirectUri: serviceConfig.authentication.redirectUri,
+      postLogoutRedirectUri: serviceConfig.authentication.postLogoutRedirectUri
+    },
+    cache: {
+      cacheLocation: BrowserCacheLocation.SessionStorage,
+      storeAuthStateInCookie: isIE, // set to true for IE 11
+    },
+    system: {
+      loggerOptions: {
+        piiLoggingEnabled: false
+      }
+    }
+  });
+}
+
+export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
+  const protectedResourceMap = new Map<string, Array<string>>();
+  protectedResourceMap.set("https://graph.microsoft.com/v1.0/me", ["user.read"]);
+  protectedResourceMap.set("https://aauto-functions.azurewebsites.net", ["https://aautologin.onmicrosoft.com/79c56f97-2e86-4eb0-a452-b56452eb07ee/token.write"]);
+  protectedResourceMap.set("http://localhost:7082/", ["https://aautologin.onmicrosoft.com/79c56f97-2e86-4eb0-a452-b56452eb07ee/organization.readwrite"]);
+
+  return {
+    interactionType: InteractionType.Redirect,
+    protectedResourceMap
+  };
+}
+
+export function MSALGuardConfigFactory(): MsalGuardConfiguration {
+  return {
+    interactionType: InteractionType.Redirect,
+    authRequest: {
+      // scopes: ['user.read']
+    },
+
+    loginFailedRoute: NavigationRoutes.LandingPage.path
+  };
+}

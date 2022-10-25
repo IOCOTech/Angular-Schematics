@@ -1,9 +1,9 @@
 {
   "name": "ioco-framework",
-  "version": "0.0.75",
+  "version": "0.0.92",
   "scripts": {
     "build": "tsc -p tsconfig.schematics.json",
-    "postbuild": "copyfiles schematics/collection.json schematics/dialog-boxes/** schematics/components/** schematics/endpoints/endpoints-root/** schematics/enums/enums-root/** schematics/helpers/helpers-root/** schematics/interceptors/interceptors-root/** schematics/modules/material-design/** schematics/modules/microsoft-authentication-library/** schematics/services/** ../../dist/ioco-framework"
+    "postbuild": "copyfiles schematics/collection.json schematics/app-settings/app-settings-root/** schematics/components/** schematics/dialog-boxes/** schematics/endpoints/endpoints-root/** schematics/enums/enums-root/** schematics/helpers/helpers-root/** schematics/interceptors/interceptors-root/** schematics/mock-data/mock-data-root/** schematics/modules/material-design/** schematics/modules/microsoft-authentication-library/**  schematics/modules/msal.environment/** schematics/services/** schematics/web-config/web-config-root/** ../../dist/ioco-framework"
   },
   "publishConfig": {
     "registry": "http://localhost:4873/"
@@ -13,8 +13,8 @@
   },
   "schematics": "./schematics/collection.json",
   "peerDependencies": {
-    "@angular/common": "^14.0.0",
-    "@angular/core": "^14.0.0",
+    "@angular/common": "latest",
+    "@angular/core": "latest",
     "@angular/material": "latest",
     "@angular/flex-layout": "latest",
     "@angular/cdk": "latest",

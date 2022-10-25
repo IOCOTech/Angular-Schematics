@@ -5,7 +5,8 @@ const serviceAuthPath = 'services/authentication';
 const modelAuthPath = 'models/authorization';
 
 const serviceConfigPath = 'services/config';
-const modelConfigInterfacePath = 'src/environments/config';
+const configurationConfigPath = 'src/environments/config';
+const configurationConfigRootPath = 'src';
 
 const serviceErrorHandlerPath = 'services/error-handler';
 
@@ -14,6 +15,7 @@ const serviceLoadingScreenPath = 'services/loading-screen';
 const serviceMonitorPath = 'services/monitor';
 
 const serviceSnackBarPath = 'services/snack-bar';
+const modelSnackBarPath = 'models/snack-bar';
 
 const serviceUserPath = 'services/user';
 const modelUserPath = 'models/user';
@@ -26,7 +28,8 @@ export function addServices(): Rule {
         const authenticationServiceModelsRule = generateAuthenticationServiceModelsRule();
 
         const configServiceRule = generateConfigServiceRule();
-        const configServiceModelsRule = generateConfigModelsRule();
+        const configServiceConfigurationRule = generateConfigConfigurationRule();
+        const configServiceConfigurationRootModelsRule = generateConfigRootRule();
         
         const errorHandlerServiceRule = generateErrorHandlerServiceRule();
         
@@ -35,6 +38,7 @@ export function addServices(): Rule {
         const monitorServiceRule = generateMonitorServiceRule();
         
         const snackBarServiceRule = generateSnackBarServiceRule();
+        const snackBarModelRule = generateSnackBarModelRule();
 
         const userServiceRule = generateUserServiceRule();
         const userServiceModelsRule = generateUserServiceModelsRule();
@@ -43,11 +47,13 @@ export function addServices(): Rule {
             mergeWith(authenticationServiceRule, MergeStrategy.Overwrite),
             mergeWith(authenticationServiceModelsRule, MergeStrategy.Overwrite),
             mergeWith(configServiceRule, MergeStrategy.Overwrite),
-            mergeWith(configServiceModelsRule, MergeStrategy.Overwrite),
+            mergeWith(configServiceConfigurationRule, MergeStrategy.Overwrite),
+            mergeWith(configServiceConfigurationRootModelsRule, MergeStrategy.Overwrite),
             mergeWith(errorHandlerServiceRule, MergeStrategy.Overwrite),
             mergeWith(loadingScreenServiceRule, MergeStrategy.Overwrite),
             mergeWith(monitorServiceRule, MergeStrategy.Overwrite),
             mergeWith(snackBarServiceRule, MergeStrategy.Overwrite),
+            mergeWith(snackBarModelRule, MergeStrategy.Overwrite),
             mergeWith(userServiceRule, MergeStrategy.Overwrite),
             mergeWith(userServiceModelsRule, MergeStrategy.Overwrite)
         ]);
@@ -88,14 +94,25 @@ function generateConfigServiceRule(): Source {
         ]
     )
 }
-function generateConfigModelsRule(): Source {
+function generateConfigConfigurationRule(): Source {
     return apply(
-        url('./config.service.models/interface'),
+        url('./config.service.configuration/environment'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
             }),
-            move(normalize(`${modelConfigInterfacePath}`)),
+            move(normalize(`${configurationConfigPath}`)),
+        ]
+    )
+}
+function generateConfigRootRule(): Source {
+    return apply(
+        url('./config.service.configuration/config-file-root'),
+        [
+            applyTemplates({
+                dasherize: strings.dasherize,
+            }),
+            move(normalize(`${configurationConfigRootPath}`)),
         ]
     )
 }
@@ -144,6 +161,18 @@ function generateSnackBarServiceRule(): Source {
                 dasherize: strings.dasherize,
             }),
             move(normalize(`src/app/${serviceSnackBarPath}`)),
+        ]
+    )
+}
+
+function generateSnackBarModelRule(): Source {
+    return apply(
+        url('./snack-bar.service.models'),
+        [
+            applyTemplates({
+                dasherize: strings.dasherize,
+            }),
+            move(normalize(`src/app/${modelSnackBarPath}`)),
         ]
     )
 }

@@ -7,6 +7,13 @@ The commented private properties must be added to the file that implements the A
 */
 export abstract class AbstractServiceAuthentication {
 
+    /**
+    * Returns a boolean indicating if the user is logged in.
+    * @returns {boolean}
+    * @remarks
+    * REMEMBER TO UNSUBSCRIBE IF YOU SUBSCRIBE TO THIS PROPERTY
+    * IF YOU DON'T NEED TO SUBSCRIBE JUST USE isLoggedIn.getValue()
+    */
     abstract isLoggedIn: BehaviorSubject<boolean>;
     abstract get account(): ModelAccountFromToken | undefined;
     abstract registerForAuthenticationEvents(): void;

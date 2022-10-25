@@ -5,6 +5,10 @@
             "description": "Add IOCO framework to your projects",
             "factory": "./ng-add/index#ngAdd"
         },
+        "app-settings": {
+            "description": "Adds IOCO default app settings",
+            "factory": "./app-settings/index#addAppSettings"
+        },
         "components": {
             "description": "Adds IOCO default components",
             "factory": "./components/index#addComponents"
@@ -48,6 +52,10 @@
         "unit-test-helpers": {
             "description": "Adds IOCO default unit test helpers",
             "factory": "./unit-test-helpers/index#addUnitTestHelpers"
+        },
+        "web-config": {
+            "description": "Adds IOCO default web.config",
+            "factory": "./web-config/index#addWebConfig"
         }
     }
 }

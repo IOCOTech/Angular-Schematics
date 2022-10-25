@@ -4,16 +4,17 @@ import { NodePackageInstallTask, RunSchematicTask } from "@angular-devkit/schema
 //     addPackageJsonDependency,
 //     NodeDependencyType
 // } from '@schematics/angular/utility/dependencies';
-import { addImportToModule, addSymbolToNgModuleMetadata, insertImport } from '@schematics/angular/utility/ast-utils';
-import { applyToUpdateRecorder } from '@schematics/angular/utility/change';
+import { addImportToModule, addSymbolToNgModuleMetadata, getSourceNodes, insertImport } from '@schematics/angular/utility/ast-utils';
+import { applyToUpdateRecorder, InsertChange } from '@schematics/angular/utility/change';
 import * as ts from 'typescript';
 
 const modulePath = 'src/app/app.module.ts'
+const routingModulePath = 'src/app/app-routing.module.ts'
+const angularJsonPath = 'angular.json'
 
 export function ngAdd(): Rule {
     return (tree: Tree, context: SchematicContext) => {
         context.logger.info('Adding IOCO Framework.....');
-
 
         if (!tree.exists(modulePath)) {
             throw new SchematicsException(`the file ${modulePath} doesn't exist`)
@@ -23,9 +24,13 @@ export function ngAdd(): Rule {
         addImportsToAppModuleFile(tree, recorder);
         addProvidersToAppModuleFile(tree, recorder);
         addImportBarrelsToAppModuleFile(tree, recorder);
+        updateAngularJsonOptions(tree);
+        updateAngularJsonDevBuildConfiguration(tree);
+        addRouteToApp(tree);
 
         tree.commitUpdate(recorder);
 
+        context.addTask(new RunSchematicTask('app-settings', {}));
         context.addTask(new RunSchematicTask('components', {}));
         context.addTask(new RunSchematicTask('dialog-boxes', {}));
         context.addTask(new RunSchematicTask('endpoints', {}));
@@ -37,6 +42,7 @@ export function ngAdd(): Rule {
         context.addTask(new RunSchematicTask('mock-data', {}));
         context.addTask(new RunSchematicTask('services', {}));
         context.addTask(new RunSchematicTask('unit-test-helpers', {}));
+        context.addTask(new RunSchematicTask('web-config', {}));
 
         context.logger.info('Adding Angular Material.....');
         context.addTask(new RunSchematicTask('@angular/material', 'ng-add', {
@@ -69,7 +75,8 @@ export function ngAdd(): Rule {
         addScriptToPackageJson(tree, "build:prod", "ng build -c production")
         addScriptToPackageJson(tree, "build:db", "json-concat ./src/app/mock-data/separated-entities/ ./src/app/mock-data/db.json")
         addScriptToPackageJson(tree, "start:mock-server", "npm run build:db & json-server --watch ./src/app/mock-data/db.json --silent")
-        addScriptToPackageJson(tree, "start:mock", "concurrently \"ng serve --configuration=mock\" \"npm run start:mock-server\" \"npm run lint:watch\"")
+        addScriptToPackageJson(tree, "start:mock", "concurrently \"ng serve --configuration=mock\" \"npm run start:mock-server\" \"npm run build:config\" \"npm run lint:watch\"")
+        addScriptToPackageJson(tree, "start", "npm run start:mock")
         addScriptToPackageJson(tree, "start:dev", "ng serve --configuration=development")
         addScriptToPackageJson(tree, "lint:fix", "npm run lint --silent -- --fix")
         addScriptToPackageJson(tree, "lint:watch", "onchange \"src/**/*.ts\" -- onerror \"npm run lint --silent\"  -t Error -m \"There are linting errors on your Angular project\"")
@@ -92,6 +99,7 @@ function addImportsToAppModuleFile(tree: Tree, recorder: UpdateRecorder) {
 
     const imports: Record<string, string> =
     {
+        'HttpClientModule': '@angular/common/http',
         'MaterialDesignModule.forRoot()': './modules/material-design/material-design.module',
         'MicrosoftAuthenticationLibraryModule.forRoot()': './modules/microsoft-authentication-library/microsoft-authentication-library.module'
     };
@@ -147,10 +155,12 @@ function addImportBarrelsToAppModuleFile(tree: Tree, recorder: UpdateRecorder) {
         'FactoryServiceConfig': './services/config/config.service.factory',
         'HTTP_INTERCEPTORS': '@angular/common/http',
         'HttpClient': '@angular/common/http',
-        'HttpClientModule': '@angular/common/http',
         'InterceptorError': './interceptors/error.interceptor',
         'InterceptorLoadingScreen': './interceptors/loading.interceptor',
-        'ServiceConfig': './services/config.service/config.service',
+        'MsalBroadcastService': '@azure/msal-angular',
+        'MsalService': '@azure/msal-angular',
+        'Router': '@angular/router',
+        'ServiceConfig': './services/config/config.service',
         'ServiceMonitoring': './services/monitor/monitor.service',
         'ServiceSnackBar': './services/snack-bar/snack-bar.service'
     };
@@ -165,6 +175,95 @@ function addImportBarrelsToAppModuleFile(tree: Tree, recorder: UpdateRecorder) {
     }
 }
 
+function updateAngularJsonOptions(tree: Tree) {
+
+    const assets: string[] = [
+        "src/config.json",
+        "src/web.config",
+    ];
+
+    if (tree.exists(angularJsonPath)) {
+        var currentAngularJson = tree.read(angularJsonPath)!.toString('utf-8');
+        var json = JSON.parse(currentAngularJson);
+        var projectName = Object.keys(json['projects'])[0];
+        const optionsJson = json['projects'][projectName]['architect']['build']['options'];
+        assets.forEach((asset: string) => {
+            optionsJson['assets'].push(asset);
+        });
+
+        json['projects'][projectName]['architect']['build']['options'] = optionsJson;
+        tree.overwrite(angularJsonPath, JSON.stringify(json, null, 2));
+    } else {
+        throw new SchematicsException('angular.json not found at ' + angularJsonPath);
+    }
+    return tree;
+}
+
+function updateAngularJsonDevBuildConfiguration(tree: Tree) {
+
+    const assetDev = JSON.parse(
+        `[{
+            "input": "src/environments/config/dev",
+            "output": "/",
+            "glob": "config.json"
+        }]`
+    )
+    const fileReplacementsDev = JSON.parse(
+        `[{
+            "replace": "src/environments/app-settings/app-settings.ts",
+            "with": "src/environments/app-settings/app-settings.dev.ts"
+        }]`
+    )
+    const assetMock = JSON.parse(
+        `[{
+            "input": "src/environments/config/mock",
+            "output": "/",
+            "glob": "config.json"
+        }]`
+    )
+    const fileReplacementsMock = JSON.parse(
+        `[{
+            "replace": "src/environments/app-settings/app-settings.ts",
+            "with": "src/environments/app-settings/app-settings.mock.ts"
+        }]`
+    )
+
+    if (tree.exists(angularJsonPath)) {
+        var currentAngularJson = tree.read(angularJsonPath)!.toString('utf-8');
+        var json = JSON.parse(currentAngularJson);
+        var projectName = Object.keys(json['projects'])[0];
+
+        const serveConfiguration = JSON.parse(
+            `
+            {
+                "browserTarget": "${projectName}:build:development"
+            }
+            `
+        )
+
+
+        const configurationDevJson = json['projects'][projectName]['architect']['build']['configurations']['development'];
+        json['projects'][projectName]['architect']['build']['configurations']['mock'] = JSON.parse(JSON.stringify(configurationDevJson));
+        const configurationMockJson = json['projects'][projectName]['architect']['build']['configurations']['mock'];
+
+        configurationDevJson['assets'] = assetDev;
+        configurationDevJson['fileReplacements'] = fileReplacementsDev;
+        json['projects'][projectName]['architect']['build']['configurations']['development'] = configurationDevJson;
+
+        configurationMockJson['assets'] = assetMock;
+        configurationMockJson['fileReplacements'] = fileReplacementsMock;
+        json['projects'][projectName]['architect']['build']['configurations']['mock'] = configurationMockJson;
+
+        const configurationServe = json['projects'][projectName]['architect']['serve']['configurations']
+        configurationServe['mock'] = serveConfiguration;
+        json['projects'][projectName]['architect']['serve']['configurations'] = configurationServe;
+
+        tree.overwrite(angularJsonPath, JSON.stringify(json, null, 2));
+    } else {
+        throw new SchematicsException('angular.json not found at ' + angularJsonPath);
+    }
+    return tree;
+}
 interface PackageJson {
     scripts: Record<string, string>;
 }
@@ -175,10 +274,8 @@ function addScriptToPackageJson(tree: Tree, scriptName: string, scriptContent: s
         if (!json.scripts) {
             json.scripts = {};
         }
-        if (!json.scripts[scriptName]) {
-            json.scripts[scriptName] = scriptContent;
-            json.scripts = sortObjectByKeys(json.scripts);
-        }
+        json.scripts[scriptName] = scriptContent;
+        json.scripts = sortObjectByKeys(json.scripts);
         tree.overwrite("package.json", JSON.stringify(json, null, 2));
     }
     return tree;
@@ -195,4 +292,76 @@ function sortObjectByKeys(obj: Record<string, string>) {
             result[key] = obj[key];
             return result;
         }, {} as Record<string, string>);
+}
+
+function addRouteToApp(tree: Tree) {
+    // tslint:disable-next-line
+    const appRouting = tree.read(routingModulePath)!.toString('utf-8');
+    const src = ts.createSourceFile(
+        'app-routing.module.ts',
+        appRouting,
+        ts.ScriptTarget.Latest,
+        true
+    ) as any;
+    const route = `
+        { path: '', component: NotFoundComponent },
+        { path: NavigationRoutes.NotFound.path, component: NotFoundComponent, canActivate: [AbstractRouteGuard]  }
+    `;
+    const nodes = getSourceNodes(src);
+    const routeNodes = nodes
+        .filter((n: any) => {
+            if (n.kind === ts.SyntaxKind.VariableDeclaration) {
+                if (
+                    n.getChildren().findIndex((c: any) => {
+                        return (
+                            c.kind === ts.SyntaxKind.Identifier && c.getText() === 'routes'
+                        );
+                    }) !== -1
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        })
+        .map((n: any) => {
+            const arrNodes = n
+                .getChildren()
+                .filter((c: any) => (c.kind = ts.SyntaxKind.ArrayLiteralExpression));
+            return arrNodes[arrNodes.length - 1];
+        });
+    if (routeNodes.length === 1) {
+        const navigation: ts.ArrayLiteralExpression = routeNodes[0] as ts.ArrayLiteralExpression;
+        const pos = navigation.getStart() + 1;
+        const fullText = navigation.getFullText();
+        let toInsert = '';
+        if (navigation.elements.length > 0) {
+            if (fullText.match(/\r\n/)) {
+                toInsert = `${(fullText.match(/\r\n(\r?)\s*/) as any)[0]}${route},`;
+            } else {
+                toInsert = `${route},`;
+            }
+        } else {
+            toInsert = `${route}`;
+        }
+        const recorder = tree.beginUpdate(routingModulePath);
+
+        const imports: Record<string, string> =
+        {
+            'AbstractRouteGuard': './modules/microsoft-authentication-library/route-guard/route-mock.guard.abstract',
+            'NavigationRoutes': './helpers/navigation.routes.helper',
+            'NotFoundComponent': './components/not-found/not-found.component'
+        }
+
+        // const importRouterGuard = insertImport(src, routingModulePath,'AbstractRouteGuard', './modules/microsoft-authentication-library/route-guard/route-mock.guard.abstract');
+        // recorder.insertLeft((importRouterGuard as InsertChange).pos, (importRouterGuard as InsertChange).toAdd );
+        // const importRouterGuard = insertImport(src, routingModulePath,'NavigationRoutes', './modules/microsoft-authentication-library/route-guard/route-mock.guard.abstract');
+        // recorder.insertLeft((importRouterGuard as InsertChange).pos, (importRouterGuard as InsertChange).toAdd );
+
+        for (const importName in imports) {
+            const importInstance = insertImport(src, routingModulePath, importName, imports[importName]);
+            recorder.insertLeft((importInstance as InsertChange).pos, (importInstance as InsertChange).toAdd );
+        }
+        recorder.insertRight(pos, toInsert);
+        tree.commitUpdate(recorder);
+    }
 }
