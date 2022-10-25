@@ -1,0 +1,24 @@
+name: "release"
+
+on:
+    release:
+        types: [published]
+
+jobs:
+    release:
+        name: release
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@latest
+            - name: node
+              uses: actions/setup-node@latest
+              with:
+                  node-version: 12
+                  registry-url: https://registry.npmjs.org
+            - run: npm run build
+            - name: publish
+              run: npm publish --access public
+              working-directory: dist/ioco-framework
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
