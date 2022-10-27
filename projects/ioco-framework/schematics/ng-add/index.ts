@@ -31,12 +31,15 @@ export function ngAdd(): Rule {
         tree.commitUpdate(recorder);
 
         context.addTask(new RunSchematicTask('app-settings', {}));
+        context.addTask(new RunSchematicTask('azure-pipeline', {}));
         context.addTask(new RunSchematicTask('components', {}));
         context.addTask(new RunSchematicTask('dialog-boxes', {}));
+        context.addTask(new RunSchematicTask('docker', {}));
         context.addTask(new RunSchematicTask('endpoints', {}));
         context.addTask(new RunSchematicTask('enums', {}));
         context.addTask(new RunSchematicTask('helpers', {}));
         context.addTask(new RunSchematicTask('interceptors', {}));
+        context.addTask(new RunSchematicTask('karma-config', {}));
         context.addTask(new RunSchematicTask('material-design', {}));
         context.addTask(new RunSchematicTask('msal', {}));
         context.addTask(new RunSchematicTask('mock-data', {}));

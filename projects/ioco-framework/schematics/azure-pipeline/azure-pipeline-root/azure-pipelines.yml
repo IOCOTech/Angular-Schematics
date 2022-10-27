@@ -1,0 +1,83 @@
+# Docker
+# Build a Docker image 
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+  - main
+  
+resources:
+  containers:
+    - container: node
+      image: ' node:14'
+
+variables:
+  # Docker Container registry variables
+  imageRepository: 'bettertravel'
+  containerRegistry: 'bettertravel.azurecr.io'
+  dockerTestfilePath: '$(Build.SourcesDirectory)/dockerfile.test'
+  dockerReleasefilePath: '$(Build.SourcesDirectory)/dockerfile.prod'
+  tag: '$(Build.BuildId)-$(Build.SourceVersion)'
+
+stages:
+- stage: Build
+  displayName: Build image
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: docker build --no-cache -f $(dockerTestfilePath) -t angular-build:$BUILD_BUILDID .
+      displayName: Build docker test image
+
+    - script: docker run --name angularapp --rm -d -it angular-build:$BUILD_BUILDID
+      displayName: Start docker container
+      
+    - script: |
+        docker cp angularapp:app/analytics/junit/report.xml $(System.DefaultWorkingDirectory) 
+        docker cp angularapp:app/analytics/coverage/code-coverage.xml $(System.DefaultWorkingDirectory)
+        docker cp angularapp:app/analytics/coverage $(System.DefaultWorkingDirectory)/coverage   
+      displayName: Copy reports
+
+    - script: |
+        mkdir -p $(System.DefaultWorkingDirectory)/dockerfile
+        docker cp angularapp:app/dockerfile.release  $(System.DefaultWorkingDirectory)/dockerfile/dockerfile.release
+        docker cp angularapp:app/nginx-custom.conf  $(System.DefaultWorkingDirectory)/dockerfile/nginx-custom.conf
+      displayName: Copy docker file with config
+      
+    - script: |
+        docker cp angularapp:app/dist/out $(System.DefaultWorkingDirectory)/out
+      displayName: Copy compiled output
+      
+    # - script: docker exec angularapp ls /app/analytics      
+    #   displayName: List files in analytics directory
+      
+    - script: docker stop angularapp
+      displayName: Stop docker container
+      
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: 'code-coverage.xml'
+        reportDirectory: 'coverage'
+        failIfCoverageEmpty: true
+      displayName: Publish code coverage results
+
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: 'report.xml'
+        failTaskOnFailedTests: true
+      displayName: Publish unit testing results
+      
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: '$(System.DefaultWorkingDirectory)/dockerfile'
+        artifactName: dockerfile
+      displayName: Publish dockerfile as artifact
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: '$(System.DefaultWorkingDirectory)/out'
+        artifactName: distribution
+      displayName: Publish distribution output
