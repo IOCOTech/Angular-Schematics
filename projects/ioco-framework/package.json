@@ -1,9 +1,12 @@
 {
   "name": "@ioco-dev/ioco-framework",
-  "version": "1.0.0",
+  "version": "0.0.96",
   "scripts": {
     "build": "tsc -p tsconfig.schematics.json",
-    "postbuild": "copyfiles schematics/collection.json schematics/app-settings/app-settings-root/** schematics/components/** schematics/dialog-boxes/** schematics/endpoints/endpoints-root/** schematics/enums/enums-root/** schematics/helpers/helpers-root/** schematics/interceptors/interceptors-root/** schematics/mock-data/mock-data-root/** schematics/modules/material-design/** schematics/modules/microsoft-authentication-library/**  schematics/modules/msal.environment/** schematics/services/** schematics/web-config/web-config-root/** ../../dist/ioco-framework"
+    "postbuild": "copyfiles schematics/collection.json schematics/app-settings/app-settings-root/** schematics/components/** schematics/dialog-boxes/** schematics/endpoints/endpoints-root/** schematics/enums/enums-root/** schematics/helpers/helpers-root/** schematics/interceptors/interceptors-root/** schematics/mock-data/mock-data-root/** schematics/modules/material-design/** schematics/modules/microsoft-authentication-library/**  schematics/modules/msal.environment/** schematics/services/** schematics/unit-test-helpers/unit-test-helpers-root/** schematics/web-config/web-config-root/** ../../dist/ioco-framework"
+  },
+  "publishConfig": {
+    "registry": "http://localhost:4873/"
   },
   "ng-add": {
     "save": "true"
