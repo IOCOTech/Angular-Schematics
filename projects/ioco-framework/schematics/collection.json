@@ -9,6 +9,10 @@
             "description": "Adds IOCO default app settings",
             "factory": "./app-settings/index#addAppSettings"
         },
+        "azure-pipeline": {
+            "description": "Adds IOCO default azure pipeline",
+            "factory": "./azure-pipeline/index#addAzurePipeline"
+        },
         "components": {
             "description": "Adds IOCO default components",
             "factory": "./components/index#addComponents"
@@ -16,6 +20,10 @@
         "dialog-boxes": {
             "description": "Adds IOCO default dialog boxes",
             "factory": "./dialog-boxes/index#addDialogBoxes"
+        },
+        "docker": {
+            "description": "Adds IOCO docker files",
+            "factory": "./docker/index#addDocker"
         },
         "endpoints": {
             "description": "Adds IOCO default endpoint configuration",
@@ -32,6 +40,10 @@
         "interceptors": {
             "description": "Adds IOCO default interceptors",
             "factory": "./interceptors/index#addInterceptors"
+        },
+        "karma-config": {
+            "description": "Adds IOCO karma configuration",
+            "factory": "./karma/index#addKarmaConfiguration"
         },
         "material-design": {
             "description": "Adds material-design module to project",
