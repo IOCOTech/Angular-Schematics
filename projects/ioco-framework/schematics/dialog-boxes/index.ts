@@ -31,9 +31,8 @@ export function addDialogBoxes(): Rule {
 }
 
 function generateConfirmationDialogRule(): Source {
-
     return apply(
-        url('./confirmation-dialog'),
+        url('./dialog-boxes-root/confirmation-dialog'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -45,9 +44,8 @@ function generateConfirmationDialogRule(): Source {
 }
 
 function generateErrorDialogRule(): Source {
-
     return apply(
-        url('./error-dialog'),
+        url('./dialog-boxes-root/error-dialog'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -59,7 +57,7 @@ function generateErrorDialogRule(): Source {
 }
 
 function generateModelsRule(): Source {
-    return apply(url('./models/dialog-data'), [
+    return apply(url('./dialog-boxes-root/models/dialog-data'), [
         applyTemplates({
             dasherize: strings.dasherize
         }),
