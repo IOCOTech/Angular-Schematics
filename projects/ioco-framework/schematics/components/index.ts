@@ -37,7 +37,7 @@ export function addComponents(): Rule {
 
 function generateLoadingScreenRule(): Source {
     return apply(
-        url('./loading-screen'),
+        url('./components-root/loading-screen'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -50,7 +50,7 @@ function generateLoadingScreenRule(): Source {
 
 function generateNotFoundRule(): Source {
     return apply(
-        url('./not-found'),
+        url('./components-root/not-found'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -63,7 +63,7 @@ function generateNotFoundRule(): Source {
 
 function generateNotificationSnackbarRule(): Source {
     return apply(
-        url('./notification-snackbar'),
+        url('./components-root/notification-snackbar'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -76,7 +76,7 @@ function generateNotificationSnackbarRule(): Source {
 
 function generateOIDRedirectRule(): Source {
     return apply(
-        url('./oid-redirect'),
+        url('./components-root/oid-redirect'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,

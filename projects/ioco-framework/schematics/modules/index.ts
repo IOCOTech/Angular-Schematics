@@ -3,7 +3,7 @@ import { apply, applyTemplates, chain, externalSchematic, MergeStrategy, mergeWi
 
 const materialDesignPath = 'modules/material-design';
 const msalPath = 'modules/microsoft-authentication-library';
-const msalEnvironementPath = 'msal'
+const msalEnvironmentPath = 'msal'
 
 export function addMaterialDesign(): Rule {
     return () => {
@@ -20,7 +20,7 @@ export function addMaterialDesign(): Rule {
 
 function generateMaterialDesignRule(): Source {
     return apply(
-        url('./material-design'),
+        url('./modules-root/material-design'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -47,7 +47,7 @@ export function addMSAL(): Rule {
 
 function generateMSALRule(): Source {
     return apply(
-        url('./microsoft-authentication-library'),
+        url('./modules-root/microsoft-authentication-library'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -59,12 +59,12 @@ function generateMSALRule(): Source {
 
 function generateMsalEnvironmentRule(): Source {
     return apply(
-        url('./msal.environment'),
+        url('./modules-root/msal.environment'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
             }),
-            move(normalize(`src/environments/${msalEnvironementPath}`)),
+            move(normalize(`src/environments/${msalEnvironmentPath}`)),
         ]
     )
 }

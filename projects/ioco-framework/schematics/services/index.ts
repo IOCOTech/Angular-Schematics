@@ -62,7 +62,7 @@ export function addServices(): Rule {
 
 function generateAuthenticationServiceRule(): Source {
     return apply(
-        url('./authentication.service'),
+        url('./services-root/authentication.service'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -73,7 +73,7 @@ function generateAuthenticationServiceRule(): Source {
 }
 function generateAuthenticationServiceModelsRule(): Source {
     return apply(
-        url('./authentication.service.models'),
+        url('./services-root/authentication.service.models'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -85,7 +85,7 @@ function generateAuthenticationServiceModelsRule(): Source {
 
 function generateConfigServiceRule(): Source {
     return apply(
-        url('./config.service'),
+        url('./services-root/config.service'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -96,7 +96,7 @@ function generateConfigServiceRule(): Source {
 }
 function generateConfigConfigurationRule(): Source {
     return apply(
-        url('./config.service.configuration/environment'),
+        url('./services-root/config.service.configuration/environment'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -107,7 +107,7 @@ function generateConfigConfigurationRule(): Source {
 }
 function generateConfigRootRule(): Source {
     return apply(
-        url('./config.service.configuration/config-file-root'),
+        url('./services-root/config.service.configuration/config-file-root'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -119,7 +119,7 @@ function generateConfigRootRule(): Source {
 
 function generateErrorHandlerServiceRule(): Source {
     return apply(
-        url('./error-handler.service'),
+        url('./services-root/error-handler.service'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -131,7 +131,7 @@ function generateErrorHandlerServiceRule(): Source {
 
 function generateLoadingScreenServiceRule(): Source {
     return apply(
-        url('./loading-screen.service'),
+        url('./services-root/loading-screen.service'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -143,7 +143,7 @@ function generateLoadingScreenServiceRule(): Source {
 
 function generateMonitorServiceRule(): Source {
     return apply(
-        url('./monitor.service'),
+        url('./services-root/monitor.service'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -155,7 +155,7 @@ function generateMonitorServiceRule(): Source {
 
 function generateSnackBarServiceRule(): Source {
     return apply(
-        url('./snack-bar.service'),
+        url('./services-root/snack-bar.service'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -167,7 +167,7 @@ function generateSnackBarServiceRule(): Source {
 
 function generateSnackBarModelRule(): Source {
     return apply(
-        url('./snack-bar.service.models'),
+        url('./services-root/snack-bar.service.models'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -179,7 +179,7 @@ function generateSnackBarModelRule(): Source {
 
 function generateUserServiceRule(): Source {
     return apply(
-        url('./user.service'),
+        url('./services-root/user.service'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
@@ -190,7 +190,7 @@ function generateUserServiceRule(): Source {
 }
 function generateUserServiceModelsRule(): Source {
     return apply(
-        url('./user.service.models'),
+        url('./services-root/user.service.models'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,
