@@ -31,6 +31,7 @@ export function ngAdd(): Rule {
         tree.commitUpdate(recorder);
 
         context.addTask(new RunSchematicTask('app-settings', {}));
+        context.addTask(new RunSchematicTask('arm-templates', {}));
         context.addTask(new RunSchematicTask('azure-pipeline', {}));
         context.addTask(new RunSchematicTask('components', {}));
         context.addTask(new RunSchematicTask('dialog-boxes', {}));

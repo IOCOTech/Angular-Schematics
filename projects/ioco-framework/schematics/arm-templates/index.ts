@@ -6,7 +6,7 @@ const bicepFilesPath = '.azuredevops/biceps'
 export function addBicepFiles(): Rule {
     return () => {
 
-        console.log("Adding IOCO default bicep files")
+        console.log("Adding bicep files")
         const bicepFilesRule = generateBicepFilesRule();
         
         return chain([
