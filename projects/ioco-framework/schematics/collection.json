@@ -13,6 +13,10 @@
             "description": "Adds IOCO default azure pipeline",
             "factory": "./azure-pipeline/index#addAzurePipeline"
         },
+        "arm-templates": {
+            "description": "Adds IOCO bicep files",
+            "factory": "./arm-templates/index#addBicepFiles"
+        },
         "components": {
             "description": "Adds IOCO default components",
             "factory": "./components/index#addComponents"
