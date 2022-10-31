@@ -1,6 +1,6 @@
 import { Type } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavigationRoutes } from './navigation.routes.helper.ts';
+import { NavigationRoutes } from './navigation.routes.helper';
 
 //#region EXTENSION METHODS FOR ANGULAR ROUTER
 
@@ -41,7 +41,7 @@ class NavigationHelper {
         this.router.navigate([`${NavigationRoutes.Analysis.fullPath}/${ids.join("&")}`]);
     }
     Home(): void {
-        this.router.navigate([`${NavigationRoutes.LandingPage.path}`]);
+        this.router.navigate([`${NavigationRoutes.LandingPage.fullPath}`]);
     }
 
     NotFound(): void {

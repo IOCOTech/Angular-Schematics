@@ -44,6 +44,7 @@ export function ngAdd(): Rule {
         context.addTask(new RunSchematicTask('material-design', {}));
         context.addTask(new RunSchematicTask('msal', {}));
         context.addTask(new RunSchematicTask('mock-data', {}));
+        context.addTask(new RunSchematicTask('model-helpers', {}));
         context.addTask(new RunSchematicTask('services', {}));
         context.addTask(new RunSchematicTask('unit-test-helpers', {}));
         context.addTask(new RunSchematicTask('web-config', {}));

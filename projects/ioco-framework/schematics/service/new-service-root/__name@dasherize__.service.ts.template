@@ -1,0 +1,17 @@
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { AbstractEndpoints } from 'src/environments/endpoints/endpoints.abstract';
+import { AbstractService<%= classify(name) %> } from './<%= dasherize(name) %>.service.abstract';
+
+export class Service<%= classify(name) %> implements AbstractService<%= classify(name) %> {
+
+  constructor(private endpoints: AbstractEndpoints, private http: HttpClient) { }
+
+  get<%= classify(name) %>ById(<%= dasherize(name) %>Id: string): Observable<Model<%= classify(name) %>> {
+    throw new Error('Method not implemented.');
+  }
+
+  get<%= classify(name) %>s(): Observable<Model<%= classify(name) %>[]> {
+    throw new Error('Method not implemented.');
+  }
+}
