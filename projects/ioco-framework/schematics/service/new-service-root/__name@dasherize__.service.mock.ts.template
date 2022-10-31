@@ -1,0 +1,19 @@
+import { HttpClient } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
+import { AbstractEndpoints } from 'src/environments/endpoints/endpoints.abstract';
+import { Model<%= classify(name) %> } from 'src/app/models/<%= dasherize(name) %>/<%= dasherize(name) %>.model';
+import { AbstractService<%= classify(name) %> } from './<%= dasherize(name) %>.service.abstract';
+
+export class MockService<%= classify(name) %> implements AbstractService<%= classify(name) %> {
+
+    constructor(private endpoints: AbstractEndpoints, private http: HttpClient) {
+
+    }
+    get<%= classify(name) %>ById(<%= classify(name) %>Id: string): Observable<Model<%= classify(name) %>> {
+        return this.http.get<Model<%= classify(name) %>>(this.endpoints.get<%= classify(name) %>ById(<%= classify(name) %>Id))
+    }
+
+    get<%= classify(name) %>s(): Observable<Model<%= classify(name) %>[]> {
+        return this.http.get<Model<%= classify(name) %>[]>(this.endpoints.get<%= classify(name) %>s());
+    }
+}

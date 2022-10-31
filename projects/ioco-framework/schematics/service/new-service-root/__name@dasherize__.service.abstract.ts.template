@@ -1,0 +1,9 @@
+import { Observable } from 'rxjs';
+
+
+export abstract class AbstractService<%= classify(name) %> {
+
+    abstract get<%= classify(name) %>ById(<%= classify(name) %>Id: string): Observable<Model<%= classify(name) %>>;
+    abstract get<%= classify(name) %>s(): Observable<Model<%= classify(name) %>[]>;
+
+}

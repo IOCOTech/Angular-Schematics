@@ -15,7 +15,7 @@ export function MSALInstanceFactory(serviceConfig: ServiceConfig): IPublicClient
       clientId: serviceConfig.authentication.clientId,
       authority: serviceConfig.authentication.authority,
       navigateToLoginRequestUrl: serviceConfig.authentication.navigateToLoginRequestUrl,
-      knownAuthorities: ['organization.b2clogin.com'],
+      knownAuthorities: ['{REPLACE-WITH-ORGANIZATION}'],
       redirectUri: serviceConfig.authentication.redirectUri,
       postLogoutRedirectUri: serviceConfig.authentication.postLogoutRedirectUri
     },
@@ -34,8 +34,11 @@ export function MSALInstanceFactory(serviceConfig: ServiceConfig): IPublicClient
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
   protectedResourceMap.set("https://graph.microsoft.com/v1.0/me", ["user.read"]);
-  protectedResourceMap.set("https://aauto-functions.azurewebsites.net", ["https://aautologin.onmicrosoft.com/79c56f97-2e86-4eb0-a452-b56452eb07ee/token.write"]);
-  protectedResourceMap.set("http://localhost:7082/", ["https://aautologin.onmicrosoft.com/79c56f97-2e86-4eb0-a452-b56452eb07ee/organization.readwrite"]);
+  // THE SCOPES BELOW NEEDS TO BE CREATED IN THE OAUTH PROVIDER
+  // Get token for functions
+  protectedResourceMap.set("https://azure-functions.azurewebsites.net", ["https://{REPLACE-WITH-ORGANIZATION}.onmicrosoft.com/00000000-0000-0000-0000-000000000000/token.read"]);
+  // Get token for API
+  protectedResourceMap.set("http://localhost:7082/", ["https://{REPLACE-WITH-ORGANIZATION}.onmicrosoft.com/00000000-0000-0000-0000-000000000000/organization.readwrite"]);
 
   return {
     interactionType: InteractionType.Redirect,

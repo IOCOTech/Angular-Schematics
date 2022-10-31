@@ -61,6 +61,16 @@
             "description": "Adds IOCO default mock-data",
             "factory": "./mock-data/index#addMockData"
         },
+        "model-helpers": {
+            "description": "Adds IOCO model helpers",
+            "factory": "./models/index#addModelHelpers"
+        },
+        "service": {
+            "description": "Adds service with IOCO default structure",
+            "factory": "./service/index#GenerateNewService",
+            "schema": "./service/schema.json",
+            "aliases": ["is"]
+        },
         "services": {
             "description": "Adds IOCO default services",
             "factory": "./services/index#addServices"
