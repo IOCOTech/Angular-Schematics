@@ -9,6 +9,7 @@ import { applyToUpdateRecorder, InsertChange } from '@schematics/angular/utility
 import * as ts from 'typescript';
 
 const modulePath = 'src/app/app.module.ts'
+const indexHTMLPath = 'src/index.html'
 const routingModulePath = 'src/app/app-routing.module.ts'
 const angularJsonPath = 'angular.json'
 
@@ -24,9 +25,11 @@ export function ngAdd(): Rule {
         addImportsToAppModuleFile(tree, recorder);
         addProvidersToAppModuleFile(tree, recorder);
         addImportBarrelsToAppModuleFile(tree, recorder);
+        addBootstrapToModuleFile(tree, recorder);
         updateAngularJsonOptions(tree);
         updateAngularJsonDevBuildConfiguration(tree);
         addRouteToApp(tree);
+        updateIndexHTML(tree);
 
         tree.commitUpdate(recorder);
 
@@ -41,12 +44,14 @@ export function ngAdd(): Rule {
         context.addTask(new RunSchematicTask('helpers', {}));
         context.addTask(new RunSchematicTask('interceptors', {}));
         context.addTask(new RunSchematicTask('karma-config', {}));
+        context.addTask(new RunSchematicTask('main-file', {}));
         context.addTask(new RunSchematicTask('material-design', {}));
         context.addTask(new RunSchematicTask('msal', {}));
         context.addTask(new RunSchematicTask('mock-data', {}));
         context.addTask(new RunSchematicTask('model-helpers', {}));
         context.addTask(new RunSchematicTask('services', {}));
         context.addTask(new RunSchematicTask('unit-test-helpers', {}));
+        context.addTask(new RunSchematicTask('vscode', {}));
         context.addTask(new RunSchematicTask('web-config', {}));
 
         context.logger.info('Adding Angular Material.....');
@@ -146,6 +151,22 @@ function addProvidersToAppModuleFile(tree: Tree, recorder: UpdateRecorder) {
     })
 }
 
+function addBootstrapToModuleFile(tree: Tree, recorder: UpdateRecorder) {
+
+    const bootstraps: string[] = [
+        'MsalRedirectComponent',
+    ];
+
+    const text = tree.read(modulePath);
+    if (text === null) { throw new SchematicsException(`The file ${modulePath} doesn't exists...`); }
+    const source = ts.createSourceFile(modulePath, text.toString(), ts.ScriptTarget.Latest, true) as any;
+
+    bootstraps.forEach((provider: string) => {
+        const providerContext = addSymbolToNgModuleMetadata(source, modulePath, 'bootstrap', provider, null)
+        applyToUpdateRecorder(recorder, providerContext);
+    })
+}
+
 function addImportBarrelsToAppModuleFile(tree: Tree, recorder: UpdateRecorder) {
 
     const imports: Record<string, string> =
@@ -159,15 +180,12 @@ function addImportBarrelsToAppModuleFile(tree: Tree, recorder: UpdateRecorder) {
         'FactoryServiceAuthentication': './services/authentication/authentication.service.factory',
         'FactoryServiceConfig': './services/config/config.service.factory',
         'HTTP_INTERCEPTORS': '@angular/common/http',
-        'HttpClient': '@angular/common/http',
         'InterceptorError': './interceptors/error.interceptor',
         'InterceptorLoadingScreen': './interceptors/loading.interceptor',
-        'MsalBroadcastService': '@azure/msal-angular',
-        'MsalService': '@azure/msal-angular',
+        'MsalBroadcastService, MsalRedirectComponent, MsalService': '@azure/msal-angular',
         'Router': '@angular/router',
         'ServiceConfig': './services/config/config.service',
-        'ServiceMonitoring': './services/monitor/monitor.service',
-        'ServiceSnackBar': './services/snack-bar/snack-bar.service'
+        'ServiceMonitoring': './services/monitor/monitor.service'
     };
 
     const text = tree.read(modulePath);
@@ -241,7 +259,7 @@ function updateAngularJsonDevBuildConfiguration(tree: Tree) {
         const serveConfiguration = JSON.parse(
             `
             {
-                "browserTarget": "${projectName}:build:development"
+                "browserTarget": "${projectName}:build:mock"
             }
             `
         )
@@ -302,12 +320,7 @@ function sortObjectByKeys(obj: Record<string, string>) {
 function addRouteToApp(tree: Tree) {
     // tslint:disable-next-line
     const appRouting = tree.read(routingModulePath)!.toString('utf-8');
-    const src = ts.createSourceFile(
-        'app-routing.module.ts',
-        appRouting,
-        ts.ScriptTarget.Latest,
-        true
-    ) as any;
+    const src = ts.createSourceFile('app-routing.module.ts', appRouting, ts.ScriptTarget.Latest, true) as any;
     const route = `
         { path: '', component: NotFoundComponent },
         { path: NavigationRoutes.NotFound.path, component: NotFoundComponent, canActivate: [AbstractRouteGuard]  }
@@ -364,9 +377,19 @@ function addRouteToApp(tree: Tree) {
 
         for (const importName in imports) {
             const importInstance = insertImport(src, routingModulePath, importName, imports[importName]);
-            recorder.insertLeft((importInstance as InsertChange).pos, (importInstance as InsertChange).toAdd );
+            recorder.insertLeft((importInstance as InsertChange).pos, (importInstance as InsertChange).toAdd);
         }
         recorder.insertRight(pos, toInsert);
         tree.commitUpdate(recorder);
     }
+}
+
+function updateIndexHTML(tree: Tree) {
+    const elementToInsert = "<app-redirect></app-redirect>";
+    const content = tree.read(indexHTMLPath);
+    if (content === null) { throw new SchematicsException(`The file ${indexHTMLPath} doesn't exists...`); }
+    let text = content.toString();
+    const appendIndex = text.indexOf('</app-root>') + 11;
+    const updatedContent = text.slice(0, appendIndex) + elementToInsert + text.slice(appendIndex);
+    tree.overwrite(indexHTMLPath, updatedContent);
 }

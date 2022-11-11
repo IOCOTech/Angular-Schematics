@@ -49,6 +49,10 @@
             "description": "Adds IOCO karma configuration",
             "factory": "./karma/index#addKarmaConfiguration"
         },
+        "main-file": {
+            "description": "Adds IOCO main file configuration",
+            "factory": "./main/index#addMainFileConfiguration"
+        },
         "material-design": {
             "description": "Adds material-design module to project",
             "factory": "./modules/index#addMaterialDesign"
@@ -78,6 +82,10 @@
         "unit-test-helpers": {
             "description": "Adds IOCO default unit test helpers",
             "factory": "./unit-test-helpers/index#addUnitTestHelpers"
+        },
+        "vscode": {
+            "description": "Adds IOCO .vscode folder with settings",
+            "factory": "./vscode/index#addVSCode"
         },
         "web-config": {
             "description": "Adds IOCO default web.config",

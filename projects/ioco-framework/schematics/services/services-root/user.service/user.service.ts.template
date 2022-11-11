@@ -1,4 +1,4 @@
-import { AbstractServiceUser } from './user.service.abstract.ts.template';
+import { AbstractServiceUser } from './user.service.abstract';
 import { Observable } from 'rxjs';
 import { ModelUser } from '../../models/user/user-details.model';
 import { HttpClient } from '@angular/common/http';

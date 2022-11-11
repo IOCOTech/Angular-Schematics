@@ -3,5 +3,9 @@
         "copyfiles",
         "Leste",
         "postbuild"
-    ]
+    ],
+    "workbench.colorCustomizations": {
+
+        "statusBar.background" : "#028009"
+    }
 }

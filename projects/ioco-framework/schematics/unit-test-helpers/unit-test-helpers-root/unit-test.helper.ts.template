@@ -9,15 +9,6 @@ export class UnitTestHelpers {
 
         static abstractAbstractEndpoints = jasmine.createSpyObj('AbstractEndpoints', {
 
-
-            authorization!: {
-                login: '',
-                loginRedirect: '',
-                passwordReset: '',
-                profileEdit: '',
-                registerRedirect: '',
-                signup: ''
-            },
             user: {
                 saveUser: '',
                 getUserByUserId: (userId: string): string => {
@@ -66,7 +57,7 @@ export class UnitTestHelpers {
                 validateAuthority: false
             },
             redirectUrl: 'testing',
-            logging!: {
+            logging: {
                 errorLogTo: [],
                 loggingLevel: 'error'
             },
