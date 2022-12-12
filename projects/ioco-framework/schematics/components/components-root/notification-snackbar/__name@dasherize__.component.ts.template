@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ServiceSnackBar } from 'src/app/services/snack-bar.service/snack-bar.service';
+import { Component } from '@angular/core';
+import { ServiceSnackBar } from 'src/app/services/snack-bar/snack-bar.service';
 
 @Component({
   selector: 'app-notification-snackbar',

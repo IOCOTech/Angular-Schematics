@@ -10,7 +10,7 @@ const notFoundPath = 'components'
 const notificationSnackbarName = 'notification-snackbar'
 const notificationSnackbarPath = 'components'
 
-const oidRedirectName = 'notification-snackbar'
+const oidRedirectName = 'oid-redirect'
 const oidRedirectPath = 'components'
 
 export function addComponents(): Rule {
@@ -24,7 +24,7 @@ export function addComponents(): Rule {
         
         return chain([
             externalSchematic('@schematics/angular', 'component', { name: `${loadingScreenPath}/${loadingScreenName}` }),
-            externalSchematic('@schematics/angular', 'component', { name: `${notFoundPath}/${loadingScreenName}` }),
+            externalSchematic('@schematics/angular', 'component', { name: `${notFoundPath}/${notFoundName}` }),
             externalSchematic('@schematics/angular', 'component', { name: `${notificationSnackbarPath}/${notificationSnackbarName}` }),
             externalSchematic('@schematics/angular', 'component', { name: `${oidRedirectPath}/${oidRedirectName}` }),
             mergeWith(loadingScreenRule, MergeStrategy.Overwrite),
@@ -67,7 +67,7 @@ function generateNotificationSnackbarRule(): Source {
         [
             applyTemplates({
                 dasherize: strings.dasherize,
-                name: notFoundName
+                name: notificationSnackbarName
             }),
             move(normalize(`src/app/${notificationSnackbarPath}/${strings.dasherize(notificationSnackbarName)}`)),
         ]
@@ -80,7 +80,7 @@ function generateOIDRedirectRule(): Source {
         [
             applyTemplates({
                 dasherize: strings.dasherize,
-                name: notFoundName
+                name: oidRedirectName
             }),
             move(normalize(`src/app/${oidRedirectPath}/${strings.dasherize(oidRedirectName)}`)),
         ]
