@@ -78,6 +78,7 @@ export function ngAdd(): Rule {
         context.addTask(new NodePackageInstallTask({ packageName: 'json-concat --save-dev' }));
         context.addTask(new NodePackageInstallTask({ packageName: 'json-server --save-dev' }));
         context.addTask(new NodePackageInstallTask({ packageName: 'karma-junit-reporter --save-dev' }));
+        context.addTask(new NodePackageInstallTask({ packageName: 'karma-sonarqube-unit-reporter --save-dev' }));
         context.addTask(new NodePackageInstallTask({ packageName: 'onchange --save-dev' }));
         context.addTask(new NodePackageInstallTask({ packageName: 'typescript-json-schema --save-dev' }));
 
