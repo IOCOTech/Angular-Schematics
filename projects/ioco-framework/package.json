@@ -13,7 +13,6 @@
     "@angular/common": "latest",
     "@angular/core": "latest",
     "@angular/material": "latest",
-    "@angular/flex-layout": "latest",
     "@angular/cdk": "latest",
     "@angular-eslint/schematics": "latest"
   },

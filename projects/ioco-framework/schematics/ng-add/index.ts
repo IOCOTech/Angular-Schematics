@@ -62,7 +62,7 @@ export function ngAdd(): Rule {
         }));
         context.logger.info('Adding Flex Layout.....');
         // addPackageJsonDependency(tree, { type: NodeDependencyType.Default, name: "@angular/flex-layout", version: "latest", overwrite: true })
-        context.addTask(new NodePackageInstallTask({ packageName: '@angular/flex-layout' }));
+        // context.addTask(new NodePackageInstallTask({ packageName: '@angular/flex-layout' }));
         context.addTask(new NodePackageInstallTask({ packageName: '@angular/cdk' }));
         context.logger.info('Adding Microsoft Authentication Library.....');
         context.addTask(new NodePackageInstallTask({ packageName: '@azure/msal-browser' }));
