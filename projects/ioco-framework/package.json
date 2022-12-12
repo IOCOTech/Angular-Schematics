@@ -1,6 +1,6 @@
 {
   "name": "@ioco-dev/ioco-framework",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "scripts": {
     "build": "tsc -p tsconfig.schematics.json",
     "postbuild": "copyfiles \"schematics/collection.json\" \"schematics/app-settings/app-settings-root/**/*\" \"schematics/arm-templates/arm-templates-root/**/*\" \"schematics/azure-pipeline/azure-pipeline-root/**/*\" \"schematics/components/components-root/**/*\" \"schematics/dialog-boxes/dialog-boxes-root/**/*\" \"schematics/docker/docker-root/**/*\" \"schematics/endpoints/endpoints-root/**/*\" \"schematics/enums/enums-root/**/*\" \"schematics/helpers/helpers-root/**/*\" \"schematics/interceptors/interceptors-root/**/*\" \"schematics/karma/karma-root/**/*\" \"schematics/main/main-root/**/*\" \"schematics/mock-data/mock-data-root/**/*\" \"schematics/models/models-root/**/*\" \"schematics/modules/modules-root/**/*\" \"schematics/service/new-service-root/**/*\" \"schematics/service/schema.json\"  \"schematics/services/services-root/**/*\" \"schematics/unit-test-helpers/unit-test-helpers-root/**/*\" \"schematics/vscode/vscode-root/**/*\" \"schematics/web-config/web-config-root/**/*\" \"../../dist/ioco-framework\""
