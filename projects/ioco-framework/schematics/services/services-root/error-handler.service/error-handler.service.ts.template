@@ -4,7 +4,7 @@ import { ErrorDialogComponent } from 'src/app/dialog-boxes/error-dialog/error-di
 import { Enums } from 'src/app/enums/enums';
 import { ModelErrorDialogConfig } from 'src/app/models/dialog-data/error-dialog-config.model';
 import * as Models from 'src/app/models/models';
-import { ServiceMonitoring } from '../monitor.service/monitor.service';
+import { ServiceMonitoring } from '../monitor/monitor.service';
 
 @Injectable({
     providedIn: 'root'
