@@ -251,6 +251,25 @@ function updateAngularJsonDevBuildConfiguration(tree: Tree) {
             "with": "src/environments/app-settings/app-settings.mock.ts"
         }]`
     )
+    const testOptionsReplacements = JSON.parse(
+        `{
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": []
+          }`
+    )
 
     if (tree.exists(angularJsonPath)) {
         var currentAngularJson = tree.read(angularJsonPath)!.toString('utf-8');
@@ -281,6 +300,10 @@ function updateAngularJsonDevBuildConfiguration(tree: Tree) {
         const configurationServe = json['projects'][projectName]['architect']['serve']['configurations']
         configurationServe['mock'] = serveConfiguration;
         json['projects'][projectName]['architect']['serve']['configurations'] = configurationServe;
+
+        const configurationTest = json['projects'][projectName]['architect']['test']
+        configurationTest["options"] = testOptionsReplacements
+        json['projects'][projectName]['architect']['test'] = configurationTest;
 
         tree.overwrite(angularJsonPath, JSON.stringify(json, null, 2));
     } else {
