@@ -1,24 +1,11 @@
 # IocoFramework
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.0.
+This library is used to add default IOCO functionality to a starter project and to generate basic components | services in the correct format
 
-## Code scaffolding
+## Framework
 
-Run `ng generate component component-name --project ioco-framework` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project ioco-framework`.
-> Note: Don't forget to add `--project ioco-framework` or else it will be added to the default project in your `angular.json` file. 
+To add the framework to a new project create a empty angular project and the run `ng add @ioco-dev/ioco-framework`
 
-## Build
+## Services
 
-Run `ng build ioco-framework` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Publishing
-
-After building your library with `ng build ioco-framework`, go to the dist folder `cd dist/ioco-framework` and run `npm publish`.
-
-## Running unit tests
-
-Run `ng test ioco-framework` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+To add a new service to a project run `ng generate @ioco-dev/ioco-framework:is`.  This will add the four basic files required for IOCO services
