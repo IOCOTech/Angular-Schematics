@@ -60,7 +60,7 @@ export function ngAdd(): Rule {
             typography: true,
             animations: "true"
         }));
-        context.logger.info('Adding Flex Layout.....');
+        // context.logger.info('Adding Flex Layout.....');
         // addPackageJsonDependency(tree, { type: NodeDependencyType.Default, name: "@angular/flex-layout", version: "latest", overwrite: true })
         // context.addTask(new NodePackageInstallTask({ packageName: '@angular/flex-layout' }));
         context.addTask(new NodePackageInstallTask({ packageName: '@angular/cdk' }));

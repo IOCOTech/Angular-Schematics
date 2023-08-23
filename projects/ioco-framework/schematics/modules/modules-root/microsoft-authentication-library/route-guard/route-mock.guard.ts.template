@@ -1,5 +1,5 @@
-import { ActivatedRouteSnapshot, Route, RouterStateSnapshot, UrlSegment, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { Observable, of } from 'rxjs';
 import { AbstractRouteGuard } from './route-mock.guard.abstract';
 
 export class MockRouteGuard implements AbstractRouteGuard {
