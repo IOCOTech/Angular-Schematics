@@ -1,27 +1,28 @@
-# IocoAngularSchematics
+# IocoFramework
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.5.
+This library is used to add default IOCO functionality to a starter project and to generate basic components | services in the correct format
 
-## Development server
+### Local Testing
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- Make sure you have [Verdaccio](https://verdaccio.org) installed and setup/start the server.
+- In the Angular Schematics project run `npm install`
+- Update the version of the project in the [projects/ioco-framework/package.json](projects/ioco-framework/package.json).
+- From the root directory run `npm run build`.  This will build the project and copy the necessary files to the `dist/ioco-framework` directory
+- Open a terminal in the `dist/ioco-framework` directory and run `npm publish --registry http://localhost:4873`(  Where the registry url is the Verdaccio server url)
+- Create a new angular project using `ng new <your-test-project>`
+- In your newly created project run `ng add @ioco-dev/ioco-framework --registry http://localhost:4873`(  Where the registry url is the Verdaccio server url)
 
-## Code scaffolding
+### To publish to npmjs.com
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- Update the version of the project test locally to ensure everything works.
+- Create a new branch and push to the github repository.
+- Create a pull request into the main branch.
+- Approve and merge the branch into main, this wil automatically publish the new version to [https://www.npmjs.com/package/@ioco-dev/ioco-framework](https://www.npmjs.com/package/@ioco-dev/ioco-framework)
 
-## Build
+### Framework
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+To add the framework to a new project create a empty angular project and the run `ng add @ioco-dev/ioco-framework`.
 
-## Running unit tests
+### Services
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+To add a new service to a project run `ng generate @ioco-dev/ioco-framework:is`.  This will add the four basic files required for IOCO services

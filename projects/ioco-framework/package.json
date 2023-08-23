@@ -1,6 +1,6 @@
 {
   "name": "@ioco-dev/ioco-framework",
-  "version": "2.0.5",
+  "version": "16.0.0",
   "scripts": {
     "build": "tsc -p tsconfig.schematics.json",
     "postbuild": "copyfiles \"schematics/collection.json\" \"schematics/app-settings/app-settings-root/**/*\" \"schematics/arm-templates/arm-templates-root/**/*\" \"schematics/azure-pipeline/azure-pipeline-root/**/*\" \"schematics/components/components-root/**/*\" \"schematics/dialog-boxes/dialog-boxes-root/**/*\" \"schematics/docker/docker-root/**/*\" \"schematics/endpoints/endpoints-root/**/*\" \"schematics/enums/enums-root/**/*\" \"schematics/helpers/helpers-root/**/*\" \"schematics/interceptors/interceptors-root/**/*\" \"schematics/karma/karma-root/**/*\" \"schematics/main/main-root/**/*\" \"schematics/mock-data/mock-data-root/**/*\" \"schematics/models/models-root/**/*\" \"schematics/modules/modules-root/**/*\" \"schematics/service/new-service-root/**/*\" \"schematics/service/schema.json\"  \"schematics/services/services-root/**/*\" \"schematics/unit-test-helpers/unit-test-helpers-root/**/*\" \"schematics/vscode/vscode-root/**/*\" \"schematics/web-config/web-config-root/**/*\" \"../../dist/ioco-framework\""
@@ -10,13 +10,13 @@
   },
   "schematics": "./schematics/collection.json",
   "peerDependencies": {
-    "@angular/common": "latest",
-    "@angular/core": "latest",
-    "@angular/material": "latest",
-    "@angular/cdk": "latest",
-    "@angular-eslint/schematics": "latest"
+    "@angular/common": "^16.0.1",
+    "@angular/core": "^16.0.1",
+    "@angular/material": "^16.0.1",
+    "@angular/cdk": "^16.0.1",
+    "@angular-eslint/schematics": "16.0.1"
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.5.0"
   }
 }
