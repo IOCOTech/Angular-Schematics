@@ -1,0 +1,37 @@
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ModelDialogDataConfirmation } from '../../models/dialog-data/dialog-data.model';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+
+@Component({
+  selector: 'app-confirmation-dialog',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatIconModule
+  ],
+  templateUrl: './confirmation-dialog.component.html',
+  styleUrl: './confirmation-dialog.component.scss'
+})
+export class ConfirmationDialogComponent {
+
+  header: string;
+  message: string;
+  displayCancelButton: boolean;
+  icon: string;
+  iconColor: string;
+  okButtonText: string
+
+  constructor(
+    public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ModelDialogDataConfirmation
+  ) {
+    this.header = data?.header ?? 'Confirmation';
+    this.message = data?.message ?? 'Confirmation not initialized with data';
+    this.displayCancelButton = data?.displayCancelButton ?? true;
+    this.icon = data?.icon ?? 'info'
+    this.okButtonText = data?.okButtonText ?? 'Ok';
+    this.iconColor = data?.iconColor ?? "#0d0d0d"
+  }
+}

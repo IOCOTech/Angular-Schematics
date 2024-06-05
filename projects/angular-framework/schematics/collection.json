@@ -1,13 +1,37 @@
 {
-    "$schema": "../../../node_modules/@angular-devkit/schematics/collection-schema.json",
-    "schematics": {
-      "ng-add": {
-        "description": "Add IOCO Angular framework",
-        "factory": "./ng-add/index#ngAdd"
-      },
-      "authentication": {
-        "description": "Add MSAL authentication libraries to project.",
-        "factory": "./authentication/index#addAuthentication"
-      }
+  "$schema": "../../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "ng-add": {
+      "description": "Add IOCO Angular framework",
+      "factory": "./ng-add/index#ngAdd"
+    },
+    "authentication": {
+      "description": "Add MSAL authentication libraries to project.",
+      "factory": "./authentication/index#addAuthentication"
+    },
+    "configuration": {
+      "description": "Add default files for configuration.",
+      "factory": "./config/index#addConfiguration"
+    },
+    "confirmation-dialog-box": {
+      "description": "Add default confirmation dialog box.",
+      "factory": "./confirmation-dialog/index#addConfirmationDialog"
+    },
+    "error-dialog-box": {
+      "description": "Add default error dialog box.",
+      "factory": "./error-dialog/index#addErrorDialog"
+    },
+    "loading-indicator": {
+      "description": "Add default loading indicator.",
+      "factory": "./loading-indicator/index#addLoadingIndicator"
+    },
+    "monitoring": {
+      "description": "Add default monitoring services.",
+      "factory": "./monitoring/index#addMonitoring"
+    },
+    "page-not-found": {
+      "description": "Add a default page-not-found page.",
+      "factory": "./page-not-found/index#addPageNotFound"
     }
   }
+}

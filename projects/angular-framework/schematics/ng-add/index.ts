@@ -24,6 +24,12 @@ export function ngAdd(): Rule {
         
         // Run tasks to add custom schematics
         context.addTask(new RunSchematicTask('authentication', {tree, context}));
+        context.addTask(new RunSchematicTask('configuration', {tree, context}));
+        context.addTask(new RunSchematicTask('confirmation-dialog-box', {tree, context}));
+        context.addTask(new RunSchematicTask('error-dialog-box', {tree, context}));
+        context.addTask(new RunSchematicTask('loading-indicator', {tree, context}));
+        context.addTask(new RunSchematicTask('monitoring', {tree, context}));
+        context.addTask(new RunSchematicTask('page-not-found', {tree, context}));
 
 
         // context.logger.info('Installing dependencies...');

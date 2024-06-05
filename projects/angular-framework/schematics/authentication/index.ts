@@ -7,7 +7,7 @@ const modelAuthPath = 'models/authentication';
 export function addAuthentication(): Rule {
     return (tree: Tree, context: SchematicContext) => {
         context.logger.info('Adding authentication...');
-        if (tree.exists(serviceAuthPath + '/authentication.service.ts')) {
+        if (tree.exists(`src/app/${serviceAuthPath}/authentication.service.ts`)) {
             context.logger.info('Authentication service already exists, delete the directory for the service if you want to regenerate it');
             return tree;
         }
@@ -24,7 +24,7 @@ export function addAuthentication(): Rule {
 
 function generateAuthenticationServiceRule(): Source {
     return apply(
-        url('./files/authentication.service'),
+        url('./files/authentication.app'),
         [
             applyTemplates({
                 dasherize: strings.dasherize,

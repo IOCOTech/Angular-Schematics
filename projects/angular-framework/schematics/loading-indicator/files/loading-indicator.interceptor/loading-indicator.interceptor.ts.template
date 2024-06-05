@@ -1,0 +1,51 @@
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { AppLoadingIndicator } from '../app-services/loading-indicator/loading-indicator.app';
+
+
+@Injectable()
+export class InterceptorLoadingScreen implements HttpInterceptor {
+
+    activeRequests = 0;
+
+    /**
+     * URLs for which the loading screen should not be enabled
+     */
+    skipUrls: string[] = [];
+
+    constructor(private loadingIndicatorService: AppLoadingIndicator) {
+        // this.skipUrls.push('url that should be skipped')
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        let displayLoadingScreen = true;
+
+        for (const skipUrl of this.skipUrls) {
+            if (new RegExp(skipUrl).test(request.url)) {
+                displayLoadingScreen = false;
+                break;
+            }
+        }
+
+        if (displayLoadingScreen) {
+            if (this.activeRequests === 0) {
+                this.loadingIndicatorService.startLoading();
+            }
+            this.activeRequests++;
+
+            return next.handle(request).pipe(
+                finalize(() => {
+                    this.activeRequests--;
+                    if (this.activeRequests === 0) {
+                        this.loadingIndicatorService.stopLoading();
+                    }
+                })
+            );
+        } else {
+            return next.handle(request);
+        }
+    }
+}

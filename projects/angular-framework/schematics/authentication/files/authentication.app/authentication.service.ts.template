@@ -2,7 +2,7 @@ import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
 import { EventMessage, EventType } from '@azure/msal-browser';
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ModelAccountFromToken } from 'src/app/models/authorization/account-from-token.model';
+import { ModelAccountFromToken } from '../../models/authentication/account-from-token.model';
 import { ServiceMonitoring } from '../monitor/monitor.service';
 import { AbstractServiceAuthentication } from './authentication.service.abstract';
 

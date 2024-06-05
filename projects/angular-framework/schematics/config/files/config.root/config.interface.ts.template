@@ -1,0 +1,46 @@
+// DON'T REMOVE OR SWAP FOR THE ENUMS IN THE ENUMS FOLDER IT BREAKS THE SCHEMA GENERATOR
+export enum ErrorSeverityLevel {
+    Info = 1,
+    Warning = 2,
+    Error = 3,
+    Critical = 4
+}
+
+export enum Environments {
+    Development = 'development',
+    MockData = 'mockData',
+    Production = 'production'
+}
+
+export abstract class IConfig {
+    apiBaseURL!: string;
+    appInsightsKey!: string;
+    authentication!: IAuthenticationConfig;
+    displayConsoleErrorsOnScreen!: boolean;
+    environment!: Environments;
+    logging!: ILogging;
+}
+interface IAuthenticationConfig {
+    authority: string;
+    clientId: string;
+    knownAuthorities: string[];
+    navigateToLoginRequestUrl: boolean;
+    postLogoutRedirectUri: string;
+    redirectUri: string;
+    validateAuthority: boolean;
+}
+
+interface ILogging {
+    /**
+     * Severity of error levels that should be logged:
+     * @default "error"
+     * @examples [ "console", "appInsights" ]
+     */
+    errorLogTo: string[];
+    /**
+     * Severity of error levels that should be logged:
+     * @default "error"
+     * @examples [ "info", "warning", "error", "critical" ]
+     */
+    loggingLevel: ErrorSeverityLevel | string;
+}

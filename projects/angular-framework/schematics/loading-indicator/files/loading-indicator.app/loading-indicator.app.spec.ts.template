@@ -1,0 +1,15 @@
+import { TestBed } from '@angular/core/testing';
+import { AppLoadingIndicator } from './loading-indicator.app';
+
+describe('LoadingIndicatorService', () => {
+  let service: AppLoadingIndicator;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(AppLoadingIndicator);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});

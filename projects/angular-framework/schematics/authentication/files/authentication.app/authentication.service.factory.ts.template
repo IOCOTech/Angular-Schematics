@@ -1,7 +1,7 @@
 import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
-import { Enums } from 'src/app/enums/enums';
-import { AppSettings } from 'src/environments/app-settings/app-settings';
-import { AbstractEndpoints } from 'src/environments/endpoints/endpoints.abstract';
+import { Enums } from '../../enums/enums';
+import { AppSettings } from '../../../environments/app-settings/app-settings';
+import { AbstractEndpoints } from '../../../environments/endpoints/endpoints.abstract';
 import { ServiceMonitoring } from '../monitor/monitor.service';
 import { ServiceAuthentication } from './authentication.service';
 import { AbstractServiceAuthentication } from './authentication.service.abstract';

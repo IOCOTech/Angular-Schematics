@@ -1,46 +1,47 @@
 import { normalize } from '@angular-devkit/core';
 import { apply, applyTemplates, chain, MergeStrategy, mergeWith, move, Rule, Source, strings, url, SchematicContext, Tree} from '@angular-devkit/schematics';
 
-const serviceAuthPath = 'app-services/authentication';
-const modelAuthPath = 'models/authentication';
+const serviceConfigPath = 'app-services/config';
+const modelAuthPath = 'config';
 
-export function addAuthentication(): Rule {
+export function addConfiguration(): Rule {
     return (tree: Tree, context: SchematicContext) => {
-        context.logger.info('Adding authentication...');
-        if (tree.exists(serviceAuthPath + '/authentication.service.ts')) {
-            context.logger.info('Authentication service already exists, delete the directory for the service if you want to regenerate it');
+        context.logger.info('Adding configuration...');
+        if (tree.exists(`src/app/${serviceConfigPath}/config.app.ts`)) {
+            context.logger.info('Config files has already been added, delete the directory for the service if you want to regenerate it');
             return tree;
         }
 
-        const authenticationServiceRule = generateAuthenticationServiceRule();
-        const authenticationServiceModelsRule = generateAuthenticationModelsRule();
+        const configServiceRule = generateConfigServiceRule();
+        const configRootRule = generateConfigRootRule();
         
         return chain([
-            mergeWith(authenticationServiceRule, MergeStrategy.Overwrite),
-            mergeWith(authenticationServiceModelsRule, MergeStrategy.Overwrite)
+            mergeWith(configServiceRule, MergeStrategy.Overwrite),
+            mergeWith(configRootRule, MergeStrategy.Overwrite)
         ]);
     }
 }
 
-// function generateAuthenticationServiceRule(): Source {
-//     return apply(
-//         url('./files/authentication.service'),
-//         [
-//             applyTemplates({
-//                 dasherize: strings.dasherize,
-//             }),
-//             move(normalize(`src/app/${serviceAuthPath}`)),
-//         ]
-//     )
-// }
-// function generateAuthenticationModelsRule(): Source {
-//     return apply(
-//         url('./files/authentication.models'),
-//         [
-//             applyTemplates({
-//                 dasherize: strings.dasherize,
-//             }),
-//             move(normalize(`src/app/${modelAuthPath}`)),
-//         ]
-//     )
-// }
+function generateConfigServiceRule(): Source {
+    return apply(
+        url('./files/config.app'),
+        [
+            applyTemplates({
+                dasherize: strings.dasherize,
+            }),
+            move(normalize(`src/app/${serviceConfigPath}`)),
+        ]
+    )
+}
+
+function generateConfigRootRule(): Source {
+    return apply(
+        url('./files/config.root'),
+        [
+            applyTemplates({
+                dasherize: strings.dasherize,
+            }),
+            move(normalize(`src/${modelAuthPath}`)),
+        ]
+    )
+}
