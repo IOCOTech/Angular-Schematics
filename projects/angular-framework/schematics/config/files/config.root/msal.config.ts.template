@@ -1,0 +1,54 @@
+import { MsalGuardConfiguration, MsalInterceptorConfiguration } from '@azure/msal-angular';
+import { BrowserAuthOptions, BrowserCacheLocation, InteractionType, IPublicClientApplication, PublicClientApplication } from '@azure/msal-browser';
+import { AppConfig } from '../app/app-services/config/config.app';
+import { NavigationRoutes } from '../app/app.routes';
+
+export const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
+
+export function MSALInstanceFactory(appConfig: AppConfig): IPublicClientApplication {
+  const authOptions: BrowserAuthOptions = {
+    clientId: appConfig.authentication.clientId,
+    authority: appConfig.authentication.authority,
+    navigateToLoginRequestUrl: appConfig.authentication.navigateToLoginRequestUrl,
+    knownAuthorities: appConfig.authentication.knownAuthorities,
+    redirectUri: appConfig.authentication.redirectUri,
+    postLogoutRedirectUri: appConfig.authentication.postLogoutRedirectUri
+  }
+  return new PublicClientApplication({
+    auth: authOptions,
+    cache: {
+      cacheLocation: BrowserCacheLocation.SessionStorage,
+      storeAuthStateInCookie: isIE, // set to true for IE 11
+    },
+    system: {
+      loggerOptions: {
+        piiLoggingEnabled: false
+      }
+    }
+  });
+}
+
+export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
+  const protectedResourceMap = new Map<string, Array<string>>();
+  protectedResourceMap.set("https://graph.microsoft.com/v1.0/me", ["user.read"]);
+  // THE SCOPES BELOW NEEDS TO BE CREATED IN THE OAUTH PROVIDER
+  // Get token for functions
+  protectedResourceMap.set("https://azure-functions.azurewebsites.net", ["https://{REPLACE-WITH-ORGANIZATION}.onmicrosoft.com/00000000-0000-0000-0000-000000000000/token.read"]);
+  // Get token for API
+  protectedResourceMap.set("http://localhost:7082/", ["https://{REPLACE-WITH-ORGANIZATION}.onmicrosoft.com/00000000-0000-0000-0000-000000000000/organization.readwrite"]);
+
+  return {
+    interactionType: InteractionType.Redirect,
+    protectedResourceMap
+  };
+}
+
+export function MSALGuardConfigFactory(): MsalGuardConfiguration {
+  return {
+    interactionType: InteractionType.Redirect,
+    authRequest: {
+      // scopes: ['user.read']
+    },
+    loginFailedRoute: NavigationRoutes.UserList.path
+  };
+}

@@ -1,0 +1,23 @@
+{
+    "$schema": "../config.schema.json",
+    "apiBaseURL": "https://XXXX-functions.azurewebsites.net",
+    "appInsightsKey": "ea2b4571-d56d-4d87-92cf-XXXXXXX",
+    "authentication": {
+        "authority": "https://XXXXXX.b2clogin.com/fc214cde-XXXX-4870-822f-4ecfdcf8b211/B2C_1_Default",
+        "clientId": "79c56f97-2e86-4eb0-a452-b56452eb07ee",
+        "knownAuthorities": [],
+        "navigateToLoginRequestUrl": true,
+        "postLogoutRedirectUri": "https://XXXXX.azurewebsites.net",
+        "redirectUri": "https://XXXXX.azurewebsites.net/oid-redirect",
+        "validateAuthority": false
+    },
+    "displayConsoleErrorsOnScreen": true,
+    "environment": "mockData",
+    "logging": {
+        "errorLogTo": [
+            "console",
+            "appInsights"
+        ],
+        "loggingLevel": "info"
+    }
+}

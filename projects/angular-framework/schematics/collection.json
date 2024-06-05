@@ -1,0 +1,13 @@
+{
+    "$schema": "../../../node_modules/@angular-devkit/schematics/collection-schema.json",
+    "schematics": {
+      "ng-add": {
+        "description": "Add IOCO Angular framework",
+        "factory": "./ng-add/index#ngAdd"
+      },
+      "authentication": {
+        "description": "Add MSAL authentication libraries to project.",
+        "factory": "./authentication/index#addAuthentication"
+      }
+    }
+  }
