@@ -1,5 +1,5 @@
 import { Rule, SchematicContext, SchematicsException, Tree, UpdateRecorder } from '@angular-devkit/schematics';
-import { RunSchematicTask } from "@angular-devkit/schematics/tasks";
+import { NodePackageInstallTask, RunSchematicTask } from "@angular-devkit/schematics/tasks";
 import { insertImport } from '@schematics/angular/utility/ast-utils';
 import { Change, InsertChange, RemoveChange, applyToUpdateRecorder } from '@schematics/angular/utility/change';
 import * as ts from 'typescript';
@@ -21,18 +21,25 @@ export function ngAdd(): Rule {
         tree.commitUpdate(recorder);
         
         // Run tasks to add custom schematics
+        context.addTask(new RunSchematicTask('app-component', {tree, context}));
         context.addTask(new RunSchematicTask('authentication', {tree, context}));
         context.addTask(new RunSchematicTask('configuration', {tree, context}));
         context.addTask(new RunSchematicTask('confirmation-dialog-box', {tree, context}));
+        context.addTask(new RunSchematicTask('endpoints', {tree, context}));
         context.addTask(new RunSchematicTask('enums', {tree, context}));
         context.addTask(new RunSchematicTask('error-dialog-box', {tree, context}));
+        context.addTask(new RunSchematicTask('error-interceptor', {tree, context}));
+        context.addTask(new RunSchematicTask('extension-methods', {tree, context}));
+        context.addTask(new RunSchematicTask('helpers', {tree, context}));
         context.addTask(new RunSchematicTask('loading-indicator', {tree, context}));
+        context.addTask(new RunSchematicTask('mock-data', {tree, context}));
         context.addTask(new RunSchematicTask('monitoring', {tree, context}));
         context.addTask(new RunSchematicTask('page-not-found', {tree, context}));
+        context.addTask(new RunSchematicTask('router', {tree, context}));
+        context.addTask(new RunSchematicTask('web-config', {tree, context}));
 
-
-        // context.logger.info('Installing dependencies...');
-        // context.addTask(new NodePackageInstallTask());
+        context.logger.info('Installing dependencies (npm install)...');
+        context.addTask(new NodePackageInstallTask());
         return tree;
     }
 

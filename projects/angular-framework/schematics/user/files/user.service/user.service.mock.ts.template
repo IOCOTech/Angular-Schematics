@@ -1,0 +1,17 @@
+
+import { HttpClient } from '@angular/common/http';
+import { AbstractServiceUser } from './user.service.abstract.ts.template';
+import { AbstractEndpoints } from '../endpoints/endpoints.service.abstract';
+import { Observable } from 'rxjs';
+import { ModelUser } from '../../models/user/user.model';
+
+export class MockServiceUser implements AbstractServiceUser {
+
+    constructor(private endpoints: AbstractEndpoints, private http: HttpClient) {
+
+    }
+
+    getUserDetails(userId: number): Observable<ModelUser> {
+        return this.http.get<ModelUser>(this.endpoints.user.getUserByUserId(userId.toString()));
+    }
+}

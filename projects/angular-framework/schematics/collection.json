@@ -5,6 +5,10 @@
       "description": "Add IOCO Angular framework",
       "factory": "./ng-add/index#ngAdd"
     },
+    "app-component": {
+      "description": "Update the app component.",
+      "factory": "./app-component/index#addAppComponent"
+    },
     "authentication": {
       "description": "Add MSAL authentication libraries to project.",
       "factory": "./authentication/index#addAuthentication"
@@ -17,6 +21,10 @@
       "description": "Add default confirmation dialog box.",
       "factory": "./confirmation-dialog/index#addConfirmationDialog"
     },
+    "endpoints": {
+      "description": "Add endpoints files.",
+      "factory": "./endpoints/index#addEndpoints"
+    },
     "enums": {
       "description": "Add Enums structure.",
       "factory": "./enums/index#addEnums"
@@ -25,9 +33,25 @@
       "description": "Add default error dialog box.",
       "factory": "./error-dialog/index#addErrorDialog"
     },
+    "error-interceptor": {
+      "description": "Add error interceptor.",
+      "factory": "./error-interceptor/index#addErrorInterceptor"
+    },
+    "extension-methods": {
+      "description": "Add extension methods.",
+      "factory": "./extension-methods/index#addExtensionMethods"
+    },
+    "helpers": {
+      "description": "Add helper classes.",
+      "factory": "./helpers/index#addHelpers"
+    },
     "loading-indicator": {
       "description": "Add default loading indicator.",
       "factory": "./loading-indicator/index#addLoadingIndicator"
+    },
+    "mock-data": {
+      "description": "Add mock data examples.",
+      "factory": "./mock-data/index#addMockData"
     },
     "monitoring": {
       "description": "Add default monitoring services.",
@@ -36,6 +60,18 @@
     "page-not-found": {
       "description": "Add a default page-not-found page.",
       "factory": "./page-not-found/index#addPageNotFound"
+    },
+    "router": {
+      "description": "Add a customized router.",
+      "factory": "./router/index#addRouter"
+    },
+    "user": {
+      "description": "Add user examples.",
+      "factory": "./user/index#addUserExamples"
+    },
+    "web-config": {
+      "description": "Add web config.",
+      "factory": "./web-config/index#addWebConfig"
     }
   }
 }

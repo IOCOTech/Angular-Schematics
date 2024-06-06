@@ -3,6 +3,7 @@ import { apply, applyTemplates, chain, MergeStrategy, mergeWith, move, Rule, Sou
 
 const serviceAuthPath = 'app-services/authentication';
 const modelAuthPath = 'models/authentication';
+const msalModulePath = 'modules/microsoft-authentication-library';
 
 export function addAuthentication(): Rule {
     return (tree: Tree, context: SchematicContext) => {
@@ -13,11 +14,13 @@ export function addAuthentication(): Rule {
         }
 
         const authenticationServiceRule = generateAuthenticationServiceRule();
-        const authenticationServiceModelsRule = generateAuthenticationServiceModelsRule();
+        const authenticationModelsRule = generateAuthenticationModelsRule();
+        const authenticationMSALModuleRule = generateMSALModuleRule();
         
         return chain([
             mergeWith(authenticationServiceRule, MergeStrategy.Overwrite),
-            mergeWith(authenticationServiceModelsRule, MergeStrategy.Overwrite)
+            mergeWith(authenticationModelsRule, MergeStrategy.Overwrite),
+            mergeWith(authenticationMSALModuleRule, MergeStrategy.Overwrite)
         ]);
     }
 }
@@ -33,7 +36,7 @@ function generateAuthenticationServiceRule(): Source {
         ]
     )
 }
-function generateAuthenticationServiceModelsRule(): Source {
+function generateAuthenticationModelsRule(): Source {
     return apply(
         url('./files/authentication.models'),
         [
@@ -41,6 +44,18 @@ function generateAuthenticationServiceModelsRule(): Source {
                 dasherize: strings.dasherize,
             }),
             move(normalize(`src/app/${modelAuthPath}`)),
+        ]
+    )
+}
+
+function generateMSALModuleRule(): Source {
+    return apply(
+        url('./files/authentication.msal.module'),
+        [
+            applyTemplates({
+                dasherize: strings.dasherize,
+            }),
+            move(normalize(`src/app/${msalModulePath}`)),
         ]
     )
 }

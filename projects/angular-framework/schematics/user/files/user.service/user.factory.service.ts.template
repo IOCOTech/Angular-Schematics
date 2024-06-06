@@ -1,0 +1,11 @@
+import { HttpClient } from '@angular/common/http';
+
+export function FactoryServiceUser(http: HttpClient, endpoints: AbstractEndpoints, serviceMonitor: ServiceMonitoring) {
+    serviceMonitor.logEvent('FactoryServiceUser', 'User Service Factory loaded');
+    switch (AppSettings.environment) {
+        case Enums.Environments.MockData:
+            return new  MockServiceUser(endpoints, http);
+        default:
+            return new ServiceUser(endpoints, http);
+    }
+}

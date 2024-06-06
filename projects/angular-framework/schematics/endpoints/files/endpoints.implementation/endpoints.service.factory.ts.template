@@ -1,0 +1,17 @@
+import { Enums } from "../../enums/enums";
+import { AppConfig } from "../../app-services/config/config.app";
+import { Endpoints } from "./endpoints.service.ts.template";
+import { AbstractEndpoints } from "./endpoints.service.abstract.ts.template";
+import { EndpointsMock } from "./endpoints.service.mock.ts.template";
+import { AppMonitoring } from "../../app-services/monitor/monitor.app";
+
+
+export function FactoryEndpoints(appConfig: AppConfig, appMonitor: AppMonitoring): AbstractEndpoints {
+    appMonitor.logEvent('FactoryEndpoints', 'Endpoints Factory loaded');
+    switch (appConfig.environment) {
+        case Enums.Environments.MockData:
+            return new EndpointsMock(appConfig);
+        default:
+            return new Endpoints(appConfig);
+    }
+}

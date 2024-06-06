@@ -1,0 +1,22 @@
+{
+    "users": [
+        {
+            "username": "Sakkie",
+            "surname": "van Zyl"
+        },
+        {
+            "username": "Jan Jurgens",
+            "surname": "van der Walt"
+        }
+    ],
+    "organizations": [
+        {
+            "name": "EOH",
+            "Description": "Holding company for a number of IT companies"
+        },
+        {
+            "name": "IOCO",
+            "Description": "Custom development IT company"
+        }
+    ]
+}
