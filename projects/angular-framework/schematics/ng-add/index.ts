@@ -4,9 +4,7 @@ import { insertImport } from '@schematics/angular/utility/ast-utils';
 import { Change, InsertChange, RemoveChange, applyToUpdateRecorder } from '@schematics/angular/utility/change';
 import * as ts from 'typescript';
 
-
 const appConfigPath = '/src/app/app.config.ts';
-
 
 export function ngAdd(): Rule {
     return (tree: Tree, context: SchematicContext) => {
@@ -26,6 +24,7 @@ export function ngAdd(): Rule {
         context.addTask(new RunSchematicTask('authentication', {tree, context}));
         context.addTask(new RunSchematicTask('configuration', {tree, context}));
         context.addTask(new RunSchematicTask('confirmation-dialog-box', {tree, context}));
+        context.addTask(new RunSchematicTask('enums', {tree, context}));
         context.addTask(new RunSchematicTask('error-dialog-box', {tree, context}));
         context.addTask(new RunSchematicTask('loading-indicator', {tree, context}));
         context.addTask(new RunSchematicTask('monitoring', {tree, context}));

@@ -17,6 +17,10 @@
       "description": "Add default confirmation dialog box.",
       "factory": "./confirmation-dialog/index#addConfirmationDialog"
     },
+    "enums": {
+      "description": "Add Enums structure.",
+      "factory": "./enums/index#addEnums"
+    },
     "error-dialog-box": {
       "description": "Add default error dialog box.",
       "factory": "./error-dialog/index#addErrorDialog"
