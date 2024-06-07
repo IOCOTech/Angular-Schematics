@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 import { MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalBroadcastService, MsalInterceptor, MsalModule, MsalService } from '@azure/msal-angular';
 import { AppConfig } from '../../app-services/config/config.app';
 import { MSALGuardConfigFactory, MSALInstanceFactory, MSALInterceptorConfigFactory } from '../../../config/msal.config';
-import { FactoryRouteGuard } from './route-guard/route-guard.factory.ts.template';
-import { AbstractRouteGuard } from './route-guard/route-guard.abstract.ts.template';
+import { FactoryRouteGuard } from './route-guard/route-guard.factory';
+import { AbstractRouteGuard } from './route-guard/route-guard.abstract';
 @NgModule({
   declarations: [],
   imports: [

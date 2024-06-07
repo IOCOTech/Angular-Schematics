@@ -3,6 +3,7 @@ import { apply, applyTemplates, chain, MergeStrategy, mergeWith, move, Rule, Sou
 
 const serviceUserPath = 'services/user';
 const modelsUserPath = 'models/user';
+const componentsUserPath = 'components';
 
 export function addUserExamples(): Rule {
     return (tree: Tree, context: SchematicContext) => {
@@ -14,10 +15,12 @@ export function addUserExamples(): Rule {
 
         const serviceRule = generateServiceRule();
         const modelsRule = generateModelsRule();
+        const componentsRule = generateComponentsRule();
         
         return chain([
             mergeWith(serviceRule, MergeStrategy.Overwrite),
-            mergeWith(modelsRule, MergeStrategy.Overwrite)
+            mergeWith(modelsRule, MergeStrategy.Overwrite),
+            mergeWith(componentsRule, MergeStrategy.Overwrite)
         ]);
     }
 }
@@ -42,6 +45,18 @@ function generateModelsRule(): Source {
                 dasherize: strings.dasherize,
             }),
             move(normalize(`src/app/${modelsUserPath}`)),
+        ]
+    )
+}
+
+function generateComponentsRule(): Source {
+    return apply(
+        url('./files/user.components'),
+        [
+            applyTemplates({
+                dasherize: strings.dasherize,
+            }),
+            move(normalize(`src/app/${componentsUserPath}`)),
         ]
     )
 }

@@ -1,8 +1,8 @@
 import { Location } from "@angular/common";
 import { Router } from '@angular/router';
 import { MsalBroadcastService, MsalGuard, MsalGuardConfiguration, MsalService } from '@azure/msal-angular';
-import { MockRouteGuard } from './route-mock.guard.ts.template';
-import { AbstractRouteGuard } from './route-guard.abstract.ts.template';
+import { MockRouteGuard } from './route-mock.guard';
+import { AbstractRouteGuard } from './route-guard.abstract';
 import { AppConfig } from "../../../app-services/config/config.app";
 import { Enums } from "../../../enums/enums";
 
