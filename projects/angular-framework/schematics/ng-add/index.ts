@@ -1,14 +1,8 @@
-import { chain, Rule, SchematicContext, SchematicsException, Tree, UpdateRecorder, callRule } from '@angular-devkit/schematics';
+import { Rule, SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
 import { NodePackageInstallTask, RunSchematicTask } from "@angular-devkit/schematics/tasks";
-import { addRootProvider } from '@schematics/angular/utility';
-import { insertImport } from '@schematics/angular/utility/ast-utils';
-import { Change, InsertChange, RemoveChange, applyToUpdateRecorder } from '@schematics/angular/utility/change';
-import { of as observableOf } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import * as ts from 'typescript';
 
 const appConfigPath = '/src/app/app.config.ts';
-const angularJsonPath = 'angular.json'
+const angularJsonPath = 'angular.json';
 const angularVersion = '17.x.x'
 const msalVersion = '3.x.x'
 let projectName = '';
@@ -21,15 +15,10 @@ export function ngAdd(): Rule {
         if (!tree.exists(appConfigPath)) {
             throw new SchematicsException(`The file ${appConfigPath} doesn't exists...`);
         }
-        const recorder = tree.beginUpdate(appConfigPath);
-        const rules: Rule[] = []
-        updateImportsInAppConfig(tree, recorder, context);
-        rules.push(...addProvidersToAppConfig(context));
-
-        tree.commitUpdate(recorder);
 
         // Run tasks to add custom schematics
         context.addTask(new RunSchematicTask('app-component', { tree, context }));
+        context.addTask(new RunSchematicTask('app-config', { tree, context }));
         context.addTask(new RunSchematicTask('authentication', { tree, context }));
         context.addTask(new RunSchematicTask('configuration', { tree, context }));
         context.addTask(new RunSchematicTask('confirmation-dialog-box', { tree, context }));
@@ -94,141 +83,9 @@ export function ngAdd(): Rule {
         updateAngularJson(tree);
 
         context.logger.info('Installing dependencies (npm install)...');
-        context.addTask(new NodePackageInstallTask());
-
-        return chain(rules);
-    }
-
-
-    function updateImportsInAppConfig(tree: Tree, recorder: UpdateRecorder, context: SchematicContext) {
-        context.logger.info('AppConfig: Adding imports');
-
-        const importsToAdd: Record<string, string> =
-        {
-            'HTTP_INTERCEPTORS': '@angular/common/http',
-            'provideHttpClient': '@angular/common/http',
-            'withFetch': '@angular/common/http',
-            'withInterceptorsFromDi': '@angular/common/http',
-            'APP_INITIALIZER': '@angular/core',
-            'importProvidersFrom': '@angular/core',
-            'Router': '@angular/router',
-            'AppConfig': './app-services/config/config.app',
-            'FactoryAppConfig': './app-services/config/config.app.factory',
-            'NavigationRoutes': './app.routes',
-            'InterceptorError': './interceptors/error.interceptor',
-            'InterceptorLoadingScreen': './interceptors/loading-indicator.interceptor',
-            'MicrosoftAuthenticationLibraryModule': './modules/microsoft-authentication-library/microsoft-authentication-library.module',
-        }
-        addImportsToFile(tree, recorder, appConfigPath, importsToAdd)
-
-
-        context.logger.info('AppConfig: Removing imports');
-        const importsToRemove: Record<string, string> =
-        {
-            // 'routes': './app.routes',
-        }
-        removeImportFromFile(tree, recorder, appConfigPath, importsToRemove, context)
+        // context.addTask(new NodePackageInstallTask());
 
         return tree;
-    }
-
-    function addProvidersToAppConfig(context: SchematicContext): Rule[] {
-        context.logger.info('AppConfig: Adding providers');
-
-        const providersToAdd: string[] = [
-            'importProvidersFrom(MicrosoftAuthenticationLibraryModule.forRoot())',
-            'provideHttpClient(withInterceptorsFromDi(), withFetch())',
-            'provideRouter(NavigationRoutes.routes)',
-            '{ provide: APP_INITIALIZER, useFactory',
-            '{ provide: HTTP_INTERCEPTORS, useClass',
-            '{ provide: HTTP_INTERCEPTORS, useClass',
-        ]
-
-        const rules: Rule[] = []
-        for (const providerName in providersToAdd) {
-            rules.push(addProvider(providerName));
-        }
-        return rules;
-    }
-
-    function addProvider(providerName: string): Rule {
-        return (tree: Tree, context: SchematicContext) => {
-            const providerRule = addRootProvider(projectName, ({ code }) => {
-                return code`\n${providerName}`;
-            });
-
-            // The `addRootProvider` rule can throw in some custom scenarios (see #28640).
-            // Add some error handling around it so the setup isn't interrupted.
-            return callRule((providerRule as any), tree, context).pipe(
-                catchError(() => {
-                    context.logger.error(
-                        `Failed to add provider ${providerName} to the root app.config.`,
-                    );
-                    return observableOf(tree);
-                }),
-            );
-        };
-    }
-
-
-    function addImportsToFile(
-        tree: Tree,
-        recorder: UpdateRecorder,
-        filePath: string,
-        imports: Record<string, string>
-    ) {
-        const changes: Change[] = [];
-        const text = tree.read(filePath);
-        if (text === null) { throw new SchematicsException(`The file ${filePath} doesn't exists...`); }
-        const source = ts.createSourceFile(filePath, text.toString(), ts.ScriptTarget.Latest, true) as any;
-
-        for (const importName in imports) {
-            const change = insertImport(source, filePath, importName, imports[importName]);
-            if (change instanceof InsertChange) {
-                changes.push(change);
-            }
-        }
-        applyToUpdateRecorder(recorder, changes);
-    }
-
-    function removeImportFromFile(
-        tree: Tree,
-        recorder: UpdateRecorder,
-        filePath: string,
-        imports: Record<string, string>,
-        context: SchematicContext
-    ) {
-        const changes: Change[] = [];
-
-        const text = tree.read(filePath);
-        if (text === null) { throw new SchematicsException(`The file ${filePath} doesn't exists...`); }
-        const source = ts.createSourceFile(filePath, text.toString(), ts.ScriptTarget.Latest, true) as any;
-
-        const importDeclarations = source.statements.filter(ts.isImportDeclaration);
-
-        for (const importName in imports) {
-
-            const importDeclarationToRemove = importDeclarations.find((node: any) => {
-                const importClause = node.importClause;
-                if (!importClause || !ts.isNamedImports(importClause.namedBindings!)) {
-                    context.logger.info(`Remove import: returning false.`);
-                    return false;
-                }
-                return importClause.namedBindings.elements.some(
-                    (element: any) => element.name.getText() === importName
-                );
-            });
-
-            if (!importDeclarationToRemove) {
-                context.logger.info(`Could not find import '${importName}' in ${filePath}.`);
-            }
-
-            const startPos = importDeclarationToRemove.getStart();
-
-            context.logger.info(`Removing import '${importName}' in ${filePath}.`);
-            changes.push(new RemoveChange(filePath, startPos + 6, importName));
-        }
-        applyToUpdateRecorder(recorder, changes);
     }
 
     interface PackageJson {
@@ -345,7 +202,6 @@ export function ngAdd(): Rule {
         }
         return tree;
     }
-
 
     function getProjectName(tree: Tree): string {
         const workspaceConfigBuffer = tree.read(angularJsonPath);

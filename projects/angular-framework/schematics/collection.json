@@ -9,6 +9,10 @@
       "description": "Update the app component.",
       "factory": "./app-component/index#addAppComponent"
     },
+    "app-config": {
+      "description": "Overwrite default app.config with IOCO app.config.",
+      "factory": "./app-config/index#addAppConfig"
+    },
     "authentication": {
       "description": "Add MSAL authentication libraries to project.",
       "factory": "./authentication/index#addAuthentication"
