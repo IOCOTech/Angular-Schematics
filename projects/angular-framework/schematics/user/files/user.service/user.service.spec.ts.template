@@ -1,7 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { UnitTestModule } from 'src/app/unit-tests-helpers/unit-test.module';
-import { AbstractEndpoints } from 'src/environments/endpoints/endpoints.abstract';
+import { UnitTestModule } from '../../unit-tests-helpers/unit-test.module';
+import { AbstractEndpoints } from '../endpoints/endpoints.service.abstract';
 import { ServiceUser } from './user.service';
 
 describe('ServiceUser', () => {

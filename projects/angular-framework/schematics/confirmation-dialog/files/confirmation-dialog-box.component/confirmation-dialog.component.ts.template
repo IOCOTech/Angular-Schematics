@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ModelDialogDataConfirmation } from '../../models/dialog-data/dialog-data.model';
+import { ModelDialogConfirmationData } from '../../models/dialog-boxes/confirmation-dialog-data.model';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -25,7 +25,7 @@ export class ConfirmationDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ModelDialogDataConfirmation
+    @Inject(MAT_DIALOG_DATA) public data: ModelDialogConfirmationData
   ) {
     this.header = data?.header ?? 'Confirmation';
     this.message = data?.message ?? 'Confirmation not initialized with data';

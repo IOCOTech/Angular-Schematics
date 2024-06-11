@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ModelErrorDialogConfig } from '../../models/dialog-data/error-dialog-config.model';
+import { ModelErrorDialogConfig } from '../../models/dialog-boxes/error-dialog-config.model';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 

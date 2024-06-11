@@ -3,6 +3,7 @@ import { NodePackageInstallTask, RunSchematicTask } from "@angular-devkit/schema
 
 const appConfigPath = '/src/app/app.config.ts';
 const angularJsonPath = 'angular.json';
+const tsConfigAppPath = 'tsconfig.app.json';
 const angularVersion = '17.x.x'
 const msalVersion = '3.x.x'
 let projectName = '';
@@ -16,40 +17,48 @@ export function ngAdd(): Rule {
             throw new SchematicsException(`The file ${appConfigPath} doesn't exists...`);
         }
 
+        updateTsConfigAppJson(tree, context);
+
         // Run tasks to add custom schematics
         context.addTask(new RunSchematicTask('app-component', { tree, context }));
         context.addTask(new RunSchematicTask('app-config', { tree, context }));
+        context.addTask(new RunSchematicTask('arm-templates', {}));
         context.addTask(new RunSchematicTask('authentication', { tree, context }));
+        context.addTask(new RunSchematicTask('azure-pipeline', {}));
         context.addTask(new RunSchematicTask('configuration', { tree, context }));
         context.addTask(new RunSchematicTask('confirmation-dialog-box', { tree, context }));
+        context.addTask(new RunSchematicTask('docker', {}));
         context.addTask(new RunSchematicTask('endpoints', { tree, context }));
         context.addTask(new RunSchematicTask('enums', { tree, context }));
         context.addTask(new RunSchematicTask('error-dialog-box', { tree, context }));
         context.addTask(new RunSchematicTask('error-interceptor', { tree, context }));
         context.addTask(new RunSchematicTask('extension-methods', { tree, context }));
         context.addTask(new RunSchematicTask('helpers', { tree, context }));
+        context.addTask(new RunSchematicTask('karma-config', {}));
         context.addTask(new RunSchematicTask('loading-indicator', { tree, context }));
         context.addTask(new RunSchematicTask('mock-data', { tree, context }));
         context.addTask(new RunSchematicTask('monitoring', { tree, context }));
         context.addTask(new RunSchematicTask('page-not-found', { tree, context }));
         context.addTask(new RunSchematicTask('router', { tree, context }));
+        context.addTask(new RunSchematicTask('unit-test-helpers', {}));
         context.addTask(new RunSchematicTask('user', { tree, context }));
+        context.addTask(new RunSchematicTask('vscode', {}));
         context.addTask(new RunSchematicTask('web-config', { tree, context }));
 
-        // context.logger.info('Adding Angular Material.....');
-        // context.addTask(new RunSchematicTask(`@angular/material@${angularVersion}`, 'ng-add', {
-        //     theme: "custom",
-        //     typography: true,
-        //     animations: "true"
-        // }));
+        context.logger.info('Adding Angular Material.....');
+        context.addTask(new RunSchematicTask(`@angular/material`, 'ng-add', {
+            theme: "custom",
+            typography: true,
+            animations: "true"
+        }));
         context.addTask(new NodePackageInstallTask({ packageName: `@angular/cdk@${angularVersion}` }));
         context.logger.info('Adding Microsoft Authentication Library.....');
         context.addTask(new NodePackageInstallTask({ packageName: `@azure/msal-browser@${msalVersion}` }));
         context.addTask(new NodePackageInstallTask({ packageName: `@azure/msal-angular@${msalVersion}` }));
         context.logger.info('Adding Application insights.....');
         context.addTask(new NodePackageInstallTask({ packageName: '@microsoft/applicationinsights-web' }));
-        // context.logger.info('Adding ESLint.....');
-        // context.addTask(new RunSchematicTask(`@angular-eslint/schematics@${angularVersion}`, 'ng-add', {}));
+        context.logger.info('Adding ESLint.....');
+        context.addTask(new RunSchematicTask(`@angular-eslint/schematics`, 'ng-add', {}));
         context.logger.info('Adding DevDependency: concurrently.....');
         context.addTask(new NodePackageInstallTask({ packageName: 'concurrently --save-dev' }));
         context.logger.info('Adding DevDependency: dev-error-reporter.....');
@@ -83,7 +92,7 @@ export function ngAdd(): Rule {
         updateAngularJson(tree);
 
         context.logger.info('Installing dependencies (npm install)...');
-        // context.addTask(new NodePackageInstallTask());
+        context.addTask(new NodePackageInstallTask());
 
         return tree;
     }
@@ -220,5 +229,30 @@ export function ngAdd(): Rule {
         const defaultProjectName = workspaceConfig.defaultProject || projectNames[0];
 
         return defaultProjectName;
+    }
+
+    function updateTsConfigAppJson(tree: Tree, context: SchematicContext) {
+        // Read the file
+        const buffer = tree.read(tsConfigAppPath);
+        if (!buffer) {
+            throw new Error(`Could not find file: ${tsConfigAppPath}`);
+        }
+
+        // Parse the JSON content
+        const tsConfig = JSON.parse(buffer.toString());
+
+        // Add "resolveJsonModule": true
+        if (!tsConfig.compilerOptions) {
+            tsConfig.compilerOptions = {};
+        }
+        tsConfig.compilerOptions.resolveJsonModule = true;
+
+        // Convert the JSON back to a string
+        const updatedTsConfig = JSON.stringify(tsConfig, null, 2);
+
+        // Write the updated content back to the file
+        tree.overwrite(tsConfigAppPath, updatedTsConfig);
+
+        context.logger.info(`Updated ${tsConfigAppPath} to include "resolveJsonModule": true`);
     }
 }

@@ -1,0 +1,43 @@
+import { HttpBackend } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NgModule } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { Router } from '@angular/router';
+import { AbstractServiceAuthentication } from '../app-services/authentication/authentication.service.abstract';
+import { AppConfig } from '../app-services/config/config.app';
+import { AppMonitoring } from '../app-services/monitoring/monitor.app';
+import '../helpers/router.extension.helper';
+import { AbstractEndpoints } from '../services/endpoints/endpoints.service.abstract';
+import { AbstractServiceUser } from '../services/user/user.service.abstract';
+import { UnitTestHelpers } from './unit-test.helper';
+
+
+const modules = [
+    HttpClientTestingModule,
+    NoopAnimationsModule
+];
+
+@NgModule({
+    imports: modules,
+    exports: modules,
+    providers: [
+        { provide: AbstractServiceAuthentication, useValue: UnitTestHelpers.MockObjects.abstractServiceAuthentication },
+        { provide: AbstractEndpoints, useValue: UnitTestHelpers.MockObjects.abstractAbstractEndpoints },
+        { provide: AbstractServiceUser, useValue: UnitTestHelpers.MockObjects.abstractServiceUser },
+        { provide: HttpBackend, useValue: {} },
+        { provide: AppConfig, useValue: UnitTestHelpers.MockObjects.abstractServiceConfig },
+        { provide: AppMonitoring, useValue: UnitTestHelpers.MockObjects.serviceMonitoring },
+        { provide: MAT_DIALOG_DATA, useValue: {} },
+        { provide: MatDialogRef, useValue: {} }
+    ]
+    // entryComponents: [CourseDialogComponent] TODO: Add dialog components here
+
+})
+
+export class UnitTestModule {
+
+    constructor(router: Router) {
+        router.InitializeExtensionMethods();
+    }
+}

@@ -2,6 +2,7 @@ import { normalize } from '@angular-devkit/core';
 import { apply, applyTemplates, chain, MergeStrategy, mergeWith, move, Rule, Source, strings, url, SchematicContext, Tree} from '@angular-devkit/schematics';
 
 const helpersImplementationPath = 'helpers';
+const helpersModelsPath = 'models';
 
 export function addHelpers(): Rule {
     return (tree: Tree, context: SchematicContext) => {
@@ -12,9 +13,11 @@ export function addHelpers(): Rule {
         }
 
         const helpersRule = generateHelpersRule();
+        const helpersModelsRule = generateHelperModelsRule();
         
         return chain([
-            mergeWith(helpersRule, MergeStrategy.Overwrite)
+            mergeWith(helpersRule, MergeStrategy.Overwrite),
+            mergeWith(helpersModelsRule, MergeStrategy.Overwrite)
         ]);
     }
 }
@@ -27,6 +30,18 @@ function generateHelpersRule(): Source {
                 dasherize: strings.dasherize,
             }),
             move(normalize(`src/app/${helpersImplementationPath}`)),
+        ]
+    )
+}
+
+function generateHelperModelsRule(): Source {
+    return apply(
+        url('./files/helpers.models'),
+        [
+            applyTemplates({
+                dasherize: strings.dasherize,
+            }),
+            move(normalize(`src/app/${helpersModelsPath}`)),
         ]
     )
 }

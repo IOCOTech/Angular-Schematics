@@ -1,6 +1,6 @@
 {
   "name": "@ioco-dev/angular-framework",
-  "version": "17.3.142",
+  "version": "17.3.149",
   "scripts": {
     "build": "tsc -p tsconfig.schematics.json",
     "postbuild": "copyfiles \"schematics/collection.json\" \"schematics/*/files/**\"  \"../../dist/angular-framework\""
@@ -8,7 +8,9 @@
   "schematics": "./schematics/collection.json",
   "peerDependencies": {
     "@angular/common": "^17.3.0",
-    "@angular/core": "^17.3.0"
+    "@angular/core": "^17.3.0",
+    "@angular/material": "^17.3.10",
+    "@angular-eslint/schematics": "17.5.2"
   },
   "dependencies": {
     "tslib": "^2.3.0"
