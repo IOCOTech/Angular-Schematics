@@ -1,0 +1,27 @@
+import { Injectable } from '@angular/core';
+import { AppMonitoring } from './monitor/monitor.app';
+import { AppLoadingIndicator } from './loading-indicator/loading-indicator.app';
+import { AppAuthentication } from './authentication/authentication.service';
+import { AppConfig } from './config/config.app';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AppService {
+
+  public authentication: AppAuthentication;
+  public config: AppConfig;
+  public monitoring: AppMonitoring;
+  public modals: {
+    loadingIndicator: AppLoadingIndicator;
+  };
+
+  constructor(appAuthentication: AppAuthentication, appConfig: AppConfig, appMonitoring: AppMonitoring, appLoadingIndicator: AppLoadingIndicator) { 
+    this.authentication = appAuthentication;
+    this.config = appConfig;
+    this.monitoring = appMonitoring;
+    this.modals = {
+      loadingIndicator: appLoadingIndicator
+    };
+  }
+}

@@ -9,6 +9,10 @@
       "description": "Overwrite default app.config with IOCO app.config.",
       "factory": "./app-config/index#addAppConfig"
     },
+    "app-service": {
+      "description": "Add app.service helper.",
+      "factory": "./app-service/index#addAppService"
+    },
     "arm-templates": {
       "description": "Adds IOCO bicep files",
       "factory": "./arm-templates/index#addBicepFiles"
@@ -84,6 +88,10 @@
     "router": {
       "description": "Add a customized router.",
       "factory": "./router/index#addRouter"
+    },
+    "snackbar": {
+      "description": "Add snackbar.",
+      "factory": "./snackbar/index#addSnackbar"
     },
     "unit-test-helpers": {
       "description": "Adds IOCO default unit test helpers",

@@ -1,5 +1,6 @@
-import { Rule, SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
+import { Rule, SchematicContext, SchematicsException, Tree, chain } from '@angular-devkit/schematics';
 import { NodePackageInstallTask, RunSchematicTask } from "@angular-devkit/schematics/tasks";
+import { externalSchematic } from '@angular-devkit/schematics';
 
 const appConfigPath = '/src/app/app.config.ts';
 const angularJsonPath = 'angular.json';
@@ -19,82 +20,96 @@ export function ngAdd(): Rule {
 
         updateTsConfigAppJson(tree, context);
 
-        // Run tasks to add custom schematics
-        context.addTask(new RunSchematicTask('app-component', { tree, context }));
-        context.addTask(new RunSchematicTask('app-config', { tree, context }));
-        context.addTask(new RunSchematicTask('arm-templates', {}));
-        context.addTask(new RunSchematicTask('authentication', { tree, context }));
-        context.addTask(new RunSchematicTask('azure-pipeline', {}));
-        context.addTask(new RunSchematicTask('configuration', { tree, context }));
-        context.addTask(new RunSchematicTask('confirmation-dialog-box', { tree, context }));
-        context.addTask(new RunSchematicTask('docker', {}));
-        context.addTask(new RunSchematicTask('endpoints', { tree, context }));
-        context.addTask(new RunSchematicTask('enums', { tree, context }));
-        context.addTask(new RunSchematicTask('error-dialog-box', { tree, context }));
-        context.addTask(new RunSchematicTask('error-interceptor', { tree, context }));
-        context.addTask(new RunSchematicTask('extension-methods', { tree, context }));
-        context.addTask(new RunSchematicTask('helpers', { tree, context }));
-        context.addTask(new RunSchematicTask('karma-config', {}));
-        context.addTask(new RunSchematicTask('loading-indicator', { tree, context }));
-        context.addTask(new RunSchematicTask('mock-data', { tree, context }));
-        context.addTask(new RunSchematicTask('monitoring', { tree, context }));
-        context.addTask(new RunSchematicTask('page-not-found', { tree, context }));
-        context.addTask(new RunSchematicTask('router', { tree, context }));
-        context.addTask(new RunSchematicTask('unit-test-helpers', {}));
-        context.addTask(new RunSchematicTask('user', { tree, context }));
-        context.addTask(new RunSchematicTask('vscode', {}));
-        context.addTask(new RunSchematicTask('web-config', { tree, context }));
 
-        context.logger.info('Adding Angular Material.....');
-        context.addTask(new RunSchematicTask(`@angular/material`, 'ng-add', {
-            theme: "custom",
-            typography: true,
-            animations: "true"
-        }));
-        context.addTask(new NodePackageInstallTask({ packageName: `@angular/cdk@${angularVersion}` }));
-        context.logger.info('Adding Microsoft Authentication Library.....');
-        context.addTask(new NodePackageInstallTask({ packageName: `@azure/msal-browser@${msalVersion}` }));
-        context.addTask(new NodePackageInstallTask({ packageName: `@azure/msal-angular@${msalVersion}` }));
-        context.logger.info('Adding Application insights.....');
-        context.addTask(new NodePackageInstallTask({ packageName: '@microsoft/applicationinsights-web' }));
-        context.logger.info('Adding ESLint.....');
-        context.addTask(new RunSchematicTask(`@angular-eslint/schematics`, 'ng-add', {}));
-        context.logger.info('Adding DevDependency: concurrently.....');
-        context.addTask(new NodePackageInstallTask({ packageName: 'concurrently --save-dev' }));
-        context.logger.info('Adding DevDependency: dev-error-reporter.....');
-        context.addTask(new NodePackageInstallTask({ packageName: 'dev-error-reporter --save-dev' }));
-        context.logger.info('Adding DevDependency: json-concat.....');
-        context.addTask(new NodePackageInstallTask({ packageName: 'json-concat --save-dev' }));
-        context.logger.info('Adding DevDependency: json-server.....');
-        context.addTask(new NodePackageInstallTask({ packageName: 'json-server --save-dev' }));
-        context.logger.info('Adding DevDependency: karma-junit-reporter.....');
-        context.addTask(new NodePackageInstallTask({ packageName: 'karma-junit-reporter --save-dev' }));
-        context.logger.info('Adding DevDependency: karma-sonarqube-unit-reporter.....');
-        context.addTask(new NodePackageInstallTask({ packageName: 'karma-sonarqube-unit-reporter --save-dev' }));
-        context.logger.info('Adding DevDependency: onchange.....');
-        context.addTask(new NodePackageInstallTask({ packageName: 'onchange --save-dev' }));
-        context.logger.info('Adding DevDependency: typescript-json-schema.....');
-        context.addTask(new NodePackageInstallTask({ packageName: 'typescript-json-schema --save-dev' }));
+        // Create a chain of tasks to be executed sequentially
+        return chain([
+            externalSchematic('@angular-eslint/schematics', 'ng-add', {}),
 
-        context.logger.info('Update package.json.....');
-        addScriptToPackageJson(tree, "build:config", "npx typescript-json-schema \"src/environments/config/config.interface.ts\" \"IConfig\" -o \"src/environments/config/config.schema.json\" --required true")
-        addScriptToPackageJson(tree, "build:prod", "ng build -c production")
-        addScriptToPackageJson(tree, "build:db", "json-concat ./src/app/mock-data/separated-entities/ ./src/app/mock-data/db.json")
-        addScriptToPackageJson(tree, "start:mock-server", "npm run build:db & json-server --watch ./src/app/mock-data/db.json --silent")
-        addScriptToPackageJson(tree, "start:mock", "concurrently \"ng serve --configuration=mock\" \"npm run start:mock-server\" \"npm run build:config\" \"npm run lint:watch\"")
-        addScriptToPackageJson(tree, "start", "npm run start:mock")
-        addScriptToPackageJson(tree, "start:dev", "ng serve --configuration=development")
-        addScriptToPackageJson(tree, "lint:fix", "npm run lint --silent -- --fix")
-        addScriptToPackageJson(tree, "lint:watch", "onchange \"src/**/*.ts\" -- onerror \"npm run lint --silent\"  -t Error -m \"There are linting errors on your Angular project\"")
-        addScriptToPackageJson(tree, "e2e", "ng e2e")
+            // Add @angular/material
+            externalSchematic('@angular/material', 'ng-add', {
+                theme: "custom",
+                typography: true,
+                animations: "true"
+            }),
 
-        context.logger.info('Update angular.json.....');
-        updateAngularJson(tree);
+            (tree: Tree, context: SchematicContext) => {
+                // Run tasks to add custom schematics
+                context.addTask(new RunSchematicTask('app-component', { tree, context }));
+                context.addTask(new RunSchematicTask('app-config', { tree, context }));
+                context.addTask(new RunSchematicTask('app-service', { tree, context }));
+                context.addTask(new RunSchematicTask('arm-templates', {}));
+                context.addTask(new RunSchematicTask('authentication', { tree, context }));
+                context.addTask(new RunSchematicTask('azure-pipeline', {}));
+                context.addTask(new RunSchematicTask('configuration', { tree, context }));
+                context.addTask(new RunSchematicTask('confirmation-dialog-box', { tree, context }));
+                context.addTask(new RunSchematicTask('docker', {}));
+                context.addTask(new RunSchematicTask('endpoints', { tree, context }));
+                context.addTask(new RunSchematicTask('enums', { tree, context }));
+                context.addTask(new RunSchematicTask('error-dialog-box', { tree, context }));
+                context.addTask(new RunSchematicTask('error-interceptor', { tree, context }));
+                context.addTask(new RunSchematicTask('extension-methods', { tree, context }));
+                context.addTask(new RunSchematicTask('helpers', { tree, context }));
+                context.addTask(new RunSchematicTask('karma-config', {}));
+                context.addTask(new RunSchematicTask('loading-indicator', { tree, context }));
+                context.addTask(new RunSchematicTask('mock-data', { tree, context }));
+                context.addTask(new RunSchematicTask('monitoring', { tree, context }));
+                context.addTask(new RunSchematicTask('page-not-found', { tree, context }));
+                context.addTask(new RunSchematicTask('router', { tree, context }));
+                context.addTask(new RunSchematicTask('snackbar', { tree, context }));
+                context.addTask(new RunSchematicTask('unit-test-helpers', {}));
+                context.addTask(new RunSchematicTask('user', { tree, context }));
+                context.addTask(new RunSchematicTask('vscode', {}));
+                context.addTask(new RunSchematicTask('web-config', { tree, context }));
+                context.logger.info('Adding Angular Material.....');
+                context.addTask(new NodePackageInstallTask({ packageName: `@angular/cdk@${angularVersion}` }));
+                context.logger.info('Adding Microsoft Authentication Library.....');
+                context.addTask(new NodePackageInstallTask({ packageName: `@azure/msal-browser@${msalVersion}` }));
+                context.addTask(new NodePackageInstallTask({ packageName: `@azure/msal-angular@${msalVersion}` }));
+                context.logger.info('Adding Application insights.....');
+                context.addTask(new NodePackageInstallTask({ packageName: '@microsoft/applicationinsights-web' }));
+                context.logger.info('Adding ESLint.....');
+                // context.addTask(new RunSchematicTask(`@angular-eslint/schematics`, 'ng-add', {}));
+                context.logger.info('Adding DevDependency: concurrently.....');
+                context.addTask(new NodePackageInstallTask({ packageName: 'concurrently --save-dev' }));
+                context.logger.info('Adding DevDependency: dev-error-reporter.....');
+                context.addTask(new NodePackageInstallTask({ packageName: 'dev-error-reporter --save-dev' }));
+                context.logger.info('Adding DevDependency: json-concat.....');
+                context.addTask(new NodePackageInstallTask({ packageName: 'json-concat --save-dev' }));
+                context.logger.info('Adding DevDependency: json-server.....');
+                context.addTask(new NodePackageInstallTask({ packageName: 'json-server --save-dev' }));
+                context.logger.info('Adding DevDependency: karma-junit-reporter.....');
+                context.addTask(new NodePackageInstallTask({ packageName: 'karma-junit-reporter --save-dev' }));
+                context.logger.info('Adding DevDependency: karma-sonarqube-unit-reporter.....');
+                context.addTask(new NodePackageInstallTask({ packageName: 'karma-sonarqube-unit-reporter --save-dev' }));
+                context.logger.info('Adding DevDependency: onchange.....');
+                context.addTask(new NodePackageInstallTask({ packageName: 'onchange --save-dev' }));
+                context.logger.info('Adding DevDependency: typescript-json-schema.....');
+                context.addTask(new NodePackageInstallTask({ packageName: 'typescript-json-schema --save-dev' }));
 
-        context.logger.info('Installing dependencies (npm install)...');
-        context.addTask(new NodePackageInstallTask());
+                context.logger.info('Update package.json.....');
+                addScriptToPackageJson(tree, "build:config", "npx typescript-json-schema \"src/environments/config/config.interface.ts\" \"IConfig\" -o \"src/environments/config/config.schema.json\" --required true")
+                addScriptToPackageJson(tree, "build:prod", "ng build -c production")
+                addScriptToPackageJson(tree, "build:db", "json-concat ./src/app/mock-data/separated-entities/ ./src/app/mock-data/db.json")
+                addScriptToPackageJson(tree, "start:mock-server", "npm run build:db & json-server --watch ./src/app/mock-data/db.json --silent")
+                addScriptToPackageJson(tree, "start:mock", "concurrently \"ng serve --configuration=mock\" \"npm run start:mock-server\" \"npm run build:config\" \"npm run lint:watch\"")
+                addScriptToPackageJson(tree, "start", "npm run start:mock")
+                addScriptToPackageJson(tree, "start:dev", "ng serve --configuration=development")
+                addScriptToPackageJson(tree, "lint:fix", "npm run lint --silent -- --fix")
+                addScriptToPackageJson(tree, "lint:watch", "onchange \"src/**/*.ts\" -- onerror \"npm run lint --silent\"  -t Error -m \"There are linting errors on your Angular project\"")
+                addScriptToPackageJson(tree, "e2e", "ng e2e")
 
-        return tree;
+                context.logger.info('Update angular.json.....');
+                updateAngularJson(tree);
+
+                context.logger.info('Installing dependencies (npm install)...');
+                context.addTask(new NodePackageInstallTask());
+
+                return tree;
+
+            }
+        ]);
+
+
     }
 
     interface PackageJson {
@@ -238,8 +253,10 @@ export function ngAdd(): Rule {
             throw new Error(`Could not find file: ${tsConfigAppPath}`);
         }
 
+        // Remove comment lines
+        const content = buffer.toString().replace(/\/\*.*?\*\//g, '').trim();
         // Parse the JSON content
-        const tsConfig = JSON.parse(buffer.toString());
+        const tsConfig = JSON.parse(content);
 
         // Add "resolveJsonModule": true
         if (!tsConfig.compilerOptions) {
