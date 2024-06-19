@@ -1,8 +1,8 @@
-import { AbstractServiceUser } from './user.service.abstract.ts.template';
-import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { AbstractEndpoints } from '../endpoints/endpoints.service.abstract';
+import { Observable } from 'rxjs';
 import { ModelUser } from '../../models/user/user.model';
+import { AbstractEndpoints } from '../endpoints/endpoints.service.abstract';
+import { AbstractServiceUser } from './user.service.abstract';
 
 export class ServiceUser implements AbstractServiceUser {
 

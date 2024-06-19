@@ -1,0 +1,90 @@
+import { TestBed } from '@angular/core/testing';
+import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
+import { EventMessage, EventType } from '@azure/msal-browser';
+import { Subject } from 'rxjs';
+import { UnitTestHelpers } from '../../unit-tests-helpers/unit-test.helper';
+import { AppMonitoring } from '../monitoring/monitor.app';
+import { AppAuthentication } from './authentication.service';
+
+describe('AppAuthentication', () => {
+    let appAuthentication: AppAuthentication;
+    let msalService: jasmine.SpyObj<MsalService>;
+    let msalBroadcastService: jasmine.SpyObj<MsalBroadcastService>;
+    let appMonitor: jasmine.SpyObj<AppMonitoring>;
+    let msalSubject$: Subject<EventMessage>;
+
+    beforeEach(() => {
+        msalService = UnitTestHelpers.MockObjects.msalService();
+        msalBroadcastService = UnitTestHelpers.MockObjects.msalBroadcastService;
+        appMonitor = UnitTestHelpers.MockObjects.appMonitoring;
+        msalSubject$ = new Subject<EventMessage>();
+
+        msalSubject$ = new Subject<EventMessage>();
+        msalBroadcastService.msalSubject$ = msalSubject$.asObservable();
+
+        console.log(msalService);
+        TestBed.configureTestingModule({
+            providers: [
+                { provide: MsalService, useValue: msalService },
+                { provide: MsalBroadcastService, useValue: msalBroadcastService },
+                { provide: AppMonitoring, useValue: appMonitor },
+                { provide: AppAuthentication, useClass: AppAuthentication, deps: [MsalService, MsalBroadcastService, AppMonitoring] }
+            ],
+        });
+        appAuthentication = TestBed.inject(AppAuthentication);
+    });
+
+    it('should initialize and update login status', () => {
+        expect(appMonitor.logEvent).toHaveBeenCalledWith(appAuthentication, 'Updating login status', { value: !!appAuthentication.account });
+    });
+
+    it('should update login status on login success', () => {
+        appAuthentication.registerForAuthenticationEvents();
+        msalSubject$.next({ eventType: EventType.LOGIN_SUCCESS } as EventMessage);        
+        const userId = appAuthentication.account?.localAccountId
+
+        expect(appMonitor.logEvent).toHaveBeenCalledWith(appAuthentication, 'Successfully logged in', { responsePayload: { eventType: EventType.LOGIN_SUCCESS } });
+        expect(appAuthentication.isLoggedIn.value).toBeTrue();
+        expect(appMonitor.userId).toBe(userId);
+    });
+
+    it('should update login status on SSO silent success', () => {       
+        appAuthentication.registerForAuthenticationEvents();
+        msalSubject$.next({ eventType: EventType.SSO_SILENT_SUCCESS } as EventMessage);
+        const userId = appAuthentication.account?.localAccountId
+
+        expect(appMonitor.logEvent).toHaveBeenCalledWith(appAuthentication, 'Successfully logged in using SSO', { responsePayload: { eventType: EventType.SSO_SILENT_SUCCESS } });
+        expect(appAuthentication.isLoggedIn.value).toBeTrue();
+        expect(appMonitor.userId).toBe(userId);
+    });
+
+    it('should log token acquisition failure', () => {
+        appAuthentication.registerForAuthenticationEvents();
+        msalSubject$.next({ eventType: EventType.ACQUIRE_TOKEN_FAILURE } as EventMessage);
+
+        expect(appMonitor.logException).toHaveBeenCalledWith(appAuthentication, 'Acquire Token Failure', { responsePayload: { eventType: EventType.ACQUIRE_TOKEN_FAILURE } });
+    });
+
+    it('should log token acquisition success', () => {
+        appAuthentication.registerForAuthenticationEvents();
+        msalSubject$.next({ eventType: EventType.ACQUIRE_TOKEN_SUCCESS } as EventMessage);
+
+        expect(appMonitor.logEvent).toHaveBeenCalledWith(appAuthentication, 'Acquire Token Success', { responsePayload: jasmine.any(Object) });
+    });
+
+    it('should call logout on MSAL service', () => {
+        appAuthentication.logout();
+        expect(appMonitor.logEvent).toHaveBeenCalledWith(appAuthentication, 'MSAL logout');
+        expect(msalService.logout).toHaveBeenCalled();
+    });
+
+    it('should log setRegisterAuthority event', () => {
+        appAuthentication.setRegisterAuthority();
+        expect(appMonitor.logEvent).toHaveBeenCalledWith(appAuthentication, 'MSAL set registration authority');
+    });
+
+    it('should log setLoginAuthority event', () => {
+        appAuthentication.setLoginAuthority();
+        expect(appMonitor.logEvent).toHaveBeenCalledWith(appAuthentication, 'MSAL set login authority');
+    });
+});

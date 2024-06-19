@@ -1,9 +1,10 @@
-import { ModelDialogDataConfirmation } from './dialog-data/dialog-data.model';
-import { ModelInitializer } from './model-initializer.helper.ts.template';
-import { ModelSnackBarDetails } from './snack-bar/snack-bar-details.model';
-import { ModelUser } from './users/user-details.model';
+import { ModelDialogConfirmationData } from "./dialog-boxes/confirmation-dialog-data.model";
+import { ModelInitializer } from "./model-initializer.helper";
+import { ModelSnackBarDetails } from "./snackbar/snackbar-details.model";
+import { ModelUser } from "./user/user.model";
 
-export type DialogDataConfirmation = ModelDialogDataConfirmation;
+
+export type DialogDataConfirmation = ModelDialogConfirmationData;
 export const Initialize = ModelInitializer;
 export type SnackbarDetails = ModelSnackBarDetails;
 export type User = ModelUser;

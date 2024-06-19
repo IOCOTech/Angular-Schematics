@@ -5,7 +5,7 @@ import { ModelAccountFromToken } from '../../models/authentication/account-from-
 This abstract class is used to wrap the authentication service so it can be mocked.
 The commented private properties must be added to the file that implements the AbstractServiceAuthentication
 */
-export abstract class AbstractServiceAuthentication {
+export abstract class AbstractAppAuthentication {
 
     /**
     * Returns a boolean indicating if the user is logged in.

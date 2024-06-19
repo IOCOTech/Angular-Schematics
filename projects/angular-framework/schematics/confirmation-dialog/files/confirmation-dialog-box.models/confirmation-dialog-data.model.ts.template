@@ -1,4 +1,5 @@
-import { MaterialIcons } from "../../enums/separated-enums/material-icons.enum";
+import { MaterialIcons } from "../../enums/standalone/material-icons.enum";
+
 
 export interface ModelDialogConfirmationData {
     header: string;

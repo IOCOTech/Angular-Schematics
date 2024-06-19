@@ -1,13 +1,17 @@
-import { of } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { Enums } from '../enums/enums';
 import MockData from '../mock-data/db.generated.json';
 import { ModelAccountFromToken } from '../models/authentication/account-from-token.model';
+import { AuthenticationResult, BrowserConfiguration, EndSessionRequest, EventMessage, IPublicClientApplication, ITokenCache, Logger } from '@azure/msal-browser';
+import { ErrorSeverityLevel } from '../../config/config.interface';
+import { MsalService } from '@azure/msal-angular';
+import { GuardNullOrUndefined } from '../helpers/guard-null-undefined.helper';
 
 export class UnitTestHelpers {
 
-    static MockObjects = class {
+    static readonly MockObjects = class {
 
-        static abstractAbstractEndpoints = jasmine.createSpyObj('AbstractEndpoints', {
+        static readonly abstractAbstractEndpoints = jasmine.createSpyObj('AbstractEndpoints', {
 
             user: {
                 saveUser: '',
@@ -17,7 +21,7 @@ export class UnitTestHelpers {
             }
         });
 
-        static abstractServiceAuthentication = jasmine.createSpyObj('AbstractServiceAuthentication', {
+        static readonly abstractAppAuthentication = jasmine.createSpyObj('AbstractAppAuthentication', {
             getAllUsers: of(MockData.users),
 
             isLoggedIn: of(false),
@@ -44,7 +48,7 @@ export class UnitTestHelpers {
 
         });
 
-        static abstractServiceConfig = jasmine.createSpyObj('AbstractServiceAuthentication', {
+        static readonly abstractAppConfig = jasmine.createSpyObj('AppConfig', {
 
             apiBaseURL: 'http://0.0.0.0',
             appInsightsKey: 'testing',
@@ -67,11 +71,11 @@ export class UnitTestHelpers {
             }
         });
 
-        static abstractServiceUser = jasmine.createSpyObj('AbstractServiceUser', {
+        static readonly abstractServiceUser = jasmine.createSpyObj('AbstractServiceUser', {
             getAllUsers: of(MockData.users),
         });
 
-        static serviceErrorHandler = jasmine.createSpyObj('serviceErrorHandler', {
+        static readonly appErrorHandler = jasmine.createSpyObj('AppErrorHandler', {
             displayErrorDialog: (
                 origin: any, errorMessage: string, header: string = 'Error',
                 icon = Enums.MaterialIcons.Error,
@@ -82,7 +86,7 @@ export class UnitTestHelpers {
             }
         });
 
-        static serviceMonitoring = jasmine.createSpyObj('AbstractServiceUser', {
+        static readonly appMonitoring = jasmine.createSpyObj('AppMonitoring', {
 
 
             microsoftVariableName: 'Microsoft',
@@ -93,15 +97,32 @@ export class UnitTestHelpers {
             logTo: [],
             appInsights: null,
 
-            logEvent: (): void => {
+            logEvent: (
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                origin: any,
+                descriptionOfEvent: string,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                properties?: { [key: string]: any }): void => {
                 return;
             },
 
-            logMetric: (): void => {
+            logMetric: (
+                nameOfMetric: string,
+                averageOfMetric: number,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                propertiesToTrack?: { [key: string]: any }): void => {
                 return;
             },
 
-            logException: (): void => {
+            logException: (
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                origin: any,
+                exception: Error | string,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                properties: { [key: string]: any } = {},
+                severityLevel:
+                    | ErrorSeverityLevel.Error
+                    | ErrorSeverityLevel.Critical = Enums.ErrorSeverityLevel.Error): void => {
                 return;
             },
 
@@ -122,5 +143,75 @@ export class UnitTestHelpers {
                 return;
             }
         });
+
+
+        static readonly msalBroadcastService = jasmine.createSpyObj('MsalBroadcastService', {
+            msalSubject$: new Subject<EventMessage>().asObservable(),
+        });
+
+        static readonly publicClientApplication = () => {
+            const spyObj = jasmine.createSpyObj<IPublicClientApplication>('IPublicClientApplication', {
+                initialize: Promise.resolve(),
+                acquireTokenPopup: Promise.resolve({} as AuthenticationResult),
+                acquireTokenRedirect: Promise.resolve(),
+                acquireTokenSilent: Promise.resolve({} as AuthenticationResult),
+                acquireTokenByCode: Promise.resolve({} as AuthenticationResult),
+                addEventCallback: 'callbackId',
+                removeEventCallback: undefined,
+                addPerformanceCallback: 'performanceCallbackId',
+                removePerformanceCallback: true,
+                enableAccountStorageEvents: undefined,
+                disableAccountStorageEvents: undefined,
+                getAccount: null,
+                getAccountByHomeId: null,
+                getAccountByLocalId: null,
+                getAccountByUsername: null,
+                getAllAccounts: [],
+                handleRedirectPromise: Promise.resolve(null),
+                loginPopup: Promise.resolve({} as AuthenticationResult),
+                loginRedirect: Promise.resolve(),
+                logout: Promise.resolve(),
+                logoutRedirect: Promise.resolve(),
+                logoutPopup: Promise.resolve(),
+                ssoSilent: Promise.resolve({} as AuthenticationResult),
+                getTokenCache: {} as ITokenCache,
+                getLogger: {} as Logger,
+                setLogger: undefined,
+                setActiveAccount: undefined,
+                getActiveAccount: null,
+                initializeWrapperLibrary: undefined,
+                setNavigationClient: undefined,
+                getConfiguration: {} as BrowserConfiguration,
+                hydrateCache: Promise.resolve(),
+                clearCache: Promise.resolve()
+            });
+            // return custom values
+            spyObj.getAllAccounts.and.returnValue(MockData.accountsFromB2C as any)
+
+            return spyObj;
+        }
+
+        static readonly msalService = () => {
+            const spyObj = jasmine.createSpyObj<MsalService>('MsalService', {
+                instance: undefined,
+                initialize: of(void 0),
+                acquireTokenPopup: of({} as AuthenticationResult),
+                acquireTokenRedirect: of(void 0),
+                acquireTokenSilent: of({} as AuthenticationResult),
+                handleRedirectObservable: of({} as AuthenticationResult),
+                loginPopup: of({} as AuthenticationResult),
+                loginRedirect: of(void 0),
+                logout: of(void 0),
+                logoutRedirect: of(void 0),
+                logoutPopup: of(void 0),
+                ssoSilent: of({} as AuthenticationResult),
+                getLogger: {} as Logger,
+                setLogger: undefined
+            });
+            // return custom values
+            spyObj.instance = UnitTestHelpers.MockObjects.publicClientApplication();
+
+            return spyObj;
+        }
     };
 }

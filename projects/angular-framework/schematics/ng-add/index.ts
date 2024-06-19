@@ -4,7 +4,7 @@ import { externalSchematic } from '@angular-devkit/schematics';
 
 const appConfigPath = '/src/app/app.config.ts';
 const angularJsonPath = 'angular.json';
-const tsConfigAppPath = 'tsconfig.app.json';
+const tsConfigAppPath = 'tsconfig.json';
 const angularVersion = '17.x.x'
 const msalVersion = '3.x.x'
 let projectName = '';
@@ -67,8 +67,6 @@ export function ngAdd(): Rule {
                 context.addTask(new NodePackageInstallTask({ packageName: `@azure/msal-angular@${msalVersion}` }));
                 context.logger.info('Adding Application insights.....');
                 context.addTask(new NodePackageInstallTask({ packageName: '@microsoft/applicationinsights-web' }));
-                context.logger.info('Adding ESLint.....');
-                // context.addTask(new RunSchematicTask(`@angular-eslint/schematics`, 'ng-add', {}));
                 context.logger.info('Adding DevDependency: concurrently.....');
                 context.addTask(new NodePackageInstallTask({ packageName: 'concurrently --save-dev' }));
                 context.logger.info('Adding DevDependency: dev-error-reporter.....');
@@ -89,7 +87,7 @@ export function ngAdd(): Rule {
                 context.logger.info('Update package.json.....');
                 addScriptToPackageJson(tree, "build:config", "npx typescript-json-schema \"src/environments/config/config.interface.ts\" \"IConfig\" -o \"src/environments/config/config.schema.json\" --required true")
                 addScriptToPackageJson(tree, "build:prod", "ng build -c production")
-                addScriptToPackageJson(tree, "build:db", "json-concat ./src/app/mock-data/separated-entities/ ./src/app/mock-data/db.json")
+                addScriptToPackageJson(tree, "build:db", "json-concat ./src/app/mock-data/data/ ./src/app/mock-data/db.generated.json")
                 addScriptToPackageJson(tree, "start:mock-server", "npm run build:db & json-server --watch ./src/app/mock-data/db.json --silent")
                 addScriptToPackageJson(tree, "start:mock", "concurrently \"ng serve --configuration=mock\" \"npm run start:mock-server\" \"npm run build:config\" \"npm run lint:watch\"")
                 addScriptToPackageJson(tree, "start", "npm run start:mock")

@@ -1,7 +1,7 @@
 import { normalize } from '@angular-devkit/core';
 import { apply, applyTemplates, chain, MergeStrategy, mergeWith, move, Rule, Source, strings, url, SchematicContext, Tree} from '@angular-devkit/schematics';
 
-const appDialogErrorDialogPath = 'app-service/error-dialog';
+const appDialogErrorDialogPath = 'app-services/error-dialog';
 const componentErrorDialogPath = 'dialog-boxes/error-dialog';
 const modelErrorDialogPath = 'models/dialog-boxes';
 

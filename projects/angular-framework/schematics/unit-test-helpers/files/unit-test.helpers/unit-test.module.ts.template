@@ -4,10 +4,10 @@ import { NgModule } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
-import { AbstractServiceAuthentication } from '../app-services/authentication/authentication.service.abstract';
+import { AbstractAppAuthentication } from '../app-services/authentication/authentication.service.abstract';
 import { AppConfig } from '../app-services/config/config.app';
 import { AppMonitoring } from '../app-services/monitoring/monitor.app';
-import '../helpers/router.extension.helper';
+import '../extension-methods/router.extension';
 import { AbstractEndpoints } from '../services/endpoints/endpoints.service.abstract';
 import { AbstractServiceUser } from '../services/user/user.service.abstract';
 import { UnitTestHelpers } from './unit-test.helper';
@@ -22,12 +22,12 @@ const modules = [
     imports: modules,
     exports: modules,
     providers: [
-        { provide: AbstractServiceAuthentication, useValue: UnitTestHelpers.MockObjects.abstractServiceAuthentication },
+        { provide: AbstractAppAuthentication, useValue: UnitTestHelpers.MockObjects.abstractAppAuthentication },
         { provide: AbstractEndpoints, useValue: UnitTestHelpers.MockObjects.abstractAbstractEndpoints },
         { provide: AbstractServiceUser, useValue: UnitTestHelpers.MockObjects.abstractServiceUser },
         { provide: HttpBackend, useValue: {} },
-        { provide: AppConfig, useValue: UnitTestHelpers.MockObjects.abstractServiceConfig },
-        { provide: AppMonitoring, useValue: UnitTestHelpers.MockObjects.serviceMonitoring },
+        { provide: AppConfig, useValue: UnitTestHelpers.MockObjects.abstractAppConfig },
+        { provide: AppMonitoring, useValue: UnitTestHelpers.MockObjects.appMonitoring },
         { provide: MAT_DIALOG_DATA, useValue: {} },
         { provide: MatDialogRef, useValue: {} }
     ]

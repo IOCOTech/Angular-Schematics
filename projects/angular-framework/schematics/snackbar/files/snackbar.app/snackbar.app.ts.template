@@ -1,6 +1,6 @@
 import { ComponentType } from '@angular/cdk/portal';
 import { EventEmitter, Injectable } from '@angular/core';
-import { ModelSnackBarDetails } from '../../models/snack-bar/snack-bar-details.model';
+import { ModelSnackBarDetails } from '../../models/snackbar/snackbar-details.model';
 
 @Injectable({
     providedIn: 'root'

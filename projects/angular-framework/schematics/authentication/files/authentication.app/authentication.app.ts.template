@@ -3,10 +3,10 @@ import { EventMessage, EventType } from '@azure/msal-browser';
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ModelAccountFromToken } from '../../models/authentication/account-from-token.model';
-import { ServiceMonitoring } from '../monitor/monitor.service';
-import { AbstractServiceAuthentication } from './authentication.service.abstract';
+import { AbstractAppAuthentication } from './authentication.service.abstract';
+import { AppMonitoring } from '../monitoring/monitor.app';
 
-export class ServiceAuthentication implements AbstractServiceAuthentication {
+export class AppAuthentication implements AbstractAppAuthentication {
 
     public isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -25,7 +25,7 @@ export class ServiceAuthentication implements AbstractServiceAuthentication {
 
     constructor(
         private serviceAuth: MsalService, private broadcastService: MsalBroadcastService,
-        private serviceMonitor: ServiceMonitoring
+        private appMonitor: AppMonitoring
     ) {
         this.updateLoginStatus()
     }
@@ -38,7 +38,7 @@ export class ServiceAuthentication implements AbstractServiceAuthentication {
             )
             .subscribe((result) => {
                 this.updateLoginStatus();
-                this.serviceMonitor.logEvent(this, 'Successfully logged in', { responsePayload: result });
+                this.appMonitor.logEvent(this, 'Successfully logged in', { responsePayload: result });
             });
 
 
@@ -48,7 +48,7 @@ export class ServiceAuthentication implements AbstractServiceAuthentication {
             )
             .subscribe((result) => {
                 this.updateLoginStatus();
-                this.serviceMonitor.logEvent(this, 'Successfully logged in using SSO', { responsePayload: result });
+                this.appMonitor.logEvent(this, 'Successfully logged in using SSO', { responsePayload: result });
             });
 
         this.broadcastService.msalSubject$
@@ -56,7 +56,7 @@ export class ServiceAuthentication implements AbstractServiceAuthentication {
                 filter((msg: EventMessage) => msg.eventType === EventType.ACQUIRE_TOKEN_FAILURE),
             )
             .subscribe((result) => {
-                this.serviceMonitor.logException(this, 'Acquire Token Failure', { responsePayload: result });
+                this.appMonitor.logException(this, 'Acquire Token Failure', { responsePayload: result });
             });
 
         this.broadcastService.msalSubject$
@@ -64,28 +64,28 @@ export class ServiceAuthentication implements AbstractServiceAuthentication {
                 filter((msg: EventMessage) => msg.eventType === EventType.ACQUIRE_TOKEN_SUCCESS),
             )
             .subscribe((result) => {
-                this.serviceMonitor.logEvent(this, 'Acquire Token Success', { responsePayload: result });
+                this.appMonitor.logEvent(this, 'Acquire Token Success', { responsePayload: result });
             });
     }
 
     private updateLoginStatus(): void {
-        this.serviceMonitor.logEvent(this, 'Updating login status', { value: !!this.account });
+        this.appMonitor.logEvent(this, 'Updating login status', { value: !!this.account });
         if (this.account) {
-            this.serviceMonitor.userId = this.account.localAccountId;
+            this.appMonitor.userId = this.account.localAccountId;
             this.isLoggedIn.next(true);
         }
     }
 
     setRegisterAuthority(): void {
-        this.serviceMonitor.logEvent(this, 'MSAL set registration authority');
+        this.appMonitor.logEvent(this, 'MSAL set registration authority');
     }
 
     setLoginAuthority(): void {
-        this.serviceMonitor.logEvent(this, 'MSAL set login authority');
+        this.appMonitor.logEvent(this, 'MSAL set login authority');
     }
 
     logout(): void {
-        this.serviceMonitor.logEvent(this, 'MSAL logout');
+        this.appMonitor.logEvent(this, 'MSAL logout');
         this.serviceAuth.logout();
     }
 }
