@@ -1,11 +1,11 @@
+import { MatDialogRef } from '@angular/material/dialog';
+import { MsalService } from '@azure/msal-angular';
+import { AuthenticationResult, BrowserConfiguration, EventMessage, IPublicClientApplication, ITokenCache, Logger } from '@azure/msal-browser';
 import { Observable, Subject, of } from 'rxjs';
+import { ErrorSeverityLevel } from '../../config/config.interface';
 import { Enums } from '../enums/enums';
 import MockData from '../mock-data/db.generated.json';
 import { ModelAccountFromToken } from '../models/authentication/account-from-token.model';
-import { AuthenticationResult, BrowserConfiguration, EndSessionRequest, EventMessage, IPublicClientApplication, ITokenCache, Logger } from '@azure/msal-browser';
-import { ErrorSeverityLevel } from '../../config/config.interface';
-import { MsalService } from '@azure/msal-angular';
-import { GuardNullOrUndefined } from '../helpers/guard-null-undefined.helper';
 
 export class UnitTestHelpers {
 
@@ -144,12 +144,28 @@ export class UnitTestHelpers {
             }
         });
 
-
         static readonly msalBroadcastService = jasmine.createSpyObj('MsalBroadcastService', {
             msalSubject$: new Subject<EventMessage>().asObservable(),
         });
 
-        static readonly publicClientApplication = () => {
+        static readonly matDialogRef = (returnValue: string = 'true') => {
+            const spyObj = jasmine.createSpyObj('MatDialogRef', {
+                afterClosed: Observable<any>
+
+            });
+            spyObj.afterClosed.and.returnValue(of(returnValue));
+            return spyObj;
+        };
+
+        static readonly matDialog = (returnValue: string = 'true') => {
+            const spyObj = jasmine.createSpyObj('MatDialog', {
+                open: MatDialogRef
+            });
+            spyObj.open.and.returnValue(this.matDialogRef(returnValue));
+            return spyObj;
+        }
+
+        private static readonly publicClientApplication = () => {
             const spyObj = jasmine.createSpyObj<IPublicClientApplication>('IPublicClientApplication', {
                 initialize: Promise.resolve(),
                 acquireTokenPopup: Promise.resolve({} as AuthenticationResult),

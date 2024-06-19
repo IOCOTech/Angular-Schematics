@@ -3,7 +3,7 @@ import { EventMessage, EventType } from '@azure/msal-browser';
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ModelAccountFromToken } from '../../models/authentication/account-from-token.model';
-import { AbstractAppAuthentication } from './authentication.service.abstract';
+import { AbstractAppAuthentication } from './authentication.app.abstract';
 import { AppMonitoring } from '../monitoring/monitor.app';
 
 export class AppAuthentication implements AbstractAppAuthentication {

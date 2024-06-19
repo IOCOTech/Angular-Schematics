@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
-import { AbstractAppAuthentication } from '../app-services/authentication/authentication.service.abstract';
+import { AbstractAppAuthentication } from '../app-services/authentication/authentication.app.abstract';
 import { AppConfig } from '../app-services/config/config.app';
 import { AppMonitoring } from '../app-services/monitoring/monitor.app';
 import '../extension-methods/router.extension';

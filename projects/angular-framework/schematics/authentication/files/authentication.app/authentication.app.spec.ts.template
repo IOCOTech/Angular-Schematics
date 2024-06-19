@@ -4,7 +4,7 @@ import { EventMessage, EventType } from '@azure/msal-browser';
 import { Subject } from 'rxjs';
 import { UnitTestHelpers } from '../../unit-tests-helpers/unit-test.helper';
 import { AppMonitoring } from '../monitoring/monitor.app';
-import { AppAuthentication } from './authentication.service';
+import { AppAuthentication } from './authentication.app';
 
 describe('AppAuthentication', () => {
     let appAuthentication: AppAuthentication;

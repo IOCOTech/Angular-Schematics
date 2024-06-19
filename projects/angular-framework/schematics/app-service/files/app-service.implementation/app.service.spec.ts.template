@@ -1,16 +1,62 @@
 import { TestBed } from '@angular/core/testing';
-
+import { AppAuthentication } from './authentication/authentication.app';
+import { AbstractAppAuthentication } from './authentication/authentication.app.abstract';
+import { AppConfig } from './config/config.app';
+import { AppLoadingIndicator } from './loading-indicator/loading-indicator.app';
+import { AppMonitoring } from './monitoring/monitor.app';
 import { AppService } from './app.service';
 
 describe('AppService', () => {
-  let service: AppService;
+  let appService: AppService;
+  let appAuthenticationStub: jasmine.SpyObj<AppAuthentication>;
+  let appConfigStub: jasmine.SpyObj<AppConfig>;
+  let appMonitoringStub: jasmine.SpyObj<AppMonitoring>;
+  let appLoadingIndicatorStub: jasmine.SpyObj<AppLoadingIndicator>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(AppService);
+    // Create spy objects for dependencies
+    appAuthenticationStub = jasmine.createSpyObj('AppAuthentication', ['method1', 'method2']); // Add actual methods if needed
+    appConfigStub = jasmine.createSpyObj('AppConfig', ['method1', 'method2']); // Add actual methods if needed
+    appMonitoringStub = jasmine.createSpyObj('AppMonitoring', ['method1', 'method2']); // Add actual methods if needed
+    appLoadingIndicatorStub = jasmine.createSpyObj('AppLoadingIndicator', ['method1', 'method2']); // Add actual methods if needed
+
+    // Configure the testing module with the provided spy objects
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: AppAuthentication, useValue: appAuthenticationStub },
+        { provide: AppConfig, useValue: appConfigStub },
+        { provide: AppMonitoring, useValue: appMonitoringStub },
+        { provide: AppLoadingIndicator, useValue: appLoadingIndicatorStub },
+        AppService
+      ]
+    });
+
+    // Inject the AppService instance
+    appService = TestBed.inject(AppService);
   });
 
+  // Test to check if the AppService is created successfully
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    expect(appService).toBeTruthy();
+  });
+
+  // Test to check if the authentication property is correctly initialized with AppAuthentication
+  it('should initialize authentication with AppAuthentication', () => {
+    expect(appService.authentication).toBe(appAuthenticationStub as unknown as AbstractAppAuthentication);
+  });
+
+  // Test to check if the config property is correctly initialized with AppConfig
+  it('should initialize config with AppConfig', () => {
+    expect(appService.config).toBe(appConfigStub as AppConfig);
+  });
+
+  // Test to check if the monitoring property is correctly initialized with AppMonitoring
+  it('should initialize monitoring with AppMonitoring', () => {
+    expect(appService.monitoring).toBe(appMonitoringStub as AppMonitoring);
+  });
+
+  // Test to check if the modals.loadingIndicator property is correctly initialized with AppLoadingIndicator
+  it('should initialize modals.loadingIndicator with AppLoadingIndicator', () => {
+    expect(appService.modals.loadingIndicator).toBe(appLoadingIndicatorStub as AppLoadingIndicator);
   });
 });

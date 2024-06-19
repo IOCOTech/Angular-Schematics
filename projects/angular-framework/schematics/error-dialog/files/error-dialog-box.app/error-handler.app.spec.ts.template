@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { UnitTestModule } from '../../unit-tests-helpers/unit-test.module';
-import { AppErrorHandler } from './error-handler.app';
-import { AppMonitoring } from '../monitoring/monitor.app';
 import { Enums } from '../../enums/enums';
+import { UnitTestHelpers } from '../../unit-tests-helpers/unit-test.helper';
+import { AppMonitoring } from '../monitoring/monitor.app';
+import { AppErrorHandler } from './error-handler.app';
 
 describe('AppErrorHandler', () => {
   let service: AppErrorHandler;
@@ -11,12 +11,15 @@ describe('AppErrorHandler', () => {
   let mockMonitoring: jasmine.SpyObj<AppMonitoring>;
 
   beforeEach(() => {
-    mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
-    mockMonitoring = jasmine.createSpyObj('AppMonitoring', ['logError']);
+    mockDialog = UnitTestHelpers.MockObjects.matDialog();
+    mockMonitoring = UnitTestHelpers.MockObjects.appMonitoring;
 
     TestBed.configureTestingModule({
-      imports: [UnitTestModule],
+      imports: [],
       providers: [
+        { provide: MatDialog, useValue: mockDialog },
+        { provide: AppMonitoring, useValue: mockMonitoring },
+        AppErrorHandler
       ]
     });
     service = TestBed.inject(AppErrorHandler);

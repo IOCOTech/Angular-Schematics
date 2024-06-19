@@ -1,23 +1,87 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ErrorDialogComponent } from './error-dialog.component';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { ModelErrorDialogConfig } from '../../models/dialog-boxes/error-dialog-config.model';
+import { UnitTestHelpers } from '../../unit-tests-helpers/unit-test.helper';
 
-describe('ErrorDialogComponent', () => {
+fdescribe('ErrorDialogComponent', () => {
   let component: ErrorDialogComponent;
   let fixture: ComponentFixture<ErrorDialogComponent>;
+  let dialogRefSpy: jasmine.SpyObj<MatDialogRef<ErrorDialogComponent>>;
+  let data: ModelErrorDialogConfig;
 
   beforeEach(async () => {
+    data = {
+      displayReportIssueButton: true,
+      errorMessage: 'An error occurred',
+      header: 'Error',
+      icon: 'error_icon'
+    };
+
+    // const dialogRefSpyObj = jasmine.createSpyObj('MatDialogRef', ['close']);
+    const dialogRefSpyObj = UnitTestHelpers.MockObjects.matDialogRef();
     await TestBed.configureTestingModule({
-      imports: [ErrorDialogComponent]
-    })
-    .compileComponents();
-    
+      imports: [CommonModule, MatIconModule, ErrorDialogComponent],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: data },
+        { provide: MatDialogRef, useValue: dialogRefSpyObj }
+      ]
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ErrorDialogComponent);
     component = fixture.componentInstance;
+    dialogRefSpy = TestBed.inject(MatDialogRef) as jasmine.SpyObj<MatDialogRef<ErrorDialogComponent>>;
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should initialize with provided data', () => {
+    expect(component.displayReportIssueButton).toBe(data.displayReportIssueButton);
+    expect(component.errorMessage).toBe(data.errorMessage);
+    expect(component.header).toBe(data.header);
+    expect(component.icon).toBe(data.icon);
+  });
+
+  it('should disable close on init', () => {
+    expect(component.dialogRef.disableClose).toBe(true);
+  });
+
+  it('should have a header element with the provided header', () => {
+    const headerElement: DebugElement = fixture.debugElement.query(By.css('.header'));
+    expect(headerElement.nativeElement.textContent).toBe(data.header);
+  });
+
+  it('should have an error message element with the provided error message', () => {
+    const errorMessageElement: DebugElement = fixture.debugElement.query(By.css('.error-message'));
+    expect(errorMessageElement.nativeElement.textContent).toBe(data.errorMessage);
+  });
+
+  it('should have an icon element with the provided icon', () => {
+    const iconElement: DebugElement = fixture.debugElement.query(By.css('.icon'));
+    expect(iconElement.nativeElement.textContent).toBe(data.icon);
+  });
+
+  it('should display the report issue button if displayReportIssueButton is true', () => {
+    const reportButtonElement: DebugElement = fixture.debugElement.query(By.css('.report-issue-button'));
+    if (data.displayReportIssueButton) {
+      expect(reportButtonElement).toBeTruthy();
+    } else {
+      expect(reportButtonElement).toBeFalsy();
+    }
+  });
+
+  it('should call close method of MatDialogRef when close button is clicked', () => {
+    const closeButton: DebugElement = fixture.debugElement.query(By.css('.close-button'));
+    closeButton.triggerEventHandler('click', null);
+    fixture.detectChanges();
+
+    expect(dialogRefSpy.close).toHaveBeenCalled();
   });
 });

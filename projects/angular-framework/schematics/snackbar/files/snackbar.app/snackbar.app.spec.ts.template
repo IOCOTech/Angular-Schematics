@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { AppSnackBar } from './snackbar.app.service';
+import { AppSnackBar } from './snackbar.app';
 
 
 describe('AppSnackBar', () => {

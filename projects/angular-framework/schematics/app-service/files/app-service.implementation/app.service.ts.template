@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { AppAuthentication } from './authentication/authentication.service';
-import { AbstractAppAuthentication } from './authentication/authentication.service.abstract';
+import { AppAuthentication } from './authentication/authentication.app';
+import { AbstractAppAuthentication } from './authentication/authentication.app.abstract';
 import { AppConfig } from './config/config.app';
 import { AppLoadingIndicator } from './loading-indicator/loading-indicator.app';
 import { AppMonitoring } from './monitoring/monitor.app';
