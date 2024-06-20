@@ -1,9 +1,9 @@
 // DON'T REMOVE OR SWAP FOR THE ENUMS IN THE ENUMS FOLDER IT BREAKS THE SCHEMA GENERATOR
 export enum ErrorSeverityLevel {
-    Info = 1,
-    Warning = 2,
-    Error = 3,
-    Critical = 4
+    Info = 'info',
+    Warning = 'warning',
+    Error = 'error',
+    Critical = 'critical'
 }
 
 export enum Environments {

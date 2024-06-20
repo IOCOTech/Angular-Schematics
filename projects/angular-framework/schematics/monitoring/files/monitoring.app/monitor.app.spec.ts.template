@@ -1,21 +1,97 @@
-// import { TestBed } from '@angular/core/testing';
-// import { UnitTestModule } from 'src/app/unit-tests-helpers/unit-test.module';
+import { TestBed } from '@angular/core/testing';
+import { ApplicationInsights } from '@microsoft/applicationinsights-web';
+import config from '../../../config/mock/config.json';
+import { Enums } from '../../enums/enums';
+import { AppConfig } from '../config/config.app';
+import { AppMonitoring } from './monitor.app';
 
-// import { AppMonitoring } from './monitor.app';
+describe('AppMonitoring', () => {
+    let service: AppMonitoring;
+    let mockConfig: Partial<AppConfig> = config as Partial<AppConfig>;
 
-// describe('MonitorService', () => {
-//   let service: AppMonitoring;
+    beforeEach(() => {
 
-//   beforeEach(() => {
-//     TestBed.configureTestingModule({
-//       imports: [
-//         UnitTestModule
-//       ]
-//     });
-//     service = TestBed.inject(AppMonitoring);
-//   });
+        TestBed.configureTestingModule({
+            providers: [
+                AppMonitoring,
+                { provide: AppConfig, useValue: mockConfig },
+            ],
+        });
 
-//   it('should be created', () => {
-//     expect(service).toBeTruthy();
-//   });
-// });
+        service = TestBed.inject(AppMonitoring);
+        service.userId = 'xxxx-test-xxxx';
+    });
+
+    it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
+
+    it('should initialize ApplicationInsights with the correct configuration', () => {
+        expect(service.appInsights).toBeDefined();
+        expect(service.appInsights.config.instrumentationKey).toBe(mockConfig.appInsightsKey);
+        expect(service.appInsights.config.appId).toBe(mockConfig.authentication?.clientId);
+    });
+
+    it('should set userId and initialize ApplicationInsights with accountId', () => {
+        const spy = spyOn(ApplicationInsights.prototype, 'loadAppInsights');
+        service.userId = 'mockUserId';
+        expect(service.userId).toBe('mockUserId');
+        expect(service.appInsights.config.accountId).toBe('mockUserId');
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('should log event to console and ApplicationInsights', () => {
+        const consoleSpy = spyOn(console, 'log');
+        const appInsightsSpy = spyOn(service.appInsights, 'trackEvent');
+
+        service.logEvent('testOrigin', 'testEvent', { test: 'property' });
+        expect(consoleSpy).toHaveBeenCalledWith('testOrigin: ', 'testEvent');
+        expect(consoleSpy).toHaveBeenCalledWith('properties', { test: 'property', origin: 'testOrigin', user: service.userId });
+
+        expect(appInsightsSpy).toHaveBeenCalledWith({
+            name: 'testEvent',
+            properties: { test: 'property', origin: 'testOrigin', user: service.userId },
+        });
+    });
+
+    it('should log metric to ApplicationInsights', () => {
+        const appInsightsSpy = spyOn(service.appInsights, 'trackMetric');
+
+        service.logMetric('testMetric', 100, { test: 'property' });
+
+        expect(appInsightsSpy).toHaveBeenCalledWith({
+            name: 'testMetric',
+            average: 100,
+            properties: { test: 'property' },
+        });
+    });
+
+    it('should log exception to console and ApplicationInsights', () => {
+        const consoleSpyError = spyOn(console, 'error');
+        const consoleSpyLog = spyOn(console, 'log');
+        const appInsightsSpy = spyOn(service.appInsights, 'trackException');
+
+        const error = new Error('testError');
+        service.logException('testOrigin', error, { test: 'property' }, Enums.ErrorSeverityLevel.Error);
+
+        expect(consoleSpyError).toHaveBeenCalledWith('testOrigin', error);
+        expect(consoleSpyLog).toHaveBeenCalledWith('Error properties:', { test: 'property', user: service.userId, origin: 'testOrigin' });
+
+        expect(appInsightsSpy).toHaveBeenCalledWith({
+            exception: error,
+            properties: { test: 'property', user: 'xxxx-test-xxxx', origin: 'testOrigin' },
+            severityLevel: 2,
+        });
+    });
+
+    it('should log trace to ApplicationInsights', () => {
+        const appInsightsSpy = spyOn(service.appInsights, 'trackTrace');
+
+        service.logTrace('testTrace', { test: 'property' });
+
+        expect(appInsightsSpy).toHaveBeenCalledWith({
+            message: 'testTrace',
+            properties: { test: 'property' },
+        });
+    });
+});

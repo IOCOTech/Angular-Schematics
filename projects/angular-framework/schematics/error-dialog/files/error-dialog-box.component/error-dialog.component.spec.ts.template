@@ -8,10 +8,10 @@ import { By } from '@angular/platform-browser';
 import { ModelErrorDialogConfig } from '../../models/dialog-boxes/error-dialog-config.model';
 import { UnitTestHelpers } from '../../unit-tests-helpers/unit-test.helper';
 
-fdescribe('ErrorDialogComponent', () => {
+describe('ErrorDialogComponent', () => {
   let component: ErrorDialogComponent;
   let fixture: ComponentFixture<ErrorDialogComponent>;
-  let dialogRefSpy: jasmine.SpyObj<MatDialogRef<ErrorDialogComponent>>;
+  let dialogRefSpyObj: jasmine.SpyObj<MatDialogRef<ErrorDialogComponent>>;
   let data: ModelErrorDialogConfig;
 
   beforeEach(async () => {
@@ -22,8 +22,7 @@ fdescribe('ErrorDialogComponent', () => {
       icon: 'error_icon'
     };
 
-    // const dialogRefSpyObj = jasmine.createSpyObj('MatDialogRef', ['close']);
-    const dialogRefSpyObj = UnitTestHelpers.MockObjects.matDialogRef();
+    dialogRefSpyObj = UnitTestHelpers.MockObjects.matDialogRef();
     await TestBed.configureTestingModule({
       imports: [CommonModule, MatIconModule, ErrorDialogComponent],
       providers: [
@@ -34,7 +33,6 @@ fdescribe('ErrorDialogComponent', () => {
 
     fixture = TestBed.createComponent(ErrorDialogComponent);
     component = fixture.componentInstance;
-    dialogRefSpy = TestBed.inject(MatDialogRef) as jasmine.SpyObj<MatDialogRef<ErrorDialogComponent>>;
     fixture.detectChanges();
   });
 
@@ -77,11 +75,15 @@ fdescribe('ErrorDialogComponent', () => {
     }
   });
 
-  it('should call close method of MatDialogRef when close button is clicked', () => {
-    const closeButton: DebugElement = fixture.debugElement.query(By.css('.close-button'));
-    closeButton.triggerEventHandler('click', null);
-    fixture.detectChanges();
+  it('should have a "mat-dialog-close" attribute on the "report issue" button', () => {
+    const closeButton: DebugElement = fixture.debugElement.query(By.css('.report-issue-button'));
+    const hasMatDialogClose = closeButton.attributes['mat-dialog-close'] !== undefined;
+    expect(hasMatDialogClose).toBeTrue();
+  });
 
-    expect(dialogRefSpy.close).toHaveBeenCalled();
+  it('should have a "mat-dialog-close" attribute on the "Ok" button', () => {
+    const closeButton: DebugElement = fixture.debugElement.query(By.css('.ok-button'));
+    const hasMatDialogClose = closeButton.attributes['mat-dialog-close'] !== undefined;
+    expect(hasMatDialogClose).toBeTrue();
   });
 });

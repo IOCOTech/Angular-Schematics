@@ -1,23 +1,112 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from './confirmation-dialog.component';
+import { ModelDialogConfirmationData } from '../../models/dialog-boxes/confirmation-dialog-data.model';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { Enums } from '../../enums/enums';
 
 describe('ConfirmationDialogComponent', () => {
   let component: ConfirmationDialogComponent;
   let fixture: ComponentFixture<ConfirmationDialogComponent>;
+  let dialogRefStub: jasmine.SpyObj<MatDialogRef<ConfirmationDialogComponent>>;
+  let dataStub: ModelDialogConfirmationData;
 
   beforeEach(async () => {
+    dialogRefStub = jasmine.createSpyObj('MatDialogRef', ['close']);
+    dataStub = {
+      header: 'Test Header',
+      message: 'Test Message',
+      displayCancelButton: false,
+      icon: Enums.MaterialIcons.Warning,
+      iconColor: '#ff0000',
+      okButtonText: 'Confirm'
+    };
+
     await TestBed.configureTestingModule({
-      imports: [ConfirmationDialogComponent]
-    })
-    .compileComponents();
-    
+      imports: [CommonModule, MatIconModule, ConfirmationDialogComponent],
+      providers: [
+        { provide: MatDialogRef, useValue: dialogRefStub },
+        { provide: MAT_DIALOG_DATA, useValue: dataStub }
+      ]
+    }).compileComponents();
+  });
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(ConfirmationDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
+  // Test to check if the component is created successfully
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  // Test to check if the component initializes header with data from MAT_DIALOG_DATA
+  it('should initialize header with data', () => {
+    expect(component.header).toBe(dataStub.header);
+  });
+
+  // Test to check if the component initializes message with data from MAT_DIALOG_DATA
+  it('should initialize message with data', () => {
+    expect(component.message).toBe(dataStub.message);
+  });
+
+  // Test to check if the component initializes displayCancelButton with data from MAT_DIALOG_DATA
+  it('should initialize displayCancelButton with data', () => {
+    expect(component.displayCancelButton).toBe(dataStub.displayCancelButton!);
+  });
+
+  // Test to check if the component initializes icon with data from MAT_DIALOG_DATA
+  it('should initialize icon with data', () => {
+    expect(component.icon).toBe(dataStub.icon!);
+  });
+
+  // Test to check if the component initializes iconColor with data from MAT_DIALOG_DATA
+  it('should initialize iconColor with data', () => {
+    expect(component.iconColor).toBe(dataStub.iconColor!);
+  });
+
+  // Test to check if the component initializes okButtonText with data from MAT_DIALOG_DATA
+  it('should initialize okButtonText with data', () => {
+    expect(component.okButtonText).toBe(dataStub.okButtonText!);
+  });
+});
+
+
+// Separate describe block for testing default values
+describe('ConfirmationDialogComponent with default values', () => {
+  let component: ConfirmationDialogComponent;
+  let fixture: ComponentFixture<ConfirmationDialogComponent>;
+  let dialogRefStub: jasmine.SpyObj<MatDialogRef<ConfirmationDialogComponent>>;
+
+  beforeEach(async () => {
+    dialogRefStub = jasmine.createSpyObj('MatDialogRef', ['close']);
+    const emptyDataStub = {};
+
+    await TestBed.configureTestingModule({
+      imports: [CommonModule, MatIconModule, ConfirmationDialogComponent],
+      providers: [
+        { provide: MatDialogRef, useValue: dialogRefStub },
+        { provide: MAT_DIALOG_DATA, useValue: emptyDataStub }
+      ]
+    }).compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ConfirmationDialogComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  // Test to check if the component assigns default values when data is not provided
+  it('should assign default values when data is not provided', () => {
+    expect(component.header).toBe('Confirmation');
+    expect(component.message).toBe('Confirmation not initialized with data');
+    expect(component.displayCancelButton).toBe(true);
+    expect(component.icon).toBe('info');
+    expect(component.iconColor).toBe('#0d0d0d');
+    expect(component.okButtonText).toBe('Ok');
   });
 });

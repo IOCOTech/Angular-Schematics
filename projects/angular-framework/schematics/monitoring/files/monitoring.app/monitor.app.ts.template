@@ -40,7 +40,7 @@ export class AppMonitoring {
   logTo: string[] = [];
   appInsights!: ApplicationInsights;
 
-  constructor(private serviceConfig: AppConfig) {
+  constructor(public serviceConfig: AppConfig) {
     this.loggingLevel = serviceConfig.logging
       .loggingLevel as ErrorSeverityLevel;
     this.logTo = serviceConfig.logging.errorLogTo;
@@ -147,11 +147,12 @@ export class AppMonitoring {
       console.error(originName, exception);
       console.log('Error properties:', properties);
     }
+    let appInsightsSeverityLevel = severityLevel === ErrorSeverityLevel.Error ? 2 : 3;
     if (this.logTo.includes('appInsights')) {
       const ex: IExceptionTelemetry = {
         exception,
         properties,
-        severityLevel,
+        severityLevel: appInsightsSeverityLevel,
       };
       this.appInsights.trackException(ex);
     }
