@@ -1,10 +1,10 @@
 <div class="icon-container margin-top-15" fxFill fxLayout="row" fxLayoutAlign="center start">
-    <mat-icon [ngStyle]="{'color': iconColor}">
+    <mat-icon class="icon" [ngStyle]="{'color': iconColor}">
         {{icon}}
     </mat-icon>
 </div>
-<h1 mat-dialog-title>{{header}}</h1>
-<div mat-dialog-content>
+<h1 class="header" mat-dialog-title>{{header}}</h1>
+<div class="message" mat-dialog-content>
     {{message}}
 </div>
 <div mat-dialog-actions fxLayout="row" fxLayoutAlign="end end" fxLayoutGap="15px">

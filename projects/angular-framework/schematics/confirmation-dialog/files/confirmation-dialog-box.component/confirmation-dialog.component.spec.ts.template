@@ -1,106 +1,118 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from './confirmation-dialog.component';
-import { ModelDialogConfirmationData } from '../../models/dialog-boxes/confirmation-dialog-data.model';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { ModelDialogConfirmationData } from '../../models/dialog-boxes/confirmation-dialog-data.model';
 import { Enums } from '../../enums/enums';
+import { UnitTestHelpers } from '../../unit-tests-helpers/unit-test.helper';
 
 describe('ConfirmationDialogComponent', () => {
   let component: ConfirmationDialogComponent;
   let fixture: ComponentFixture<ConfirmationDialogComponent>;
-  let dialogRefStub: jasmine.SpyObj<MatDialogRef<ConfirmationDialogComponent>>;
-  let dataStub: ModelDialogConfirmationData;
+  let dialogRefSpy: jasmine.SpyObj<MatDialogRef<ConfirmationDialogComponent>>;
+  let data: ModelDialogConfirmationData;
 
   beforeEach(async () => {
-    dialogRefStub = jasmine.createSpyObj('MatDialogRef', ['close']);
-    dataStub = {
+    data = {
       header: 'Test Header',
       message: 'Test Message',
-      displayCancelButton: false,
-      icon: Enums.MaterialIcons.Warning,
-      iconColor: '#ff0000',
+      displayCancelButton: true,
+      icon: Enums.MaterialIcons.Info,
+      iconColor: '#123456',
       okButtonText: 'Confirm'
     };
 
+    const dialogRefSpyObj = UnitTestHelpers.MockObjects.matDialogRef();
     await TestBed.configureTestingModule({
       imports: [CommonModule, MatIconModule, ConfirmationDialogComponent],
       providers: [
-        { provide: MatDialogRef, useValue: dialogRefStub },
-        { provide: MAT_DIALOG_DATA, useValue: dataStub }
+        { provide: MAT_DIALOG_DATA, useValue: data },
+        { provide: MatDialogRef, useValue: dialogRefSpyObj }
       ]
     }).compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(ConfirmationDialogComponent);
     component = fixture.componentInstance;
+    dialogRefSpy = TestBed.inject(MatDialogRef) as jasmine.SpyObj<MatDialogRef<ConfirmationDialogComponent>>;
     fixture.detectChanges();
   });
 
-  // Test to check if the component is created successfully
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  // Test to check if the component initializes header with data from MAT_DIALOG_DATA
-  it('should initialize header with data', () => {
-    expect(component.header).toBe(dataStub.header);
+  it('should initialize with provided data', () => {
+    expect(component.header).toBe(data.header);
+    expect(component.message).toBe(data.message);
+    expect(component.displayCancelButton).toBe(data.displayCancelButton!);
+    expect(component.icon).toBe(data.icon!);
+    expect(component.iconColor).toBe(data.iconColor!);
+    expect(component.okButtonText).toBe(data.okButtonText!);
   });
 
-  // Test to check if the component initializes message with data from MAT_DIALOG_DATA
-  it('should initialize message with data', () => {
-    expect(component.message).toBe(dataStub.message);
+  it('should have a header element with the provided header', () => {
+    const headerElement: DebugElement = fixture.debugElement.query(By.css('.header'));
+    expect(headerElement.nativeElement.textContent.trim()).toBe(data.header);
   });
 
-  // Test to check if the component initializes displayCancelButton with data from MAT_DIALOG_DATA
-  it('should initialize displayCancelButton with data', () => {
-    expect(component.displayCancelButton).toBe(dataStub.displayCancelButton!);
+  it('should have a message element with the provided message', () => {
+    const messageElement: DebugElement = fixture.debugElement.query(By.css('.message'));
+    expect(messageElement.nativeElement.textContent.trim()).toBe(data.message);
   });
 
-  // Test to check if the component initializes icon with data from MAT_DIALOG_DATA
-  it('should initialize icon with data', () => {
-    expect(component.icon).toBe(dataStub.icon!);
+  it('should have an icon element with the provided icon', () => {
+    const iconElement: DebugElement = fixture.debugElement.query(By.css('.icon'));
+    expect(iconElement.nativeElement.textContent.trim()).toBe(data.icon);
   });
 
-  // Test to check if the component initializes iconColor with data from MAT_DIALOG_DATA
-  it('should initialize iconColor with data', () => {
-    expect(component.iconColor).toBe(dataStub.iconColor!);
+  it('should have a cancel button if displayCancelButton is true', () => {
+    const cancelButtonElement: DebugElement = fixture.debugElement.query(By.css('.cancel-button'));
+    if (data.displayCancelButton) {
+      expect(cancelButtonElement).toBeTruthy();
+    } else {
+      expect(cancelButtonElement).toBeFalsy();
+    }
   });
 
-  // Test to check if the component initializes okButtonText with data from MAT_DIALOG_DATA
-  it('should initialize okButtonText with data', () => {
-    expect(component.okButtonText).toBe(dataStub.okButtonText!);
+  it('should have mat-dialog-close attribute on the action button is clicked', () => {
+    const actionButton: DebugElement = fixture.debugElement.query(By.css('.action-button'));
+    const hasMatDialogClose = actionButton.attributes['mat-dialog-close'] !== undefined;
+    expect(hasMatDialogClose).toBeTrue();
+  });
+
+  it('should have mat-dialog-close attribute on the cancel button is clicked', () => {
+    if (data.displayCancelButton) {
+      const cancelButton: DebugElement = fixture.debugElement.query(By.css('.cancel-button'));
+      const hasMatDialogClose = cancelButton.attributes['mat-dialog-close'] !== undefined;
+      expect(hasMatDialogClose).toBeTrue();
+    }
   });
 });
 
-
-// Separate describe block for testing default values
-describe('ConfirmationDialogComponent with default values', () => {
+describe('ConfirmationDialogComponent with no data', () => {
   let component: ConfirmationDialogComponent;
   let fixture: ComponentFixture<ConfirmationDialogComponent>;
-  let dialogRefStub: jasmine.SpyObj<MatDialogRef<ConfirmationDialogComponent>>;
 
   beforeEach(async () => {
-    dialogRefStub = jasmine.createSpyObj('MatDialogRef', ['close']);
     const emptyDataStub = {};
 
+    const dialogRefSpyObj = UnitTestHelpers.MockObjects.matDialogRef();
     await TestBed.configureTestingModule({
       imports: [CommonModule, MatIconModule, ConfirmationDialogComponent],
       providers: [
-        { provide: MatDialogRef, useValue: dialogRefStub },
-        { provide: MAT_DIALOG_DATA, useValue: emptyDataStub }
+        { provide: MAT_DIALOG_DATA, useValue: emptyDataStub },
+        { provide: MatDialogRef, useValue: dialogRefSpyObj }
       ]
     }).compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(ConfirmationDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  // Test to check if the component assigns default values when data is not provided
   it('should assign default values when data is not provided', () => {
     expect(component.header).toBe('Confirmation');
     expect(component.message).toBe('Confirmation not initialized with data');

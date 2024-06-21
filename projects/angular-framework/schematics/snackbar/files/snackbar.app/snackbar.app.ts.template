@@ -9,7 +9,14 @@ export class AppSnackBar {
 
     onSnackbar: EventEmitter<ModelSnackBarDetails> = new EventEmitter<ModelSnackBarDetails>();
     onDismissSnackbar = new EventEmitter();
-    private callbackOnAction: ((response?: any) => void) | undefined;
+    
+    private _callbackOnAction : ((response?: any) => void) | undefined;
+    public get callbackOnAction() : ((response?: any) => void) | undefined {
+        return this._callbackOnAction;
+    }
+    private set callbackOnAction(v : ((response?: any) => void) | undefined) {
+        this._callbackOnAction = v;
+    }
 
     showSnackbar(componentToShow: ComponentType<any>, callbackFunction?: (response?: any) => void): void {
         const details = new ModelSnackBarDetails(componentToShow, callbackFunction);
