@@ -1,8 +1,14 @@
 import { HttpClient } from '@angular/common/http';
+import { Enums } from '../../enums/enums';
+import { AbstractEndpoints } from '../endpoints/endpoints.service.abstract';
+import { ServiceUser } from './user.service';
+import { MockServiceUser } from './user.service.mock';
+import { AppMonitoring } from '../../app-services/monitoring/monitor.app';
+import { AppConfig } from '../../app-services/config/config.app';
 
-export function FactoryServiceUser(http: HttpClient, endpoints: AbstractEndpoints, serviceMonitor: ServiceMonitoring) {
-    serviceMonitor.logEvent('FactoryServiceUser', 'User Service Factory loaded');
-    switch (AppSettings.environment) {
+export function FactoryServiceUser(http: HttpClient, endpoints: AbstractEndpoints, appMonitor: AppMonitoring, appConfig: AppConfig) {
+    appMonitor.logEvent('FactoryServiceUser', 'User Service Factory loaded');
+    switch (appConfig.environment) {
         case Enums.Environments.MockData:
             return new  MockServiceUser(endpoints, http);
         default:

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 import { ModelAccountFromToken } from '../../models/authentication/account-from-token.model';
-import { AbstractAppAuthentication } from './authentication.service.abstract';
+import { AbstractAppAuthentication } from '../authentication/authentication.app.abstract'
 import { AbstractEndpoints } from '../../services/endpoints/endpoints.service.abstract';
 
 export class MockAppAuthentication implements AbstractAppAuthentication {
@@ -15,7 +15,7 @@ export class MockAppAuthentication implements AbstractAppAuthentication {
 
     get account(): ModelAccountFromToken | undefined {
         const token = localStorage.getItem(this.storageForAccountName);
-        return !!token ? (JSON.parse(token) as ModelAccountFromToken) : undefined;
+        return token ? (JSON.parse(token) as ModelAccountFromToken) : undefined;
     }
 
     registerForAuthenticationEvents(): void {

@@ -1,29 +1,30 @@
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { UserListComponent } from './components/user-list/user-list.component';
+import { UserDetailsComponent } from './components/user-details/user-details.component';
 import { ModelRouteExtended } from './models/router/route-extended.model';
 import { AbstractRouteGuard } from './modules/microsoft-authentication-library/route-guard/route-guard.abstract';
 
 /// This class is added to provide strongly typed routes in the application
 export class NavigationRoutes {
     static readonly UserList: ModelRouteExtended = {
-        path: '',
+        path: 'users',
         title: 'User List',
-        fullPath: '',
+        navigationPath: 'users',
         component: UserListComponent,
         canActivate: [AbstractRouteGuard]
     }
     
     static readonly UserDetails: ModelRouteExtended = {
-        path: 'user/:userId',
-        title: 'User List',
-        fullPath: '',
-        component: UserListComponent
+        path: 'users/:id',
+        title: 'User details',
+        navigationPath: 'users',
+        component: UserDetailsComponent,
     }
 
     static readonly NotFound: ModelRouteExtended = {
         path: '**',
         title: 'Not Found',
-        fullPath: '',
+        navigationPath: '',
         component: PageNotFoundComponent
     }
     

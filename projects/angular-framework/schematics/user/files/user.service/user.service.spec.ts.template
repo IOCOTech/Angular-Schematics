@@ -1,25 +1,63 @@
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { UnitTestModule } from '../../unit-tests-helpers/unit-test.module';
-import { AbstractEndpoints } from '../endpoints/endpoints.service.abstract';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ServiceUser } from './user.service';
+import { AbstractEndpoints } from '../endpoints/endpoints.service.abstract';
+import { ModelUser } from '../../models/user/user.model';
+import { UnitTestHelpers } from '../../unit-tests-helpers/unit-test.helper';
+import { HttpClient } from '@angular/common/http';
 
 describe('ServiceUser', () => {
   let service: ServiceUser;
+  let httpMock: HttpTestingController;
 
   beforeEach(() => {
+    const endpointsSpy = UnitTestHelpers.MockObjects.abstractAbstractEndpoints();
+
     TestBed.configureTestingModule({
-      imports: [
-        UnitTestModule
-      ],
+      imports: [HttpClientTestingModule],
       providers: [
-        { provide: ServiceUser, useClass: ServiceUser, deps: [AbstractEndpoints, HttpClientTestingModule] }
+        { provide: ServiceUser, userClass: ServiceUser, deps: [AbstractEndpoints, HttpClient] },
+        { provide: AbstractEndpoints, useValue: endpointsSpy }
       ]
     });
+
     service = TestBed.inject(ServiceUser);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('should call getUserDetails and return expected user details', () => {
+    const mockUser: ModelUser = UnitTestHelpers.MockData.users[0];
+    const userId = mockUser.id;
+
+    service.getUserDetails(userId).subscribe(user => {
+      expect(user).toEqual(mockUser);
+    });
+
+    const req = httpMock.expectOne(`http://example.com/users/${userId}`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockUser);
+  });
+
+  it('should handle error response', () => {
+    const userId = -1;
+    const errorMessage = '404 Not Found';
+
+    service.getUserDetails(userId).subscribe({
+      next: () => fail('expected an error, not user details'),
+      error:(error) => expect(error.status).toBe(404)
+    }
+  );
+
+  const req = httpMock.expectOne(`http://example.com/users/${userId}`);
+  expect(req.request.method).toBe('GET');
+  req.flush(errorMessage, { status: 404, statusText: 'Not Found' });
+});
 });

@@ -85,15 +85,14 @@ export function ngAdd(): Rule {
                 context.addTask(new NodePackageInstallTask({ packageName: 'typescript-json-schema --save-dev' }));
 
                 context.logger.info('Update package.json.....');
-                addScriptToPackageJson(tree, "build:config", "npx typescript-json-schema \"src/environments/config/config.interface.ts\" \"IConfig\" -o \"src/environments/config/config.schema.json\" --required true")
+                addScriptToPackageJson(tree, "build:config", "npx typescript-json-schema \"src/config/config.interface.ts\" \"IConfig\" -o \"src/config/config.schema.json\" --required true")
                 addScriptToPackageJson(tree, "build:prod", "ng build -c production")
                 addScriptToPackageJson(tree, "build:db", "json-concat ./src/app/mock-data/data/ ./src/app/mock-data/db.generated.json")
-                addScriptToPackageJson(tree, "start:mock-server", "npm run build:db & json-server --watch ./src/app/mock-data/db.json --silent")
+                addScriptToPackageJson(tree, "start:mock-server", "npm run build:db & json-server ./src/app/mock-data/db.generated.json")
                 addScriptToPackageJson(tree, "start:mock", "concurrently \"ng serve --configuration=mock\" \"npm run start:mock-server\" \"npm run build:config\" \"npm run lint:watch\"")
                 addScriptToPackageJson(tree, "start", "npm run start:mock")
                 addScriptToPackageJson(tree, "start:dev", "ng serve --configuration=development")
-                addScriptToPackageJson(tree, "lint:fix", "npm run lint --silent -- --fix")
-                addScriptToPackageJson(tree, "lint:watch", "onchange \"src/**/*.ts\" -- onerror \"npm run lint --silent\"  -t Error -m \"There are linting errors on your Angular project\"")
+                addScriptToPackageJson(tree, "lint:watch", "onchange \"src/**/*.ts\" -- onerror \"npm run lint\"  -t Error -m \"There are linting errors on your Angular project\"")
                 addScriptToPackageJson(tree, "e2e", "ng e2e")
 
                 context.logger.info('Update angular.json.....');

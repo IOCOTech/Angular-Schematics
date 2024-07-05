@@ -12,7 +12,7 @@ describe('AppErrorHandler', () => {
 
   beforeEach(() => {
     mockDialog = UnitTestHelpers.MockObjects.matDialog();
-    mockMonitoring = UnitTestHelpers.MockObjects.appMonitoring;
+    mockMonitoring = UnitTestHelpers.MockObjects.appMonitoring();
 
     TestBed.configureTestingModule({
       imports: [],

@@ -3,6 +3,8 @@ import { ModelUser } from '../../models/user/user.model';
 
 export abstract class AbstractServiceUser {
 
-    abstract getUserDetails(userId: number): Observable<ModelUser>;
+    abstract getUserList(): Observable<ModelUser[]>;
+
+    abstract getUserDetails(userId: string | number): Observable<ModelUser>;
 
 }

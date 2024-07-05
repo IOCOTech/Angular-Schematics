@@ -22,13 +22,8 @@ export class InterceptorLoadingScreen implements HttpInterceptor {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         let displayLoadingScreen = true;
-
-        for (const skipUrl of this.skipUrls) {
-            if (new RegExp(skipUrl).test(request.url)) {
-                displayLoadingScreen = false;
-                break;
-            }
-        }
+        // Check if url is in skipUrls
+        displayLoadingScreen = !this.skipUrls.some(skipUrl => new RegExp(skipUrl).test(request.url));
 
         if (displayLoadingScreen) {
             if (this.activeRequests === 0) {

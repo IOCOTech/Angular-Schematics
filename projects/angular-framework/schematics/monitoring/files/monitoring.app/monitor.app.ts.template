@@ -147,7 +147,7 @@ export class AppMonitoring {
       console.error(originName, exception);
       console.log('Error properties:', properties);
     }
-    let appInsightsSeverityLevel = severityLevel === ErrorSeverityLevel.Error ? 2 : 3;
+    const appInsightsSeverityLevel = severityLevel === ErrorSeverityLevel.Error ? 2 : 3;
     if (this.logTo.includes('appInsights')) {
       const ex: IExceptionTelemetry = {
         exception,

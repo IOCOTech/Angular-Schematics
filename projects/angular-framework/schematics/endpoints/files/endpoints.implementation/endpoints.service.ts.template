@@ -1,5 +1,5 @@
 import { AppConfig } from "../../app-services/config/config.app";
-import { AbstractEndpoints, IAuthorizationEndpoints, IUserEndpoints } from "./endpoints.service.abstract.ts.template";
+import { AbstractEndpoints, IAuthorizationEndpoints, IUserEndpoints } from "./endpoints.service.abstract";
 
 export class Endpoints implements AbstractEndpoints {
 
@@ -16,6 +16,7 @@ export class Endpoints implements AbstractEndpoints {
 
     user: IUserEndpoints = {
         getUserByUserId: (userId: string) => `${this.config.apiBaseURL}/api/user/${userId}`,
+        getUserList: `${this.config.apiBaseURL}/api/Users/`,
         saveUser: `${this.config.apiBaseURL}/api/Users/`
     };
 }

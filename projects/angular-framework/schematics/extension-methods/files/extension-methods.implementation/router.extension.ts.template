@@ -1,6 +1,8 @@
 import { ComponentType } from '@angular/cdk/portal';
 import { Router } from '@angular/router';
 import { NavigationRoutes } from '../app.routes';
+import { ModelUser } from '../models/user/user.model';
+import { UserDetailsComponent } from '../components/user-details/user-details.component';
 
 //#region EXTENSION METHODS FOR ANGULAR ROUTER
 
@@ -36,7 +38,7 @@ function nameOf<T extends new (...args: any[]) => any>(classType: T): string {
 class NavigationHelper {
 
     constructor(private router: Router) { }
-    
+
     // AdvertisementAnalytics(advertisementIds: string[], fromDate: Date, toDate: Date): void {
     //     // parameters[nameOf(AdvertisementAnalysisComponent)] = { fromDate: fromDate, toDate: toDate };
     //     // this.router.navigate([`${NavigationRoutes.AdvertisementAnalysis.fullPath}/${advertisementIds.join("&")}`]);
@@ -44,10 +46,18 @@ class NavigationHelper {
     // }
 
     UserList(): void {
-        this.router.navigate([`${NavigationRoutes.UserList.path}`]);
+        this.router.navigate([`${NavigationRoutes.UserList.navigationPath}`]);
+    }
+
+    UserDetails(id: string | number | ModelUser): void {
+        if (typeof id === 'object') {
+            parameters[nameOf(UserDetailsComponent)] = id;
+            id = id.id;
+        }
+        this.router.navigate([`${NavigationRoutes.UserDetails.navigationPath}/${id}`]);
     }
 
     NotFound(): void {
-        this.router.navigate([`${NavigationRoutes.NotFound.fullPath}`]);
+        this.router.navigate([`${NavigationRoutes.NotFound.navigationPath}`]);
     }
 }

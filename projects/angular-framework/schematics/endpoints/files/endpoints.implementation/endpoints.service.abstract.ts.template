@@ -11,6 +11,7 @@ export interface IAuthorizationEndpoints {
     registerRedirect: string;
 }
 export interface IUserEndpoints {
-    saveUser: string;
     getUserByUserId(userId: string): string;
+    getUserList: string
+    saveUser: string;
 }

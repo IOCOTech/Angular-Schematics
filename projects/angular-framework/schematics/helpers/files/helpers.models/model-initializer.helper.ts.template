@@ -22,7 +22,8 @@ export class ModelInitializer {
     static readonly User = (data?: Partial<ModelUser>): ModelUser => {
         return {
             id: data?.id ?? '',
-            name: data?.name ?? ''
+            name: data?.name ?? '',
+            surname: data?.surname ?? ''
         };
     }
 }

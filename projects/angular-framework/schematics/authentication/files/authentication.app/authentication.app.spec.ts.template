@@ -15,14 +15,13 @@ describe('AppAuthentication', () => {
 
     beforeEach(() => {
         msalService = UnitTestHelpers.MockObjects.msalService();
-        msalBroadcastService = UnitTestHelpers.MockObjects.msalBroadcastService;
-        appMonitor = UnitTestHelpers.MockObjects.appMonitoring;
+        msalBroadcastService = UnitTestHelpers.MockObjects.msalBroadcastService();
+        appMonitor = UnitTestHelpers.MockObjects.appMonitoring();
         msalSubject$ = new Subject<EventMessage>();
 
         msalSubject$ = new Subject<EventMessage>();
         msalBroadcastService.msalSubject$ = msalSubject$.asObservable();
 
-        console.log(msalService);
         TestBed.configureTestingModule({
             providers: [
                 { provide: MsalService, useValue: msalService },

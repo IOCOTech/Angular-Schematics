@@ -7,7 +7,7 @@ import { AppMonitoring } from './monitor.app';
 
 describe('AppMonitoring', () => {
     let service: AppMonitoring;
-    let mockConfig: Partial<AppConfig> = config as Partial<AppConfig>;
+    const mockConfig: Partial<AppConfig> = config as Partial<AppConfig>;
 
     beforeEach(() => {
 

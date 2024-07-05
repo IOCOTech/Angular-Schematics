@@ -1,11 +1,13 @@
 {
     "users": [
         {
-            "username": "Sakkie",
+            "id": "cc023858-ddbc-4a93-a881-87baed7b0535",
+            "name": "Sakkie",
             "surname": "van Zyl"
         },
         {
-            "username": "Jan Jurgens",
+            "id": "530396e9-bf7e-4b52-b628-349a1a995ea3",
+            "name": "Jan Jurgens",
             "surname": "van der Walt"
         }
     ]

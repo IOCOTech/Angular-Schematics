@@ -1,0 +1,75 @@
+import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
+import { AppLoadingIndicator } from '../app-services/loading-indicator/loading-indicator.app';
+import { InterceptorLoadingScreen } from './loading-indicator.interceptor';
+
+describe('InterceptorLoadingScreen', () => {
+    let httpMock: HttpTestingController;
+    let httpClient: HttpClient;
+    let loadingIndicatorServiceSpy: jasmine.SpyObj<AppLoadingIndicator>;
+
+    beforeEach(() => {
+        loadingIndicatorServiceSpy = jasmine.createSpyObj('AppLoadingIndicator', ['startLoading', 'stopLoading']);
+
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule],
+            providers: [
+                {
+                    provide: HTTP_INTERCEPTORS,
+                    useClass: InterceptorLoadingScreen,
+                    multi: true
+                },
+                { provide: AppLoadingIndicator, useValue: loadingIndicatorServiceSpy }
+            ]
+        });
+
+        httpMock = TestBed.inject(HttpTestingController);
+        httpClient = TestBed.inject(HttpClient);
+    });
+
+    afterEach(() => {
+        httpMock.verify();
+    });
+
+    it('should start and stop loading indicator for a request', () => {
+        httpClient.get('/test').subscribe();
+
+        const req = httpMock.expectOne('/test');
+        expect(loadingIndicatorServiceSpy.startLoading).toHaveBeenCalledTimes(1);
+
+        req.flush({});
+        expect(loadingIndicatorServiceSpy.stopLoading).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not start loading indicator for a skipped URL', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const interceptor: InterceptorLoadingScreen = TestBed.inject(HTTP_INTERCEPTORS).find((i: any) => i instanceof InterceptorLoadingScreen) as any;
+        interceptor.skipUrls.push('/skip-this-url');
+
+        httpClient.get('/skip-this-url').subscribe();
+
+        const req = httpMock.expectOne('/skip-this-url');
+        expect(loadingIndicatorServiceSpy.startLoading).not.toHaveBeenCalled();
+
+        req.flush({});
+        expect(loadingIndicatorServiceSpy.stopLoading).not.toHaveBeenCalled();
+    });
+
+    it('should manage activeRequests count correctly', () => {
+        httpClient.get('/test1').subscribe();
+        httpClient.get('/test2').subscribe();
+
+        const req1 = httpMock.expectOne('/test1');
+        const req2 = httpMock.expectOne('/test2');
+
+        expect(loadingIndicatorServiceSpy.startLoading).toHaveBeenCalledTimes(1);
+        expect(loadingIndicatorServiceSpy.stopLoading).not.toHaveBeenCalled();
+
+        req1.flush({});
+        expect(loadingIndicatorServiceSpy.stopLoading).not.toHaveBeenCalled();
+
+        req2.flush({});
+        expect(loadingIndicatorServiceSpy.stopLoading).toHaveBeenCalledTimes(1);
+    });
+});

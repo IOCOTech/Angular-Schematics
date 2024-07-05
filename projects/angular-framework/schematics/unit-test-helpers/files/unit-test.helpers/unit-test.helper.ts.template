@@ -6,154 +6,185 @@ import { ErrorSeverityLevel } from '../../config/config.interface';
 import { Enums } from '../enums/enums';
 import MockData from '../mock-data/db.generated.json';
 import { ModelAccountFromToken } from '../models/authentication/account-from-token.model';
-
+import { AbstractEndpoints, IAuthorizationEndpoints, IUserEndpoints } from '../services/endpoints/endpoints.service.abstract';
+import { AbstractServiceUser } from '../services/user/user.service.abstract';
+import { ModelUser } from '../models/user/user.model';
+/* eslint-disable */
 export class UnitTestHelpers {
+
+    static readonly MockData = MockData;
 
     static readonly MockObjects = class {
 
-        static readonly abstractAbstractEndpoints = jasmine.createSpyObj('AbstractEndpoints', {
+        static readonly abstractAbstractEndpoints = (): jasmine.SpyObj<AbstractEndpoints> => {
+            const authorizationEndpointsSpy = jasmine.createSpyObj<IAuthorizationEndpoints>('IAuthorizationEndpoints', ['login', 'passwordReset', 'profileEdit', 'signup', 'loginRedirect', 'registerRedirect']);
+            authorizationEndpointsSpy.passwordReset = 'http://example.com/password-reset';
+            authorizationEndpointsSpy.profileEdit = 'http://example.com/profile-edit';
+            authorizationEndpointsSpy.signup = 'http://example.com/signup';
+            authorizationEndpointsSpy.loginRedirect = 'http://example.com/login-redirect';
+            authorizationEndpointsSpy.registerRedirect = 'http://example.com/register-redirect';
 
-            user: {
-                saveUser: '',
-                getUserByUserId: (userId: string): string => {
-                    return '';
+            const userEndpointsSpy = jasmine.createSpyObj<IUserEndpoints>('IUserEndpoints', ['saveUser', 'getUserByUserId']);
+            userEndpointsSpy.saveUser = 'http://example.com/save-user';
+            userEndpointsSpy.getUserByUserId.and.callFake((userId: string) => `http://example.com/users/${userId}`);
+
+            const abstractEndpointsSpy = jasmine.createSpyObj<AbstractEndpoints>('AbstractEndpoints', [], {
+                authorization: authorizationEndpointsSpy,
+                user: userEndpointsSpy
+            });
+            return abstractEndpointsSpy
+        }
+
+        static readonly abstractAppAuthentication = () => {
+            return jasmine.createSpyObj('AbstractAppAuthentication', {
+                getAllUsers: of(MockData.users),
+
+                isLoggedIn: of(false),
+
+                account: (): ModelAccountFromToken | null => {
+                    return null;
+                },
+
+                registerForAuthenticationEvents: (): void => {
+                    return;
+                },
+
+                setRegisterAuthority: (): void => {
+                    return;
+                },
+
+                setLoginAuthority: (): void => {
+                    return;
+                },
+
+                logout: (): void => {
+                    return;
                 }
-            }
-        });
 
-        static readonly abstractAppAuthentication = jasmine.createSpyObj('AbstractAppAuthentication', {
-            getAllUsers: of(MockData.users),
+            });
+        }
 
-            isLoggedIn: of(false),
+        static readonly abstractAppConfig = () => {
+            return jasmine.createSpyObj('AppConfig', {
 
-            account: (): ModelAccountFromToken | null => {
-                return null;
-            },
+                apiBaseURL: 'http://0.0.0.0',
+                appInsightsKey: 'testing',
+                authentication: {
+                    authority: 'testing',
+                    clientId: 'testing',
+                    navigateToLoginRequestUrl: false,
+                    postLogoutRedirectUri: 'testing',
+                    redirectUri: 'testing',
+                    validateAuthority: false
+                },
+                redirectUrl: 'testing',
+                logging: {
+                    errorLogTo: [],
+                    loggingLevel: 'error'
+                },
 
-            registerForAuthenticationEvents: (): void => {
-                return;
-            },
+                loadConfig: (): Promise<void> => {
+                    return new Promise(res => setTimeout(res, 200));
+                }
+            });
+        }
 
-            setRegisterAuthority: (): void => {
-                return;
-            },
+        static readonly abstractServiceUser = (): jasmine.SpyObj<AbstractServiceUser> => {
+            const spyObj = jasmine.createSpyObj<AbstractServiceUser>('AbstractServiceUser', ['getUserDetails']);
+            spyObj.getUserDetails.and.callFake((userId: number | string): Observable<ModelUser> => {
+                let user = MockData.users.find(u => u.id === userId);
+                if (!user) {
+                    user = MockData.users[0];
+                }
+                return of(user);
+            });
+            return spyObj;
+        }
 
-            setLoginAuthority: (): void => {
-                return;
-            },
+        static readonly appErrorHandler = () => {
+            return jasmine.createSpyObj('AppErrorHandler', {
+                displayErrorDialog: (
+                    origin: any, errorMessage: string, header: string = 'Error',
+                    icon = Enums.MaterialIcons.Error,
+                    displayReportIssueButton: boolean = false,
+                    error?: Error
+                ): void => {
+                    return;
+                }
+            });
+        }
 
-            logout: (): void => {
-                return;
-            }
+        static readonly appMonitoring = () => {
+            return jasmine.createSpyObj('AppMonitoring', {
+                microsoftVariableName: 'Microsoft',
 
-        });
+                userId: '1',
 
-        static readonly abstractAppConfig = jasmine.createSpyObj('AppConfig', {
+                loggingLevel: Enums.ErrorSeverityLevel.Info,
+                logTo: [],
+                appInsights: null,
 
-            apiBaseURL: 'http://0.0.0.0',
-            appInsightsKey: 'testing',
-            authentication: {
-                authority: 'testing',
-                clientId: 'testing',
-                navigateToLoginRequestUrl: false,
-                postLogoutRedirectUri: 'testing',
-                redirectUri: 'testing',
-                validateAuthority: false
-            },
-            redirectUrl: 'testing',
-            logging: {
-                errorLogTo: [],
-                loggingLevel: 'error'
-            },
+                logEvent: (
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    origin: any,
+                    descriptionOfEvent: string,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    properties?: { [key: string]: any }): void => {
+                    return;
+                },
 
-            loadConfig: (): Promise<void> => {
-                return new Promise(res => setTimeout(res, 200));
-            }
-        });
+                logMetric: (
+                    nameOfMetric: string,
+                    averageOfMetric: number,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    propertiesToTrack?: { [key: string]: any }): void => {
+                    return;
+                },
 
-        static readonly abstractServiceUser = jasmine.createSpyObj('AbstractServiceUser', {
-            getAllUsers: of(MockData.users),
-        });
+                logException: (
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    origin: any,
+                    exception: Error | string,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    properties: { [key: string]: any } = {},
+                    severityLevel:
+                        | ErrorSeverityLevel.Error
+                        | ErrorSeverityLevel.Critical = Enums.ErrorSeverityLevel.Error): void => {
+                    return;
+                },
 
-        static readonly appErrorHandler = jasmine.createSpyObj('AppErrorHandler', {
-            displayErrorDialog: (
-                origin: any, errorMessage: string, header: string = 'Error',
-                icon = Enums.MaterialIcons.Error,
-                displayReportIssueButton: boolean = false,
-                error?: Error
-            ): void => {
-                return;
-            }
-        });
+                getOriginName: (origin: any): string => {
+                    const originName = typeof (origin) === 'string' ? origin : origin?.constructor.name;
+                    return originName;
+                },
 
-        static readonly appMonitoring = jasmine.createSpyObj('AppMonitoring', {
+                addUserIdToProperties: (properties: { [key: string]: any }): void => {
+                    return;
+                },
 
+                addOriginToProperties: (origin: string, properties: { [key: string]: any }): void => {
+                    return;
+                },
 
-            microsoftVariableName: 'Microsoft',
+                logTrace: (message: string, properties?: { [key: string]: any }): void => {
+                    return;
+                }
+            });
+        }
 
-            userId: '1',
-
-            loggingLevel: Enums.ErrorSeverityLevel.Info,
-            logTo: [],
-            appInsights: null,
-
-            logEvent: (
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                origin: any,
-                descriptionOfEvent: string,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                properties?: { [key: string]: any }): void => {
-                return;
-            },
-
-            logMetric: (
-                nameOfMetric: string,
-                averageOfMetric: number,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                propertiesToTrack?: { [key: string]: any }): void => {
-                return;
-            },
-
-            logException: (
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                origin: any,
-                exception: Error | string,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                properties: { [key: string]: any } = {},
-                severityLevel:
-                    | ErrorSeverityLevel.Error
-                    | ErrorSeverityLevel.Critical = Enums.ErrorSeverityLevel.Error): void => {
-                return;
-            },
-
-            getOriginName: (origin: any): string => {
-                const originName = typeof (origin) === 'string' ? origin : origin?.constructor.name;
-                return originName;
-            },
-
-            addUserIdToProperties: (properties: { [key: string]: any }): void => {
-                return;
-            },
-
-            addOriginToProperties: (origin: string, properties: { [key: string]: any }): void => {
-                return;
-            },
-
-            logTrace: (message: string, properties?: { [key: string]: any }): void => {
-                return;
-            }
-        });
-
-        static readonly msalBroadcastService = jasmine.createSpyObj('MsalBroadcastService', {
-            msalSubject$: new Subject<EventMessage>().asObservable(),
-        });
+        static readonly msalBroadcastService = () => {
+            return jasmine.createSpyObj('MsalBroadcastService', {
+                msalSubject$: new Subject<EventMessage>().asObservable(),
+            });
+        }
 
         static readonly matDialogRef = (returnValue: string = 'true') => {
             const spyObj = jasmine.createSpyObj('MatDialogRef', {
-                afterClosed: Observable<any>
-
+                afterClosed: Observable<any>,
+                close: void 0
             });
             spyObj.afterClosed.and.returnValue(of(returnValue));
+            spyObj.close.and.returnValue(void 0);
             return spyObj;
         };
 
@@ -231,3 +262,4 @@ export class UnitTestHelpers {
         }
     };
 }
+/* eslint-enable */

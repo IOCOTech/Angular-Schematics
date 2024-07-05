@@ -1,1 +1,27 @@
-<p>user-details works!</p>
+<mat-card>
+    <mat-card-title>Edit User</mat-card-title>
+    <mat-card-content>
+      <form class="card-content" [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" >
+          <mat-label>ID</mat-label>
+          <input matInput formControlName="id" [disabled]="true">
+          <mat-error *ngIf="userForm.get('id')!.hasError('required')">ID is required</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name">
+          <mat-error *ngIf="userForm.get('name')!.hasError('required')">Name is required</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline">
+          <mat-label>Surname</mat-label>
+          <input matInput formControlName="surname">
+          <mat-error *ngIf="userForm.get('surname')!.hasError('required')">Surname is required</mat-error>
+        </mat-form-field>
+  
+        <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">Save</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+  

@@ -1,9 +1,9 @@
-import { Enums } from "../../enums/enums";
 import { AppConfig } from "../../app-services/config/config.app";
-import { Endpoints } from "./endpoints.service.ts.template";
-import { AbstractEndpoints } from "./endpoints.service.abstract.ts.template";
-import { EndpointsMock } from "./endpoints.service.mock.ts.template";
-import { AppMonitoring } from "../../app-services/monitor/monitor.app";
+import { AppMonitoring } from "../../app-services/monitoring/monitor.app";
+import { Enums } from "../../enums/enums";
+import { Endpoints } from "./endpoints.service";
+import { AbstractEndpoints } from "./endpoints.service.abstract";
+import { EndpointsMock } from "./endpoints.service.mock";
 
 
 export function FactoryEndpoints(appConfig: AppConfig, appMonitor: AppMonitoring): AbstractEndpoints {

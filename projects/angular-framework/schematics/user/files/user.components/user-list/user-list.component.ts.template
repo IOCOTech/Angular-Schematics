@@ -11,15 +11,15 @@ import { ModelUser } from '../../models/user/user.model';
 export class UserListComponent {
 
   users: ModelUser[] = [
-    { id: 12, name: 'Dr. Nice' },
-    { id: 13, name: 'Bombasto' },
-    { id: 14, name: 'Celeritas' },
-    { id: 15, name: 'Magneta' },
-    { id: 16, name: 'RubberMan' },
-    { id: 17, name: 'Dynama' },
-    { id: 18, name: 'Dr. IQ' },
-    { id: 19, name: 'Magma' },
-    { id: 20, name: 'Tornado' }
+    { id: 12, name: 'Dr. Nice', surname: 'McGlynn' },
+    { id: 13, name: 'Bombasto', surname: 'Bruen' },
+    { id: 14, name: 'Celeritas', surname: 'O\'Hara' },
+    { id: 15, name: 'Magneta', surname: 'Leffler' },
+    { id: 16, name: 'RubberMan', surname: 'Hahn' },
+    { id: 17, name: 'Dynama', surname: 'Rath' },
+    { id: 18, name: 'Dr. IQ', surname: 'Cole' },
+    { id: 19, name: 'Magma', surname: 'Lubowitz' },
+    { id: 20, name: 'Tornado', surname: 'Zieme' }
   ];
 
 

@@ -8,7 +8,11 @@ export class ServiceUser implements AbstractServiceUser {
 
     constructor(private endpoints: AbstractEndpoints, private http: HttpClient) { }
 
-    getUserDetails(userId: number): Observable<ModelUser> {
+    getUserList(): Observable<ModelUser[]> {
+        return this.http.get<ModelUser[]>(this.endpoints.user.getUserList);
+    }
+    
+    getUserDetails(userId: string | number): Observable<ModelUser> {
         return this.http.get<ModelUser>(this.endpoints.user.getUserByUserId(userId.toString()));
     }
 
