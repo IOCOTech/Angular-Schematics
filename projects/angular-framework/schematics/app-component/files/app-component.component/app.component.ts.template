@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar, MatSnackBarModule, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig, MatSnackBarModule, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { RouterOutlet } from '@angular/router';
 import { AbstractAppAuthentication } from '../app/app-services/authentication/authentication.app.abstract';
 import { AppMonitoring } from '../app/app-services/monitoring/monitor.app';
@@ -49,13 +49,12 @@ export class AppComponent implements OnInit {
   }
 
   openSnackBar(snackbarDetails: ModelSnackBarDetails): void {
-    // Added timeout because snackbar has a bug that gives a error if displayed on Init of component
-    setTimeout(() => {
-      this.snackbarRef = this.snackBar.openFromComponent(
-        snackbarDetails.componentRef
-        , {
-          panelClass: ['custom-snackbar']
-        });
-    }, 100);
+    // This is a example to display a more complex snackbar.
+    // To display a simple snackbar, use the default snackBar.open(message, action);
+    this.snackbarRef = this.snackBar.openFromComponent(
+      snackbarDetails.componentRef
+      , {
+        panelClass: ['custom-snackbar']
+      });
   }
 }

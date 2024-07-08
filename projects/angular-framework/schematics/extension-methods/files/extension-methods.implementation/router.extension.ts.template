@@ -10,7 +10,7 @@ declare module '@angular/router' {
     export interface Router {
         Routes: NavigationRoutes;
         NavigateTo: NavigationHelper;
-        GetNavigationParameter<T>(component: ComponentType<T>): T;
+        GetNavigationParameter<T>(component: ComponentType<any>): T;
         InitializeExtensionMethods(): void;
     }
 }
@@ -24,7 +24,7 @@ Router.prototype.InitializeExtensionMethods = function () {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const parameters: { [key: string]: any } = {};
 
-Router.prototype.GetNavigationParameter = function <T>(component: ComponentType<T>) {
+Router.prototype.GetNavigationParameter = function <T>(component: ComponentType<any>): T {
     return parameters[nameOf(component)] as T;
 };
 

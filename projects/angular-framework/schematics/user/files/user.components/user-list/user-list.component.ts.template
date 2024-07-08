@@ -1,26 +1,48 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppConfig } from '../../app-services/config/config.app';
+import { AppMonitoring } from '../../app-services/monitoring/monitor.app';
+import { MaterialDesignConfig } from '../../app.config.material';
+import '../../extension-methods/observable.extension';
+import '../../extension-methods/router.extension';
 import { ModelUser } from '../../models/user/user.model';
+import { AbstractEndpoints } from '../../services/endpoints/endpoints.service.abstract';
+import { FactoryServiceUser } from '../../services/user/user.factory.service';
+import { AbstractServiceUser } from '../../services/user/user.service.abstract';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [],
+  imports: [
+    ...MaterialDesignConfig
+  ],
+  providers: [
+    { provide: AbstractServiceUser, useFactory: FactoryServiceUser, deps: [HttpClient, AbstractEndpoints, AppMonitoring, AppConfig] }
+  ],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss'
 })
 export class UserListComponent {
 
-  users: ModelUser[] = [
-    { id: 12, name: 'Dr. Nice', surname: 'McGlynn' },
-    { id: 13, name: 'Bombasto', surname: 'Bruen' },
-    { id: 14, name: 'Celeritas', surname: 'O\'Hara' },
-    { id: 15, name: 'Magneta', surname: 'Leffler' },
-    { id: 16, name: 'RubberMan', surname: 'Hahn' },
-    { id: 17, name: 'Dynama', surname: 'Rath' },
-    { id: 18, name: 'Dr. IQ', surname: 'Cole' },
-    { id: 19, name: 'Magma', surname: 'Lubowitz' },
-    { id: 20, name: 'Tornado', surname: 'Zieme' }
-  ];
+  users: ModelUser[] | undefined;;
 
+  constructor(private router: Router, private serviceUser: AbstractServiceUser, private appMonitor: AppMonitoring) { 
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.serviceUser.getUserList().subscribe({
+      next: (users: ModelUser[]) => {
+        this.users = users;
+      }, error: (error) => {
+        this.appMonitor.logException(this, error);
+      }
+    });
+  }
+
+  navigateToDetails(id: ModelUser) {
+      this.router.NavigateTo.UserDetails(id);
+    }
 
 }
