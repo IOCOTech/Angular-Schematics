@@ -20,6 +20,6 @@ jobs:
             - run: npm run build
             - name: publish
               run: npm publish --access public
-              working-directory: dist/ioco-framework
+              working-directory: dist/angular-framework
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
