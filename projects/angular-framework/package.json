@@ -1,6 +1,6 @@
 {
   "name": "@ioco-dev/angular-framework",
-  "version": "17.3.183",
+  "version": "17.3.0",
   "scripts": {
     "build": "tsc -p tsconfig.schematics.json",
     "postbuild": "copyfiles \"schematics/collection.json\" \"schematics/*/files/**\"  \"../../dist/angular-framework\""
