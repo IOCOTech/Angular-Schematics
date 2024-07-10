@@ -17,8 +17,8 @@ export class EndpointsMock implements AbstractEndpoints {
     };
     
     user: IUserEndpoints = {
-        getUserByUserId: (userId: string) => `${this.config.apiBaseURL}/Users/${userId}`,
-        getUserList: `${this.config.apiBaseURL}/Users`,
-        saveUser: `${this.config.apiBaseURL}/Users`,
+        getUserByUserId: (userId: string) => `${this.config.apiBaseURL}/users/${userId}`,
+        getUserList: `${this.config.apiBaseURL}/users`,
+        saveUser: `${this.config.apiBaseURL}/users`,
     };
 }
