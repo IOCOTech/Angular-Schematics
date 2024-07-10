@@ -1,17 +1,56 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute, Router } from '@angular/router';
+import { throwError } from 'rxjs';
+import { AppMonitoring } from '../../app-services/monitoring/monitor.app';
+import { AbstractEndpoints } from '../../services/endpoints/endpoints.service.abstract';
+import { AbstractServiceUser } from '../../services/user/user.service.abstract';
+import { UnitTestHelpers } from '../../unit-tests-helpers/unit-test.helper';
 import { UserDetailsComponent } from './user-details.component';
 
 describe('UserDetailsComponent', () => {
   let component: UserDetailsComponent;
   let fixture: ComponentFixture<UserDetailsComponent>;
+  let mockActivatedRoute: Partial<ActivatedRoute>;
+  let mockAppMonitoring: jasmine.SpyObj<AppMonitoring>;
+  let mockEndpoints: jasmine.SpyObj<AbstractEndpoints>;
+  let mockRouter: jasmine.SpyObj<Router>;
+  let mockServiceUser: jasmine.SpyObj<AbstractServiceUser>;
 
   beforeEach(async () => {
+    mockActivatedRoute = UnitTestHelpers.MockObjects.activatedRouteWithId(UnitTestHelpers.MockData.users[0].id);
+    mockAppMonitoring = UnitTestHelpers.MockObjects.appMonitoring();
+    mockEndpoints = UnitTestHelpers.MockObjects.abstractEndpoints();
+    mockRouter = UnitTestHelpers.MockObjects.router();
+    mockServiceUser = UnitTestHelpers.MockObjects.abstractServiceUser();
+
     await TestBed.configureTestingModule({
-      imports: [UserDetailsComponent]
-    })
-    .compileComponents();
-    
+      imports: [
+        HttpClientTestingModule,
+        NoopAnimationsModule,
+        ReactiveFormsModule,
+        UserDetailsComponent
+      ],
+      providers: [
+        FormBuilder,
+      ]
+    }).compileComponents();
+
+
+    TestBed.overrideComponent(UserDetailsComponent, {
+      set: {
+        providers: [
+          { provide: ActivatedRoute, useValue: mockActivatedRoute },
+          { provide: Router, useValue: mockRouter },
+          { provide: AbstractServiceUser, useValue: mockServiceUser },
+          { provide: AppMonitoring, useValue: mockAppMonitoring },
+          { provide: AbstractEndpoints, useValue: mockEndpoints }
+        ]
+      },
+    });
+
     fixture = TestBed.createComponent(UserDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -19,5 +58,55 @@ describe('UserDetailsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should initialize user from NavigationParameter if passed via router', () => {
+    const user = UnitTestHelpers.MockData.users[0];
+    mockRouter.GetNavigationParameter.and.returnValue(user);
+
+    fixture = TestBed.createComponent(UserDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    
+    expect(component.user).toEqual(user);
+    expect(component.userForm.value).toEqual(user);
+
+  });
+
+  it('should load user details on init if user is not passed via router', () => {
+    const user = UnitTestHelpers.MockData.users[0];
+
+    component.loadUser(user.id);
+
+    expect(mockServiceUser.getUserDetails).toHaveBeenCalledWith(user.id);
+    expect(component.user).toEqual(user);
+    expect(component.userForm.value).toEqual(user);
+  });
+
+  it('should log an error if loading user details fails', () => {
+    const user = UnitTestHelpers.MockData.users[0];
+    const errorResponse = new Error('Testing error');
+    mockServiceUser.getUserDetails.and.returnValue(throwError(() => errorResponse));
+
+    component.loadUser(user.id);
+
+    expect(mockServiceUser.getUserDetails).toHaveBeenCalledWith(user.id);
+    expect(mockAppMonitoring.logException).toHaveBeenCalledWith(component, errorResponse);
+  });
+
+  it('should navigate to user list on form submission if form is valid', () => {
+    component.userForm.setValue({ id: '123', name: 'John', surname: 'Doe' });
+
+    component.onSubmit();
+
+    expect(mockRouter.NavigateTo.UserList).toHaveBeenCalled();
+  });
+
+  it('should not navigate on form submission if form is invalid', () => {
+    component.userForm.setValue({ id: '', name: '', surname: '' });
+
+    component.onSubmit();
+
+    expect(mockRouter.NavigateTo.UserList).not.toHaveBeenCalled();
   });
 });

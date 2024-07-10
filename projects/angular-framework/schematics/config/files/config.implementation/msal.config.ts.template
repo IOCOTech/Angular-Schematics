@@ -1,7 +1,7 @@
 import { MsalGuardConfiguration, MsalInterceptorConfiguration } from '@azure/msal-angular';
 import { BrowserAuthOptions, BrowserCacheLocation, InteractionType, IPublicClientApplication, PublicClientApplication } from '@azure/msal-browser';
 import { AppConfig } from '../app/app-services/config/config.app';
-import { NavigationRoutes } from '../app/app.routes';
+import { NavigationRoutes } from '../app/app.routes.definition';
 
 export const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
 

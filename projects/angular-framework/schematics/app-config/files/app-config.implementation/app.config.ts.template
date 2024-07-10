@@ -5,7 +5,7 @@ import { Router, provideRouter } from '@angular/router';
 import { AppConfig } from './app-services/config/config.app';
 import { FactoryAppConfig } from './app-services/config/config.app.factory';
 import { AppMonitoring } from './app-services/monitoring/monitor.app';
-import { NavigationRoutes } from './app.routes';
+import { RoutesProvider } from './app.routes';
 import { InterceptorError } from './interceptors/error.interceptor';
 import { InterceptorLoadingScreen } from './interceptors/loading-indicator.interceptor';
 import { MicrosoftAuthenticationLibraryModule } from './modules/microsoft-authentication-library/microsoft-authentication-library.module';
@@ -16,11 +16,11 @@ export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(MicrosoftAuthenticationLibraryModule.forRoot()),
     provideHttpClient(withInterceptorsFromDi(), withFetch()),
-    provideRouter(NavigationRoutes.routes), 
+    provideRouter(RoutesProvider.routes), 
     provideAnimationsAsync(),
     { provide: APP_INITIALIZER, useFactory: FactoryAppConfig, deps: [AppConfig, Router], multi: true, },
     { provide: AbstractEndpoints, useFactory: FactoryEndpoints, deps: [AppConfig, AppMonitoring] },
     { provide: HTTP_INTERCEPTORS, useClass: InterceptorLoadingScreen, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: InterceptorError, multi: true }, provideAnimationsAsync()
+    { provide: HTTP_INTERCEPTORS, useClass: InterceptorError, multi: true }, provideAnimationsAsync(), provideAnimationsAsync()
   ]
 };

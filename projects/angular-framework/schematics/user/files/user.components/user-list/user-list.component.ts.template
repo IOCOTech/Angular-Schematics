@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppConfig } from '../../app-services/config/config.app';
 import { AppMonitoring } from '../../app-services/monitoring/monitor.app';
+import { AppSnackBar } from '../../app-services/snackbar/snackbar.app';
 import { MaterialDesignConfig } from '../../app.config.material';
 import '../../extension-methods/observable.extension';
 import '../../extension-methods/router.extension';
@@ -10,6 +11,7 @@ import { ModelUser } from '../../models/user/user.model';
 import { AbstractEndpoints } from '../../services/endpoints/endpoints.service.abstract';
 import { FactoryServiceUser } from '../../services/user/user.factory.service';
 import { AbstractServiceUser } from '../../services/user/user.service.abstract';
+import { SnackBarExampleComponent } from '../../snack-bar-components/snack-bar-example/snack-bar-example.component';
 
 @Component({
   selector: 'app-user-list',
@@ -25,12 +27,15 @@ import { AbstractServiceUser } from '../../services/user/user.service.abstract';
 })
 export class UserListComponent {
 
-  users: ModelUser[] | undefined;;
+  users: ModelUser[] | undefined;
 
-  constructor(private router: Router, private serviceUser: AbstractServiceUser, private appMonitor: AppMonitoring) { 
+  constructor(
+    private router: Router, private serviceUser: AbstractServiceUser,
+    private appMonitor: AppMonitoring, private appSnackBar: AppSnackBar
+  ) {
     this.loadUsers();
   }
-
+  
   loadUsers(): void {
     this.serviceUser.getUserList().subscribe({
       next: (users: ModelUser[]) => {
@@ -42,7 +47,12 @@ export class UserListComponent {
   }
 
   navigateToDetails(id: ModelUser) {
-      this.router.NavigateTo.UserDetails(id);
-    }
+    this.router.NavigateTo.UserDetails(id);
+  }
 
+  openSnackbar() {
+    this.appSnackBar.showSnackbar(SnackBarExampleComponent, () => {
+      console.log('Snackbar closed');
+    });
+  }
 }

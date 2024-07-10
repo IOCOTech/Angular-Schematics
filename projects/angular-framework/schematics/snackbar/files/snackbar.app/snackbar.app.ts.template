@@ -9,21 +9,38 @@ export class AppSnackBar {
 
     onSnackbar: EventEmitter<ModelSnackBarDetails> = new EventEmitter<ModelSnackBarDetails>();
     onDismissSnackbar = new EventEmitter();
-    
-    private _callbackOnAction : ((response?: any) => void) | undefined;
-    public get callbackOnAction() : ((response?: any) => void) | undefined {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private _callbackOnAction: ((response?: any) => void) | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public get callbackOnAction(): ((response?: any) => void) | undefined {
         return this._callbackOnAction;
     }
-    private set callbackOnAction(v : ((response?: any) => void) | undefined) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private set callbackOnAction(v: ((response?: any) => void) | undefined) {
         this._callbackOnAction = v;
     }
 
+    /**
+     * Displays a snackbar with the specified component and optional callback function.
+     * This is to display a more complex snackbar. To display a simple snackbar, use the default snackBar.open(message, action).
+     * 
+     * @param componentToShow The component to be displayed in the snackbar.
+     * @param callbackFunction An optional callback function to be executed when an action is performed on the snackbar.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     showSnackbar(componentToShow: ComponentType<any>, callbackFunction?: (response?: any) => void): void {
         const details = new ModelSnackBarDetails(componentToShow, callbackFunction);
         this.callbackOnAction = callbackFunction;
         this.onSnackbar.emit(details);
     }
 
+    /**
+     * Dismisses the snackbar and triggers the callback function if available.
+     * 
+     * @param response - The optional response to pass to the callback function.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dismissSnackBar(response?: any): void {
         if (this.callbackOnAction) {
             this.callbackOnAction(response);

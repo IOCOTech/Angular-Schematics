@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar, MatSnackBarConfig, MatSnackBarModule, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
 import { RouterOutlet } from '@angular/router';
 import { AbstractAppAuthentication } from '../app/app-services/authentication/authentication.app.abstract';
 import { AppMonitoring } from '../app/app-services/monitoring/monitor.app';

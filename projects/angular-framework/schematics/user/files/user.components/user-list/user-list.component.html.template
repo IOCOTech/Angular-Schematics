@@ -1,7 +1,8 @@
 <mat-selection-list #shoes>
   @for (user of users; track user) {
   <mat-list-option (click)="navigateToDetails(user)">
-      {{ user.name }} {{ user.surname }}
+    {{ user.name }} {{ user.surname }}
   </mat-list-option>
   }
-</mat-selection-list>   
+</mat-selection-list>
+<button mat-raised-button color="primary" (click)="openSnackbar()">Display complex snackbar</button>

@@ -1,0 +1,42 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { SnackBarExampleComponent } from './snack-bar-example.component';
+import { AppSnackBar } from '../../app-services/snackbar/snackbar.app';
+import { MaterialDesignConfig } from '../../app.config.material';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { UnitTestHelpers } from '../../unit-tests-helpers/unit-test.helper';
+
+describe('SnackBarExampleComponent', () => {
+  let component: SnackBarExampleComponent;
+  let fixture: ComponentFixture<SnackBarExampleComponent>;
+  let mockAppSnackBar: jasmine.SpyObj<AppSnackBar>;
+
+  beforeEach(async () => {
+    mockAppSnackBar = UnitTestHelpers.MockObjects.appSnackbar();
+
+    await TestBed.configureTestingModule({
+      imports: [
+        ...MaterialDesignConfig,
+        SnackBarExampleComponent
+      ],
+      providers: [
+        { provide: AppSnackBar, useValue: mockAppSnackBar }
+      ],
+      schemas: [NO_ERRORS_SCHEMA] // Ignore Angular Material modules and components during test
+    }).compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(SnackBarExampleComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should call dismissSnackBar from AppSnackBar service when dismiss is called', () => {
+    component.dismiss();
+    expect(mockAppSnackBar.dismissSnackBar).toHaveBeenCalled();
+  });
+});

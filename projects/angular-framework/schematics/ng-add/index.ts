@@ -93,6 +93,7 @@ export function ngAdd(): Rule {
                 addScriptToPackageJson(tree, "start", "npm run start:mock")
                 addScriptToPackageJson(tree, "start:dev", "ng serve --configuration=development")
                 addScriptToPackageJson(tree, "lint:watch", "onchange \"src/**/*.ts\" -- onerror \"npm run lint\"  -t Error -m \"There are linting errors on your Angular project\"")
+                addScriptToPackageJson(tree, "test:coverage", "ng test --no-watch --code-coverage")
                 addScriptToPackageJson(tree, "e2e", "ng e2e")
 
                 context.logger.info('Update angular.json.....');
@@ -166,7 +167,15 @@ export function ngAdd(): Rule {
               "zone.js/testing"
             ],
             "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
+            "karmaConfig": "karma.conf.js",            
+            "codeCoverageExclude": [
+              "src/app/**/*.mock.ts",
+              "src/app/**/*.factory.*",
+              "src/app/**/*.abstract.ts",
+              "src/app/models/**/*.*",
+              "src/app/extension-methods/router.extension.ts",
+              "src/app/unit-tests-helpers/**/*.*"
+            ],
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",

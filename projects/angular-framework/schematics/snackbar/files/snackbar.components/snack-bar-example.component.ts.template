@@ -1,0 +1,30 @@
+import { Component } from '@angular/core';
+import { AppSnackBar } from '../../app-services/snackbar/snackbar.app';
+import { MaterialDesignConfig } from '../../app.config.material';
+
+
+
+@Component({
+  selector: 'app-snack-bar-example',
+  standalone: true,
+  imports: [
+    ...MaterialDesignConfig
+  ],
+  templateUrl: './snack-bar-example.component.html',
+  styleUrl: './snack-bar-example.component.scss'
+})
+
+/**
+ * This is a example of a complex snack bar.
+ * If you want to display a simple snack bar, you can use the MatSnackbar.Open() method.
+ * If not used in your project, you can remove this component and the corresponding methods/files that reference it.
+ * 
+ */
+export class SnackBarExampleComponent {
+
+  constructor(private appSnackBar: AppSnackBar) { }
+
+  dismiss() {
+    this.appSnackBar.dismissSnackBar();
+  }
+}

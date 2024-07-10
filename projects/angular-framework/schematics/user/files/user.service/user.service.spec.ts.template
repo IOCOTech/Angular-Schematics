@@ -11,7 +11,7 @@ describe('ServiceUser', () => {
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
-    const endpointsSpy = UnitTestHelpers.MockObjects.abstractAbstractEndpoints();
+    const endpointsSpy = UnitTestHelpers.MockObjects.abstractEndpoints();
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
@@ -33,6 +33,19 @@ describe('ServiceUser', () => {
     expect(service).toBeTruthy();
   });
 
+  it('getUserList should return an Observable<ModelUser[]>', () => {
+    const mockUserList: ModelUser[] = UnitTestHelpers.MockData.users
+
+    service.getUserList().subscribe(users => {
+      expect(users.length).toBe(UnitTestHelpers.MockData.users.length);
+      expect(users).toEqual(mockUserList);
+    });
+
+    const req = httpMock.expectOne(UnitTestHelpers.MockObjects.abstractEndpoints().user.getUserList);
+    expect(req.request.method).toEqual('GET');
+    req.flush(mockUserList);
+  });
+
   it('should call getUserDetails and return expected user details', () => {
     const mockUser: ModelUser = UnitTestHelpers.MockData.users[0];
     const userId = mockUser.id;
@@ -41,7 +54,7 @@ describe('ServiceUser', () => {
       expect(user).toEqual(mockUser);
     });
 
-    const req = httpMock.expectOne(`http://example.com/users/${userId}`);
+    const req = httpMock.expectOne(UnitTestHelpers.MockObjects.abstractEndpoints().user.getUserByUserId(userId.toString()));
     expect(req.request.method).toBe('GET');
     req.flush(mockUser);
   });

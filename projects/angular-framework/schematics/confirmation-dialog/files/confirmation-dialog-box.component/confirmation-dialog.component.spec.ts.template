@@ -12,7 +12,6 @@ import { UnitTestHelpers } from '../../unit-tests-helpers/unit-test.helper';
 describe('ConfirmationDialogComponent', () => {
   let component: ConfirmationDialogComponent;
   let fixture: ComponentFixture<ConfirmationDialogComponent>;
-  let dialogRefSpy: jasmine.SpyObj<MatDialogRef<ConfirmationDialogComponent>>;
   let data: ModelDialogConfirmationData;
 
   beforeEach(async () => {
@@ -36,7 +35,6 @@ describe('ConfirmationDialogComponent', () => {
 
     fixture = TestBed.createComponent(ConfirmationDialogComponent);
     component = fixture.componentInstance;
-    dialogRefSpy = TestBed.inject(MatDialogRef) as jasmine.SpyObj<MatDialogRef<ConfirmationDialogComponent>>;
     fixture.detectChanges();
   });
 

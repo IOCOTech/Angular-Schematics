@@ -1,22 +1,35 @@
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MsalService } from '@azure/msal-angular';
 import { AuthenticationResult, BrowserConfiguration, EventMessage, IPublicClientApplication, ITokenCache, Logger } from '@azure/msal-browser';
 import { Observable, Subject, of } from 'rxjs';
 import { ErrorSeverityLevel } from '../../config/config.interface';
+import { AppSnackBar } from '../app-services/snackbar/snackbar.app';
 import { Enums } from '../enums/enums';
 import MockData from '../mock-data/db.generated.json';
 import { ModelAccountFromToken } from '../models/authentication/account-from-token.model';
+import { ModelSnackBarDetails } from '../models/snackbar/snackbar-details.model';
+import { ModelUser } from '../models/user/user.model';
 import { AbstractEndpoints, IAuthorizationEndpoints, IUserEndpoints } from '../services/endpoints/endpoints.service.abstract';
 import { AbstractServiceUser } from '../services/user/user.service.abstract';
-import { ModelUser } from '../models/user/user.model';
+import { EventEmitter } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 /* eslint-disable */
 export class UnitTestHelpers {
 
+    /**
+     * This mock data is only intended for unit tests.
+     */
     static readonly MockData = MockData;
 
+    /**
+     * These are base mock objects that can be used to mock objects/services in unit tests.
+     * 
+     * Complex objects/services that require more complex setup can be created in the unit test itself.
+     */
     static readonly MockObjects = class {
 
-        static readonly abstractAbstractEndpoints = (): jasmine.SpyObj<AbstractEndpoints> => {
+        static readonly abstractEndpoints = (): jasmine.SpyObj<AbstractEndpoints> => {
             const authorizationEndpointsSpy = jasmine.createSpyObj<IAuthorizationEndpoints>('IAuthorizationEndpoints', ['login', 'passwordReset', 'profileEdit', 'signup', 'loginRedirect', 'registerRedirect']);
             authorizationEndpointsSpy.passwordReset = 'http://example.com/password-reset';
             authorizationEndpointsSpy.profileEdit = 'http://example.com/profile-edit';
@@ -24,9 +37,10 @@ export class UnitTestHelpers {
             authorizationEndpointsSpy.loginRedirect = 'http://example.com/login-redirect';
             authorizationEndpointsSpy.registerRedirect = 'http://example.com/register-redirect';
 
-            const userEndpointsSpy = jasmine.createSpyObj<IUserEndpoints>('IUserEndpoints', ['saveUser', 'getUserByUserId']);
+            const userEndpointsSpy = jasmine.createSpyObj<IUserEndpoints>('IUserEndpoints', ['saveUser', 'getUserList', 'getUserByUserId']);
             userEndpointsSpy.saveUser = 'http://example.com/save-user';
             userEndpointsSpy.getUserByUserId.and.callFake((userId: string) => `http://example.com/users/${userId}`);
+            userEndpointsSpy.getUserList = 'http://example.com/user';
 
             const abstractEndpointsSpy = jasmine.createSpyObj<AbstractEndpoints>('AbstractEndpoints', [], {
                 authorization: authorizationEndpointsSpy,
@@ -90,7 +104,8 @@ export class UnitTestHelpers {
         }
 
         static readonly abstractServiceUser = (): jasmine.SpyObj<AbstractServiceUser> => {
-            const spyObj = jasmine.createSpyObj<AbstractServiceUser>('AbstractServiceUser', ['getUserDetails']);
+            const spyObj = jasmine.createSpyObj<AbstractServiceUser>('AbstractServiceUser', ['getUserDetails', 'getUserList']);
+
             spyObj.getUserDetails.and.callFake((userId: number | string): Observable<ModelUser> => {
                 let user = MockData.users.find(u => u.id === userId);
                 if (!user) {
@@ -98,6 +113,12 @@ export class UnitTestHelpers {
                 }
                 return of(user);
             });
+
+            spyObj.getUserList.and.callFake((): Observable<ModelUser[]> => {
+                return of(MockData.users);
+            });
+
+
             return spyObj;
         }
 
@@ -125,10 +146,8 @@ export class UnitTestHelpers {
                 appInsights: null,
 
                 logEvent: (
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     origin: any,
                     descriptionOfEvent: string,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     properties?: { [key: string]: any }): void => {
                     return;
                 },
@@ -136,16 +155,13 @@ export class UnitTestHelpers {
                 logMetric: (
                     nameOfMetric: string,
                     averageOfMetric: number,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     propertiesToTrack?: { [key: string]: any }): void => {
                     return;
                 },
 
                 logException: (
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     origin: any,
                     exception: Error | string,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     properties: { [key: string]: any } = {},
                     severityLevel:
                         | ErrorSeverityLevel.Error
@@ -193,6 +209,12 @@ export class UnitTestHelpers {
                 open: MatDialogRef
             });
             spyObj.open.and.returnValue(this.matDialogRef(returnValue));
+            return spyObj;
+        }
+
+        static readonly matSnackbar = (): jasmine.SpyObj<MatSnackBar> => {
+            const spyObj = jasmine.createSpyObj('MatSnackBar', ['openFromComponent']);
+            spyObj.openFromComponent.and.returnValue({} as any);
             return spyObj;
         }
 
@@ -259,6 +281,44 @@ export class UnitTestHelpers {
             spyObj.instance = UnitTestHelpers.MockObjects.publicClientApplication();
 
             return spyObj;
+        }
+
+        static readonly appSnackbar = (): jasmine.SpyObj<AppSnackBar> => {
+            const mockOnSnackbarEventEmitter = new EventEmitter<ModelSnackBarDetails>();
+            const mockOnDismissEventEmitter = new EventEmitter();
+
+            const spyObj = jasmine.createSpyObj('AppSnackBar', ['onSnackbar', 'onDismissSnackbar', 'showSnackbar', 'dismissSnackBar']);
+            // Mocking onSnackbar to behave like an EventEmitter
+            spyObj.onSnackbar = mockOnSnackbarEventEmitter;
+            spyObj.onDismissSnackbar = mockOnDismissEventEmitter;
+
+            return spyObj;
+        }
+
+        static readonly router = (navigationParameter?: any): jasmine.SpyObj<Router> => {
+
+            const spyObj = jasmine.createSpyObj('Router', ['GetNavigationParameter', 'NavigateTo']);
+            // Add all the navigation routes to the spy object
+            spyObj.NavigateTo = jasmine.createSpyObj('NavigateTo', [
+                'UserDetails',
+                'UserList'
+            ]);
+
+            spyObj.GetNavigationParameter.and.returnValue(navigationParameter);
+
+            return spyObj;
+        }
+
+
+        static readonly activatedRouteWithId = (mockId: string | number): Partial<ActivatedRoute> => {
+
+            const mockActivatedRoute = {
+                snapshot: {
+                    params: { id: mockId }
+                }
+            };
+
+            return mockActivatedRoute as unknown as Partial<ActivatedRoute>;
         }
     };
 }

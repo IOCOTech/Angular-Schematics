@@ -3,6 +3,7 @@ import { apply, applyTemplates, chain, MergeStrategy, mergeWith, move, Rule, Sou
 
 const appSnackbarPath = 'app-services/snackbar';
 const modelsSnackbarPath = 'models/snackbar';
+const componentsSnackbarPath = 'snack-bar-components/snack-bar-example';
 
 export function addSnackbar(): Rule {
     return (tree: Tree, context: SchematicContext) => {
@@ -13,10 +14,12 @@ export function addSnackbar(): Rule {
         }
 
         const appRule = generateAppRule();
+        const componentsRule = generateComponentsRule();
         const modelsRule = generateModelsRule();
         
         return chain([
             mergeWith(appRule, MergeStrategy.Overwrite),
+            mergeWith(componentsRule, MergeStrategy.Overwrite),
             mergeWith(modelsRule, MergeStrategy.Overwrite)
         ]);
     }
@@ -42,6 +45,18 @@ function generateModelsRule(): Source {
                 dasherize: strings.dasherize,
             }),
             move(normalize(`src/app/${modelsSnackbarPath}`)),
+        ]
+    )
+}
+
+function generateComponentsRule(): Source {
+    return apply(
+        url('./files/snackbar.components'),
+        [
+            applyTemplates({
+                dasherize: strings.dasherize,
+            }),
+            move(normalize(`src/app/${componentsSnackbarPath}`)),
         ]
     )
 }

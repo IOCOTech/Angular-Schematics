@@ -35,10 +35,9 @@ export class UserDetailsComponent implements OnInit {
   ) {
     this.user = this.router.GetNavigationParameter<ModelUser>(UserDetailsComponent);
     if (!this.user) {
-      let id = this.route.snapshot.params['id'];
+      const id = this.route.snapshot.params['id'];
       // Load user from the server
       this.loadUser(id);
-
     }
   }
 
