@@ -1,0 +1,17 @@
+import { AppConfig } from "../../app-services/config/config.app";
+import { AppMonitoring } from "../../app-services/monitoring/monitor.app";
+import { Enums } from "../../enums/enums";
+import { Endpoints } from "./endpoints.service";
+import { AbstractEndpoints } from "./endpoints.service.abstract";
+import { EndpointsMock } from "./endpoints.service.mock";
+
+
+export function FactoryEndpoints(appConfig: AppConfig, appMonitor: AppMonitoring): AbstractEndpoints {
+    appMonitor.logEvent('FactoryEndpoints', 'Endpoints Factory loaded');
+    switch (appConfig.environment) {
+        case Enums.Environments.MockData:
+            return new EndpointsMock(appConfig);
+        default:
+            return new Endpoints(appConfig);
+    }
+}

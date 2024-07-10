@@ -1,0 +1,325 @@
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MsalService } from '@azure/msal-angular';
+import { AuthenticationResult, BrowserConfiguration, EventMessage, IPublicClientApplication, ITokenCache, Logger } from '@azure/msal-browser';
+import { Observable, Subject, of } from 'rxjs';
+import { ErrorSeverityLevel } from '../../config/config.interface';
+import { AppSnackBar } from '../app-services/snackbar/snackbar.app';
+import { Enums } from '../enums/enums';
+import MockData from '../mock-data/db.generated.json';
+import { ModelAccountFromToken } from '../models/authentication/account-from-token.model';
+import { ModelSnackBarDetails } from '../models/snackbar/snackbar-details.model';
+import { ModelUser } from '../models/user/user.model';
+import { AbstractEndpoints, IAuthorizationEndpoints, IUserEndpoints } from '../services/endpoints/endpoints.service.abstract';
+import { AbstractServiceUser } from '../services/user/user.service.abstract';
+import { EventEmitter } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+/* eslint-disable */
+export class UnitTestHelpers {
+
+    /**
+     * This mock data is only intended for unit tests.
+     */
+    static readonly MockData = MockData;
+
+    /**
+     * These are base mock objects that can be used to mock objects/services in unit tests.
+     * 
+     * Complex objects/services that require more complex setup can be created in the unit test itself.
+     */
+    static readonly MockObjects = class {
+
+        static readonly abstractEndpoints = (): jasmine.SpyObj<AbstractEndpoints> => {
+            const authorizationEndpointsSpy = jasmine.createSpyObj<IAuthorizationEndpoints>('IAuthorizationEndpoints', ['login', 'passwordReset', 'profileEdit', 'signup', 'loginRedirect', 'registerRedirect']);
+            authorizationEndpointsSpy.passwordReset = 'http://example.com/password-reset';
+            authorizationEndpointsSpy.profileEdit = 'http://example.com/profile-edit';
+            authorizationEndpointsSpy.signup = 'http://example.com/signup';
+            authorizationEndpointsSpy.loginRedirect = 'http://example.com/login-redirect';
+            authorizationEndpointsSpy.registerRedirect = 'http://example.com/register-redirect';
+
+            const userEndpointsSpy = jasmine.createSpyObj<IUserEndpoints>('IUserEndpoints', ['saveUser', 'getUserList', 'getUserByUserId']);
+            userEndpointsSpy.saveUser = 'http://example.com/save-user';
+            userEndpointsSpy.getUserByUserId.and.callFake((userId: string) => `http://example.com/users/${userId}`);
+            userEndpointsSpy.getUserList = 'http://example.com/user';
+
+            const abstractEndpointsSpy = jasmine.createSpyObj<AbstractEndpoints>('AbstractEndpoints', [], {
+                authorization: authorizationEndpointsSpy,
+                user: userEndpointsSpy
+            });
+            return abstractEndpointsSpy
+        }
+
+        static readonly abstractAppAuthentication = () => {
+            return jasmine.createSpyObj('AbstractAppAuthentication', {
+                getAllUsers: of(MockData.users),
+
+                isLoggedIn: of(false),
+
+                account: (): ModelAccountFromToken | null => {
+                    return null;
+                },
+
+                registerForAuthenticationEvents: (): void => {
+                    return;
+                },
+
+                setRegisterAuthority: (): void => {
+                    return;
+                },
+
+                setLoginAuthority: (): void => {
+                    return;
+                },
+
+                logout: (): void => {
+                    return;
+                }
+
+            });
+        }
+
+        static readonly abstractAppConfig = () => {
+            return jasmine.createSpyObj('AppConfig', {
+
+                apiBaseURL: 'http://0.0.0.0',
+                appInsightsKey: 'testing',
+                authentication: {
+                    authority: 'testing',
+                    clientId: 'testing',
+                    navigateToLoginRequestUrl: false,
+                    postLogoutRedirectUri: 'testing',
+                    redirectUri: 'testing',
+                    validateAuthority: false
+                },
+                redirectUrl: 'testing',
+                logging: {
+                    errorLogTo: [],
+                    loggingLevel: 'error'
+                },
+
+                loadConfig: (): Promise<void> => {
+                    return new Promise(res => setTimeout(res, 200));
+                }
+            });
+        }
+
+        static readonly abstractServiceUser = (): jasmine.SpyObj<AbstractServiceUser> => {
+            const spyObj = jasmine.createSpyObj<AbstractServiceUser>('AbstractServiceUser', ['getUserDetails', 'getUserList']);
+
+            spyObj.getUserDetails.and.callFake((userId: number | string): Observable<ModelUser> => {
+                let user = MockData.users.find(u => u.id === userId);
+                if (!user) {
+                    user = MockData.users[0];
+                }
+                return of(user);
+            });
+
+            spyObj.getUserList.and.callFake((): Observable<ModelUser[]> => {
+                return of(MockData.users);
+            });
+
+
+            return spyObj;
+        }
+
+        static readonly appErrorHandler = () => {
+            return jasmine.createSpyObj('AppErrorHandler', {
+                displayErrorDialog: (
+                    origin: any, errorMessage: string, header: string = 'Error',
+                    icon = Enums.MaterialIcons.Error,
+                    displayReportIssueButton: boolean = false,
+                    error?: Error
+                ): void => {
+                    return;
+                }
+            });
+        }
+
+        static readonly appMonitoring = () => {
+            return jasmine.createSpyObj('AppMonitoring', {
+                microsoftVariableName: 'Microsoft',
+
+                userId: '1',
+
+                loggingLevel: Enums.ErrorSeverityLevel.Info,
+                logTo: [],
+                appInsights: null,
+
+                logEvent: (
+                    origin: any,
+                    descriptionOfEvent: string,
+                    properties?: { [key: string]: any }): void => {
+                    return;
+                },
+
+                logMetric: (
+                    nameOfMetric: string,
+                    averageOfMetric: number,
+                    propertiesToTrack?: { [key: string]: any }): void => {
+                    return;
+                },
+
+                logException: (
+                    origin: any,
+                    exception: Error | string,
+                    properties: { [key: string]: any } = {},
+                    severityLevel:
+                        | ErrorSeverityLevel.Error
+                        | ErrorSeverityLevel.Critical = Enums.ErrorSeverityLevel.Error): void => {
+                    return;
+                },
+
+                getOriginName: (origin: any): string => {
+                    const originName = typeof (origin) === 'string' ? origin : origin?.constructor.name;
+                    return originName;
+                },
+
+                addUserIdToProperties: (properties: { [key: string]: any }): void => {
+                    return;
+                },
+
+                addOriginToProperties: (origin: string, properties: { [key: string]: any }): void => {
+                    return;
+                },
+
+                logTrace: (message: string, properties?: { [key: string]: any }): void => {
+                    return;
+                }
+            });
+        }
+
+        static readonly msalBroadcastService = () => {
+            return jasmine.createSpyObj('MsalBroadcastService', {
+                msalSubject$: new Subject<EventMessage>().asObservable(),
+            });
+        }
+
+        static readonly matDialogRef = (returnValue: string = 'true') => {
+            const spyObj = jasmine.createSpyObj('MatDialogRef', {
+                afterClosed: Observable<any>,
+                close: void 0
+            });
+            spyObj.afterClosed.and.returnValue(of(returnValue));
+            spyObj.close.and.returnValue(void 0);
+            return spyObj;
+        };
+
+        static readonly matDialog = (returnValue: string = 'true') => {
+            const spyObj = jasmine.createSpyObj('MatDialog', {
+                open: MatDialogRef
+            });
+            spyObj.open.and.returnValue(this.matDialogRef(returnValue));
+            return spyObj;
+        }
+
+        static readonly matSnackbar = (): jasmine.SpyObj<MatSnackBar> => {
+            const spyObj = jasmine.createSpyObj('MatSnackBar', ['openFromComponent']);
+            spyObj.openFromComponent.and.returnValue({} as any);
+            return spyObj;
+        }
+
+        private static readonly publicClientApplication = () => {
+            const spyObj = jasmine.createSpyObj<IPublicClientApplication>('IPublicClientApplication', {
+                initialize: Promise.resolve(),
+                acquireTokenPopup: Promise.resolve({} as AuthenticationResult),
+                acquireTokenRedirect: Promise.resolve(),
+                acquireTokenSilent: Promise.resolve({} as AuthenticationResult),
+                acquireTokenByCode: Promise.resolve({} as AuthenticationResult),
+                addEventCallback: 'callbackId',
+                removeEventCallback: undefined,
+                addPerformanceCallback: 'performanceCallbackId',
+                removePerformanceCallback: true,
+                enableAccountStorageEvents: undefined,
+                disableAccountStorageEvents: undefined,
+                getAccount: null,
+                getAccountByHomeId: null,
+                getAccountByLocalId: null,
+                getAccountByUsername: null,
+                getAllAccounts: [],
+                handleRedirectPromise: Promise.resolve(null),
+                loginPopup: Promise.resolve({} as AuthenticationResult),
+                loginRedirect: Promise.resolve(),
+                logout: Promise.resolve(),
+                logoutRedirect: Promise.resolve(),
+                logoutPopup: Promise.resolve(),
+                ssoSilent: Promise.resolve({} as AuthenticationResult),
+                getTokenCache: {} as ITokenCache,
+                getLogger: {} as Logger,
+                setLogger: undefined,
+                setActiveAccount: undefined,
+                getActiveAccount: null,
+                initializeWrapperLibrary: undefined,
+                setNavigationClient: undefined,
+                getConfiguration: {} as BrowserConfiguration,
+                hydrateCache: Promise.resolve(),
+                clearCache: Promise.resolve()
+            });
+            // return custom values
+            spyObj.getAllAccounts.and.returnValue(MockData.accountsFromB2C as any)
+
+            return spyObj;
+        }
+
+        static readonly msalService = () => {
+            const spyObj = jasmine.createSpyObj<MsalService>('MsalService', {
+                instance: undefined,
+                initialize: of(void 0),
+                acquireTokenPopup: of({} as AuthenticationResult),
+                acquireTokenRedirect: of(void 0),
+                acquireTokenSilent: of({} as AuthenticationResult),
+                handleRedirectObservable: of({} as AuthenticationResult),
+                loginPopup: of({} as AuthenticationResult),
+                loginRedirect: of(void 0),
+                logout: of(void 0),
+                logoutRedirect: of(void 0),
+                logoutPopup: of(void 0),
+                ssoSilent: of({} as AuthenticationResult),
+                getLogger: {} as Logger,
+                setLogger: undefined
+            });
+            // return custom values
+            spyObj.instance = UnitTestHelpers.MockObjects.publicClientApplication();
+
+            return spyObj;
+        }
+
+        static readonly appSnackbar = (): jasmine.SpyObj<AppSnackBar> => {
+            const mockOnSnackbarEventEmitter = new EventEmitter<ModelSnackBarDetails>();
+            const mockOnDismissEventEmitter = new EventEmitter();
+
+            const spyObj = jasmine.createSpyObj('AppSnackBar', ['onSnackbar', 'onDismissSnackbar', 'showSnackbar', 'dismissSnackBar']);
+            // Mocking onSnackbar to behave like an EventEmitter
+            spyObj.onSnackbar = mockOnSnackbarEventEmitter;
+            spyObj.onDismissSnackbar = mockOnDismissEventEmitter;
+
+            return spyObj;
+        }
+
+        static readonly router = (navigationParameter?: any): jasmine.SpyObj<Router> => {
+
+            const spyObj = jasmine.createSpyObj('Router', ['GetNavigationParameter', 'NavigateTo']);
+            // Add all the navigation routes to the spy object
+            spyObj.NavigateTo = jasmine.createSpyObj('NavigateTo', [
+                'UserDetails',
+                'UserList'
+            ]);
+
+            spyObj.GetNavigationParameter.and.returnValue(navigationParameter);
+
+            return spyObj;
+        }
+
+
+        static readonly activatedRouteWithId = (mockId: string | number): Partial<ActivatedRoute> => {
+
+            const mockActivatedRoute = {
+                snapshot: {
+                    params: { id: mockId }
+                }
+            };
+
+            return mockActivatedRoute as unknown as Partial<ActivatedRoute>;
+        }
+    };
+}
+/* eslint-enable */

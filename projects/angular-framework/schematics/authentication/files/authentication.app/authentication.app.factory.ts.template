@@ -1,0 +1,22 @@
+import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
+import { Enums } from '../../enums/enums';
+import { AbstractEndpoints } from '../../services/endpoints/endpoints.service.abstract';
+import { AppMonitoring } from '../monitoring/monitor.app';
+import { AppConfig } from '../config/config.app';
+import { HttpClient } from '@angular/common/http';
+import { AbstractAppAuthentication } from './authentication.app.abstract';
+import { MockAppAuthentication } from './authentication.app.mock';
+import { AppAuthentication } from './authentication.app';
+
+export function FactoryAppAuthentication(    
+    serviceMsal: MsalService, serviceBroadcast: MsalBroadcastService, endpoints: AbstractEndpoints,
+    appMonitor: AppMonitoring,  appConfig: AppConfig, httpClient: HttpClient
+): AbstractAppAuthentication {
+    appMonitor.logEvent('FactoryServiceAuthentication', 'Authentication Service Factory loaded');
+    switch (appConfig.environment) {
+        case Enums.Environments.MockData:
+            return new MockAppAuthentication(httpClient, endpoints);
+        default:
+            return new AppAuthentication(serviceMsal, serviceBroadcast, appMonitor);
+    }
+}

@@ -1,0 +1,12 @@
+
+import { Countries } from './standalone/countries.enum';
+import { Environments, ErrorSeverityLevel } from "../../config/config.interface";
+import { MaterialIcons } from "./standalone/material-icons.enum";
+
+
+export class Enums {
+    static readonly Countries = Countries;
+    static readonly Environments = Environments;
+    static readonly ErrorSeverityLevel = ErrorSeverityLevel;
+    static readonly MaterialIcons = MaterialIcons;
+}

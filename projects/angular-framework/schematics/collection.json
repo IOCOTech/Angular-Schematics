@@ -1,0 +1,113 @@
+{
+  "$schema": "../../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "app-component": {
+      "description": "Update the app component.",
+      "factory": "./app-component/index#addAppComponent"
+    },
+    "app-config": {
+      "description": "Overwrite default app.config with IOCO app.config.",
+      "factory": "./app-config/index#addAppConfig"
+    },
+    "app-service": {
+      "description": "Add app.service helper.",
+      "factory": "./app-service/index#addAppService"
+    },
+    "arm-templates": {
+      "description": "Adds IOCO bicep files",
+      "factory": "./arm-templates/index#addBicepFiles"
+    },
+    "authentication": {
+      "description": "Add MSAL authentication libraries to project.",
+      "factory": "./authentication/index#addAuthentication"
+    },
+    "azure-pipeline": {
+      "description": "Adds IOCO default azure pipeline",
+      "factory": "./azure-pipeline/index#addAzurePipeline"
+    },
+    "configuration": {
+      "description": "Add default files for configuration.",
+      "factory": "./config/index#addConfiguration"
+    },
+    "confirmation-dialog-box": {
+      "description": "Add default confirmation dialog box.",
+      "factory": "./confirmation-dialog/index#addConfirmationDialog"
+    },
+    "docker": {
+      "description": "Adds IOCO docker files",
+      "factory": "./docker/index#addDocker"
+    },
+    "endpoints": {
+      "description": "Add endpoints files.",
+      "factory": "./endpoints/index#addEndpoints"
+    },
+    "enums": {
+      "description": "Add Enums structure.",
+      "factory": "./enums/index#addEnums"
+    },
+    "error-dialog-box": {
+      "description": "Add default error dialog box.",
+      "factory": "./error-dialog/index#addErrorDialog"
+    },
+    "error-interceptor": {
+      "description": "Add error interceptor.",
+      "factory": "./error-interceptor/index#addErrorInterceptor"
+    },
+    "extension-methods": {
+      "description": "Add extension methods.",
+      "factory": "./extension-methods/index#addExtensionMethods"
+    },
+    "helpers": {
+      "description": "Add helper classes.",
+      "factory": "./helpers/index#addHelpers"
+    },
+    "karma-config": {
+      "description": "Adds IOCO karma configuration",
+      "factory": "./karma/index#addKarmaConfiguration"
+    },
+    "loading-indicator": {
+      "description": "Add default loading indicator.",
+      "factory": "./loading-indicator/index#addLoadingIndicator"
+    },
+    "mock-data": {
+      "description": "Add mock data examples.",
+      "factory": "./mock-data/index#addMockData"
+    },
+    "monitoring": {
+      "description": "Add default monitoring services.",
+      "factory": "./monitoring/index#addMonitoring"
+    },
+    "ng-add": {
+      "description": "Add IOCO Angular framework",
+      "factory": "./ng-add/index#ngAdd"
+    },
+    "page-not-found": {
+      "description": "Add a default page-not-found page.",
+      "factory": "./page-not-found/index#addPageNotFound"
+    },
+    "router": {
+      "description": "Add a customized router.",
+      "factory": "./router/index#addRouter"
+    },
+    "snackbar": {
+      "description": "Add snackbar.",
+      "factory": "./snackbar/index#addSnackbar"
+    },
+    "unit-test-helpers": {
+      "description": "Adds IOCO default unit test helpers",
+      "factory": "./unit-test-helpers/index#addUnitTestHelpers"
+    },
+    "user": {
+      "description": "Add user examples.",
+      "factory": "./user/index#addUserExamples"
+    },
+    "vscode": {
+      "description": "Adds IOCO .vscode folder with settings",
+      "factory": "./vscode/index#addVSCode"
+    },
+    "web-config": {
+      "description": "Add web config.",
+      "factory": "./web-config/index#addWebConfig"
+    }
+  }
+}

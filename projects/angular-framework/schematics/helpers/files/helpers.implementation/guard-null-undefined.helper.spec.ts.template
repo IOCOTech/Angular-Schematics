@@ -1,0 +1,31 @@
+import { GuardNullOrUndefined } from "./guard-null-undefined.helper";
+
+
+describe('GuardNullOrUndefined', () => {
+    it('should throw an error when object is null', () => {
+        const obj: string | null = null;
+        expect(() => GuardNullOrUndefined(obj)).toThrow(new Error('Value must be defined'));
+    });
+
+    it('should throw an error when object is undefined', () => {
+        const obj: string | undefined = undefined;
+        expect(() => GuardNullOrUndefined(obj)).toThrow(new Error('Value must be defined'));
+    });
+
+    it('should not throw an error when object is defined', () => {
+        const obj: string = 'defined';
+        expect(() => GuardNullOrUndefined(obj)).not.toThrow();
+    });
+
+    it('should throw a custom error message', () => {
+        const obj: string | null = null;
+        const customErrorMessage = 'Custom error message';
+        expect(() => GuardNullOrUndefined(obj, customErrorMessage)).toThrow(new Error(customErrorMessage));
+    });
+
+    it('should not throw an error with custom error message when object is defined', () => {
+        const obj: string = 'defined';
+        const customErrorMessage = 'Custom error message';
+        expect(() => GuardNullOrUndefined(obj, customErrorMessage)).not.toThrow();
+    });
+});

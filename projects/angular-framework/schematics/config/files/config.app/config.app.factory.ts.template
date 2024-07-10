@@ -1,0 +1,18 @@
+import { Router } from '@angular/router';
+import { AppConfig } from './config.app';
+import '../../extension-methods/observable.extension';
+import '../../extension-methods/router.extension';
+
+export function FactoryAppConfig(appConfig: AppConfig, router: Router): () => Promise<unknown> {
+    console.log('Config Service Factory loaded');
+    // Promise wrapped in promise to make provision for async calls in setup after loadConfig
+    const promise = new Promise((res) => {
+        appConfig.loadConfig()
+            .then(() => {
+                router.InitializeExtensionMethods();
+                res(true);
+            });
+    });
+    // For the app initializer the factory needs to return a function that returns a promise
+    return () => promise;
+}

@@ -1,0 +1,33 @@
+import { Component, OnDestroy } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Subscription, debounceTime } from 'rxjs';
+import { AppLoadingIndicator } from '../../app-services/loading-indicator/loading-indicator.app';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-loading-indicator',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatProgressSpinnerModule
+  ],
+  templateUrl: './loading-indicator.component.html',
+  styleUrl: './loading-indicator.component.scss'
+})
+export class LoadingIndicatorComponent implements OnDestroy{
+  loading = false;
+  loadingSubscription!: Subscription;
+
+  constructor(private loadingIndicatorService: AppLoadingIndicator) {
+    this.loadingSubscription = this.loadingIndicatorService.loadingStatus
+      .pipe(debounceTime(200))
+      .subscribe((value: boolean) => {
+      this.loading = value;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.loadingSubscription.unsubscribe();
+  }
+
+}

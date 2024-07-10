@@ -1,0 +1,86 @@
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpRequest, HttpResponse } from '@angular/common/http';
+import { throwError, Observable } from 'rxjs';
+import { AppMonitoring } from '../app-services/monitoring/monitor.app';
+import { InterceptorError } from './error.interceptor';
+import { UnitTestHelpers } from '../unit-tests-helpers/unit-test.helper';
+import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { GuardNullOrUndefined } from '../helpers/guard-null-undefined.helper';
+
+describe('InterceptorError', () => {
+
+    let interceptor: InterceptorError;
+    let appMonitorSpy: jasmine.SpyObj<AppMonitoring>;
+    let httpHandlerSpy: jasmine.SpyObj<HttpHandler>;
+
+    beforeEach(() => {
+        appMonitorSpy = UnitTestHelpers.MockObjects.appMonitoring();
+        httpHandlerSpy = jasmine.createSpyObj<HttpHandler>('HttpHandler', ['handle']);
+        interceptor = new InterceptorError(appMonitorSpy);
+
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule],
+            providers: [
+                { provide: AppMonitoring, useValue: appMonitorSpy }
+            ],
+        });
+    });
+
+    it('should log and rethrow client-side errors', () => {
+        const errorResponse = {
+            message: 'Client-side error message'
+        };
+
+
+        httpHandlerSpy.handle.and.returnValue(throwError(() => new HttpErrorResponse({
+            error: errorResponse,
+            status: 400,
+            statusText: 'Bad Request',
+        })));
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        interceptor.intercept(new HttpRequest<any>('GET', '/api/data'), httpHandlerSpy).subscribe({
+            next: () => { },
+            error: (error: HttpErrorResponse) => {
+                const status = RegExp(/Status:\s(\d+)/).exec(error.message);
+                const message = RegExp(/Message:\s(.+)/).exec(error.message);
+
+                GuardNullOrUndefined(status, 'Status is null or undefined');
+                GuardNullOrUndefined(message, 'Message is null or undefined');
+
+                const statusCode = Number(status[1]);
+                const messageText = message[1];
+
+                expect(statusCode).toBe(400);
+                expect(messageText).toContain('Bad Request');
+                expect(appMonitorSpy.logException).toHaveBeenCalled();
+            }
+        });
+    });
+
+    it('should handle non-error responses without logging', () => {
+        const mockResponse = {
+            data: 'Mock data',
+        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const successResponse = new HttpResponse<any>({
+            status: 200,
+            body: mockResponse,
+        });
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        httpHandlerSpy.handle.and.returnValue(new Observable<HttpResponse<any>>(subscriber => {
+            subscriber.next(successResponse);
+            subscriber.complete();
+        }));
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        interceptor.intercept(new HttpRequest<any>('GET', '/api/data'), httpHandlerSpy).subscribe(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (response: HttpEvent<any>) => {
+                expect(response).toEqual(successResponse);
+                expect(appMonitorSpy.logException).not.toHaveBeenCalled();
+            }
+        );
+    });
+});

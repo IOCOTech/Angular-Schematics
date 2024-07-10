@@ -1,0 +1,9 @@
+<div class="container">
+    <div>
+        Snackbar custom example works
+    </div>
+    <div class="buttons">
+        <button mat-raised-button color="primary" (click)="dismiss()">Accept</button>
+        <button mat-raised-button (click)="dismiss()">Decline</button>
+    </div>
+</div>

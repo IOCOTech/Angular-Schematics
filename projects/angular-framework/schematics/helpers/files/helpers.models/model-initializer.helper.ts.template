@@ -1,0 +1,29 @@
+import { Enums } from '../enums/enums';
+import { MaterialIcons } from '../enums/standalone/material-icons.enum';
+import { ModelErrorDialogConfig } from './dialog-boxes/error-dialog-config.model';
+import { ModelUser } from './user/user.model';
+
+export class ModelInitializer {
+
+    static readonly ErrorDialog = class {
+        static readonly ErrorDialogConfig = (
+            errorMessage: string, header: string = 'Error',
+            icon: MaterialIcons = Enums.MaterialIcons.Error,
+            displayReportIssueButton: boolean = false): ModelErrorDialogConfig => {
+            return {
+                errorMessage
+                , header
+                , icon
+                , displayReportIssueButton
+            };
+        }
+    };
+
+    static readonly User = (data?: Partial<ModelUser>): ModelUser => {
+        return {
+            id: data?.id ?? '',
+            name: data?.name ?? '',
+            surname: data?.surname ?? ''
+        };
+    }
+}

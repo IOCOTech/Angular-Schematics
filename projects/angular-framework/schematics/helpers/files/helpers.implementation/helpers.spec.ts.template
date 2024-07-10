@@ -1,0 +1,67 @@
+import { Helpers } from './helpers';
+
+describe('Helpers', () => {
+    describe('guid', () => {
+        it('should generate a valid GUID', () => {
+            const guid = Helpers.guid.generateGuid();
+            const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+            expect(guid).toMatch(regex);
+        });
+    });
+
+    describe('color', () => {
+        it('should convert hex color to RGB and set values', () => {
+            Helpers.color.setColor('#ff5733');
+            expect(Helpers.color.toRgb()).toBe('rgb(255, 87, 51)');
+        });
+
+        it('should convert RGB color to RGB and set values', () => {
+            Helpers.color.setColor('rgb(255, 87, 51)');
+            expect(Helpers.color.toRgb()).toBe('rgb(255, 87, 51)');
+        });
+
+        it('should convert RGBA color to RGBA and set values', () => {
+            Helpers.color.setColor('rgba(255, 87, 51, 0.5)');
+            expect(Helpers.color.toRgba()).toBe('rgba(255, 87, 51, 0.5)');
+        });
+
+        it('should log an error for invalid hex color', () => {
+            spyOn(console, 'error');
+            Helpers.color.setColor('#zzzzzz');
+            expect(console.error).toHaveBeenCalledWith('Error converting color from hex', '#zzzzzz');
+        });
+
+        it('should log an error for invalid RGB color', () => {
+            spyOn(console, 'error');
+            Helpers.color.setColor('rgb(255, 87)');
+            expect(console.error).toHaveBeenCalledWith('Error converting color from rgb', 'rgb(255, 87)');
+        });
+
+        it('should set opacity value', () => {
+            Helpers.color.setColor('rgb(255, 87, 51)');
+            Helpers.color.setOpacity(0.5);
+            expect(Helpers.color.toRgba()).toBe('rgba(255, 87, 51, 0.5)');
+        });
+
+        it('should convert color to hex string', () => {
+            Helpers.color.setColor('#ff5733');
+            expect(Helpers.color.toHex()).toBe('#ff5733');
+        });
+
+        it('should convert color to RGB string', () => {
+            Helpers.color.setColor('rgb(255, 87, 51)');
+            expect(Helpers.color.toRgb()).toBe('rgb(255, 87, 51)');
+        });
+
+        it('should convert color to RGBA string', () => {
+            Helpers.color.setColor('rgba(255, 87, 51, 0.5)');
+            expect(Helpers.color.toRgba()).toBe('rgba(255, 87, 51, 0.5)');
+        });
+
+        it('should correctly handle opacity changes', () => {
+            Helpers.color.setColor('rgba(255, 87, 51, 0.5)');
+            Helpers.color.setOpacity(0.8);
+            expect(Helpers.color.toRgba()).toBe('rgba(255, 87, 51, 0.8)');
+        });
+    });
+});

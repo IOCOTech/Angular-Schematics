@@ -1,0 +1,17 @@
+export abstract class AbstractEndpoints {
+    authorization!: IAuthorizationEndpoints;
+    user!: IUserEndpoints;
+}
+export interface IAuthorizationEndpoints {
+    login: string;
+    passwordReset: string;
+    profileEdit: string;
+    signup: string;
+    loginRedirect: string;
+    registerRedirect: string;
+}
+export interface IUserEndpoints {
+    getUserByUserId(userId: string): string;
+    getUserList: string
+    saveUser: string;
+}

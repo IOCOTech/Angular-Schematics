@@ -1,0 +1,10 @@
+import { Observable } from 'rxjs';
+import { ModelUser } from '../../models/user/user.model';
+
+export abstract class AbstractServiceUser {
+
+    abstract getUserList(): Observable<ModelUser[]>;
+
+    abstract getUserDetails(userId: string | number): Observable<ModelUser>;
+
+}

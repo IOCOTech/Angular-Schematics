@@ -1,0 +1,29 @@
+import { ModelRouteExtended } from './models/router/route-extended.model'
+
+export abstract class NavigationRoutes {
+
+    static readonly default = { 
+        path: '', 
+        redirectTo: 'users', 
+        pathMatch: 'full',
+    }
+
+    static readonly UserList: ModelRouteExtended = {
+        path: 'users',
+        title: 'User List',
+        navigationPath: 'users'
+    }
+    
+    static readonly UserDetails: ModelRouteExtended = {
+        path: 'users/:id',
+        title: 'User details',
+        navigationPath: 'users'
+    }
+
+    static readonly NotFound: ModelRouteExtended = {
+        path: '**',
+        title: 'Not Found',
+        navigationPath: ''
+    }
+    
+}

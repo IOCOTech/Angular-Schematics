@@ -1,0 +1,60 @@
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { MatSnackBar, MatSnackBarModule, MatSnackBarRef, SimpleSnackBar } from '@angular/material/snack-bar';
+import { RouterOutlet } from '@angular/router';
+import { AbstractAppAuthentication } from '../app/app-services/authentication/authentication.app.abstract';
+import { AppMonitoring } from '../app/app-services/monitoring/monitor.app';
+import { AppSnackBar } from '../app/app-services/snackbar/snackbar.app';
+import { ModelSnackBarDetails } from '../app/models/snackbar/snackbar-details.model';
+import { LoadingIndicatorComponent } from './components/loading-indicator/loading-indicator.component';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [
+    CommonModule,
+    LoadingIndicatorComponent,
+    MatSnackBarModule,
+    RouterOutlet
+  ],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss'
+})
+export class AppComponent implements OnInit {
+  title = 'IOCO';
+  snackbarRef: MatSnackBarRef<SimpleSnackBar> | undefined;
+
+  constructor(
+    public snackBar: MatSnackBar, private appSnackBar: AppSnackBar,
+    private appAuthentication: AbstractAppAuthentication, private appMonitoring: AppMonitoring
+  ) {
+    this.registerSnackbar();
+  }
+
+  ngOnInit(): void {
+    this.appAuthentication.registerForAuthenticationEvents();
+  }
+
+  registerSnackbar() {
+    this.appSnackBar.onSnackbar.subscribe((snackbarDetails: ModelSnackBarDetails) => {
+      this.openSnackBar(snackbarDetails);
+    });
+
+    this.appSnackBar.onDismissSnackbar.subscribe(() => {
+      if (this.snackbarRef) {
+        this.snackbarRef.dismiss();
+      }
+    });
+    this.appMonitoring.logEvent(this, 'Snackbar service registered');
+  }
+
+  openSnackBar(snackbarDetails: ModelSnackBarDetails): void {
+    // This is a example to display a more complex snackbar.
+    // To display a simple snackbar, use the default snackBar.open(message, action);
+    this.snackbarRef = this.snackBar.openFromComponent(
+      snackbarDetails.componentRef
+      , {
+        panelClass: ['custom-snackbar']
+      });
+  }
+}

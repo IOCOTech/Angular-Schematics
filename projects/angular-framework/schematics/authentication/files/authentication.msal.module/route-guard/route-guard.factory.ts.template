@@ -1,0 +1,22 @@
+import { Location } from "@angular/common";
+import { Router } from '@angular/router';
+import { MsalBroadcastService, MsalGuard, MsalGuardConfiguration, MsalService } from '@azure/msal-angular';
+import { MockRouteGuard } from './route-mock.guard';
+import { AbstractRouteGuard } from './route-guard.abstract';
+import { AppConfig } from "../../../app-services/config/config.app";
+import { Enums } from "../../../enums/enums";
+
+export function FactoryRouteGuard(
+    appConfig: AppConfig,
+    msalGuardConfig: MsalGuardConfiguration,
+    msalBroadcastService: MsalBroadcastService,
+    authService: MsalService,
+    location: Location,
+    router: Router): AbstractRouteGuard {
+    switch (appConfig.environment) {
+        case Enums.Environments.MockData:
+            return new MockRouteGuard();
+        default:
+            return new MsalGuard(msalGuardConfig, msalBroadcastService, authService, location, router);
+    }
+}

@@ -1,0 +1,110 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { MatSnackBar, MatSnackBarModule, MatSnackBarRef } from '@angular/material/snack-bar';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { AbstractAppAuthentication } from '../app/app-services/authentication/authentication.app.abstract';
+import { AppMonitoring } from '../app/app-services/monitoring/monitor.app';
+import { AppSnackBar } from '../app/app-services/snackbar/snackbar.app';
+import { AppComponent } from './app.component';
+import { ModelSnackBarDetails } from './models/snackbar/snackbar-details.model';
+import { UnitTestHelpers } from './unit-tests-helpers/unit-test.helper';
+
+describe('AppComponent', () => {
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+  let snackBar: jasmine.SpyObj<MatSnackBar>;
+  let appSnackBar: jasmine.SpyObj<AppSnackBar>;
+  let appAuthentication: jasmine.SpyObj<AbstractAppAuthentication>;
+  let appMonitoring: jasmine.SpyObj<AppMonitoring>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let mockSnackBarRef: jasmine.SpyObj<MatSnackBarRef<any>>;
+
+  beforeEach(async () => {
+    snackBar = UnitTestHelpers.MockObjects.matSnackbar();
+    appSnackBar = UnitTestHelpers.MockObjects.appSnackbar();
+    appAuthentication = UnitTestHelpers.MockObjects.abstractAppAuthentication();
+    appMonitoring = UnitTestHelpers.MockObjects.appMonitoring();
+    mockSnackBarRef = jasmine.createSpyObj('MatSnackBarRef', ['dismiss', 'Tests']);
+
+    await TestBed.configureTestingModule({
+      imports: [
+        AppComponent,
+        MatSnackBarModule,
+        NoopAnimationsModule
+      ],
+      providers: [
+        { provide: MatSnackBar, useValue: snackBar },
+        { provide: AppSnackBar, useValue: appSnackBar },
+        { provide: AbstractAppAuthentication, useValue: appAuthentication },
+        { provide: AppMonitoring, useValue: appMonitoring }
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+  });
+
+  it('should create the component', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should register for authentication events on init', () => {
+    component.ngOnInit();
+    expect(appAuthentication.registerForAuthenticationEvents).toHaveBeenCalled();
+  });
+
+  it('should register for snackbar events and log the registration', () => {
+    spyOn(appSnackBar.onSnackbar, 'emit');
+    spyOn(appSnackBar.onSnackbar, 'subscribe').and.callThrough();
+
+    spyOn(appSnackBar.onDismissSnackbar, 'emit');
+    spyOn(appSnackBar.onDismissSnackbar, 'subscribe').and.callThrough();
+
+    component.registerSnackbar();
+
+    expect(appSnackBar.onSnackbar.subscribe).toHaveBeenCalled();
+    expect(appSnackBar.onDismissSnackbar.subscribe).toHaveBeenCalled();
+    expect(appMonitoring.logEvent).toHaveBeenCalledWith(component, 'Snackbar service registered');
+  });
+
+  it('should open a snackbar with correct details', () => {
+    const snackbarDetails = new ModelSnackBarDetails(
+      AppComponent,
+      () => { }
+    );
+
+    component.snackBar = snackBar;
+    component.openSnackBar(snackbarDetails);
+
+    expect(snackBar.openFromComponent).toHaveBeenCalledWith(
+      snackbarDetails.componentRef, {
+      panelClass: ['custom-snackbar'],
+    });
+  });
+
+  it('should dismiss snackbar when onDismissSnackbar is triggered', fakeAsync(() => {
+    component.snackBar = snackBar;
+    component.snackbarRef = mockSnackBarRef;
+    component.registerSnackbar();
+    appSnackBar.onDismissSnackbar.emit();
+    tick();
+    expect(mockSnackBarRef.dismiss).toHaveBeenCalled();
+  }));
+
+  it('should call openSnackBar when onSnackbar is triggered', fakeAsync(() => {
+    const snackbarDetails = new ModelSnackBarDetails(AppComponent);
+    component.snackBar = snackBar;
+    component.registerSnackbar(); // Ensure the subscription is made
+
+    appSnackBar.onSnackbar.emit(snackbarDetails);
+    tick();
+
+    expect(snackBar.openFromComponent).toHaveBeenCalledWith(AppComponent, {
+      panelClass: ['custom-snackbar'],
+    });
+  }));
+
+});

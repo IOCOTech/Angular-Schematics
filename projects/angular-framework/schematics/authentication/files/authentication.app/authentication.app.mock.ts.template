@@ -1,0 +1,41 @@
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
+import { ModelAccountFromToken } from '../../models/authentication/account-from-token.model';
+import { AbstractAppAuthentication } from '../authentication/authentication.app.abstract'
+import { AbstractEndpoints } from '../../services/endpoints/endpoints.service.abstract';
+
+export class MockAppAuthentication implements AbstractAppAuthentication {
+
+    public isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    private storageForAccountName = 'mock_data_account';
+
+    constructor(private httpClient: HttpClient, private endpoints: AbstractEndpoints) {
+        this.registerForAuthenticationEvents();
+    }
+
+    get account(): ModelAccountFromToken | undefined {
+        const token = localStorage.getItem(this.storageForAccountName);
+        return token ? (JSON.parse(token) as ModelAccountFromToken) : undefined;
+    }
+
+    registerForAuthenticationEvents(): void {
+        this.setLoginAuthority();
+    }
+
+    setRegisterAuthority(): void {
+        this.httpClient.get<ModelAccountFromToken[]>(`${this.endpoints.authorization.signup}?mockId=new`).subscribe(user => {
+            localStorage.setItem(this.storageForAccountName, JSON.stringify(user[0]));
+        });
+
+    }
+
+    setLoginAuthority(): void {
+        this.httpClient.get<ModelAccountFromToken[]>(`${this.endpoints.authorization.login}?mockId=existing`).subscribe(user => {
+            localStorage.setItem(this.storageForAccountName, JSON.stringify(user[0]));
+        });
+    }
+
+    logout(): void {
+        this.isLoggedIn.next(false);
+    }
+}

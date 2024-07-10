@@ -1,0 +1,58 @@
+import { ComponentType } from '@angular/cdk/portal';
+import { Router } from '@angular/router';
+import { NavigationRoutes } from '../app.routes.definition';
+import { UserDetailsComponent } from '../components/user-details/user-details.component';
+import { ModelUser } from '../models/user/user.model';
+
+//#region EXTENSION METHODS FOR ANGULAR ROUTER
+
+/* eslint-disable */
+declare module '@angular/router' {
+    export interface Router {
+        Routes: NavigationRoutes;
+        NavigateTo: NavigationHelper;
+        GetNavigationParameter<T>(component: ComponentType<any>): T;
+        InitializeExtensionMethods(): void;
+    }
+}
+
+Router.prototype.InitializeExtensionMethods = function () {
+    const router = (this as unknown as Router);
+    if (!router.NavigateTo) {
+        router.NavigateTo = new NavigationHelper(router);
+    }
+};
+
+const parameters: { [key: string]: any } = {};
+
+Router.prototype.GetNavigationParameter = function <T>(component: ComponentType<any>): T {
+    return parameters[nameOf(component)] as T;
+};
+
+//#endregion
+
+function nameOf<T extends new (...args: any[]) => any>(classType: T): string {
+    return classType.name;
+}
+
+/* eslint-enable */
+class NavigationHelper {
+
+    constructor(private router: Router) { }
+
+    UserList(): void {
+        this.router.navigate([`${NavigationRoutes.UserList.navigationPath}`]);
+    }
+
+    UserDetails(id: string | number | ModelUser): void {
+        if (typeof id === 'object') {
+            parameters[nameOf(UserDetailsComponent)] = id;
+            id = id.id;
+        }
+        this.router.navigate([`${NavigationRoutes.UserDetails.navigationPath}/${id}`]);
+    }
+
+    NotFound(): void {
+        this.router.navigate([`${NavigationRoutes.NotFound.navigationPath}`]);
+    }
+}

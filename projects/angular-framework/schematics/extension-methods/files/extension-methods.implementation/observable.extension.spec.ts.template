@@ -1,0 +1,51 @@
+import { Observable, of, throwError } from "rxjs";
+import '../extension-methods/observable.extension';
+
+describe('Observable.prototype.firstValue', () => {
+
+    it('should resolve the first value from an observable', async () => {
+        const mockObservable = of(1, 2, 3);
+        const result = await mockObservable.firstValue();
+        expect(result).toBe(1);
+    });
+
+    it('should handle empty observables', async () => {
+        const mockObservable = new Observable<number>(subscriber => {
+            subscriber.complete();
+        });
+
+        try {
+            await mockObservable.firstValue();
+            fail('Expected promise to be rejected');
+        } catch (error) {
+            expect(error).toBeDefined();
+        }
+    });
+
+    it('should reject when the observable errors', async () => {
+        const errorMessage = 'Test error';
+        const mockObservable = throwError(() => new Error(errorMessage));
+
+        try {
+            await mockObservable.firstValue();
+            fail('Expected promise to be rejected');
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        catch (error: any) {
+            expect(error).toBeDefined();
+            expect(error.message).toBe(errorMessage);
+        }
+    });
+
+    it('should work with async data', async () => {
+        const mockObservable = new Observable<number>(subscriber => {
+            setTimeout(() => {
+                subscriber.next(42);
+                subscriber.complete();
+            }, 100);
+        });
+
+        const result = await mockObservable.firstValue();
+        expect(result).toBe(42);
+    });
+});

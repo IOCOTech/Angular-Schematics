@@ -1,0 +1,73 @@
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AppConfig } from '../../app-services/config/config.app';
+import { AppMonitoring } from '../../app-services/monitoring/monitor.app';
+import { FormsConfig } from '../../app.config.forms';
+import { MaterialDesignConfig } from '../../app.config.material';
+import { ModelUser } from '../../models/user/user.model';
+import { AbstractEndpoints } from '../../services/endpoints/endpoints.service.abstract';
+import { FactoryServiceUser } from '../../services/user/user.factory.service';
+import { AbstractServiceUser } from '../../services/user/user.service.abstract';
+
+@Component({
+  selector: 'app-user-details',
+  standalone: true,
+  imports: [
+    ...FormsConfig,
+    ...MaterialDesignConfig
+  ],
+  providers: [
+    { provide: AbstractServiceUser, useFactory: FactoryServiceUser, deps: [HttpClient, AbstractEndpoints, AppMonitoring, AppConfig] }
+  ],
+  templateUrl: './user-details.component.html',
+  styleUrl: './user-details.component.scss'
+})
+export class UserDetailsComponent implements OnInit {
+
+  user: ModelUser | undefined;
+  userForm!: FormGroup;
+
+  constructor(
+    private route: ActivatedRoute, private router: Router, private serviceUser: AbstractServiceUser,
+    private appMonitor: AppMonitoring, private fb: FormBuilder
+  ) {
+    this.user = this.router.GetNavigationParameter<ModelUser>(UserDetailsComponent);
+    if (!this.user) {
+      const id = this.route.snapshot.params['id'];
+      // Load user from the server
+      this.loadUser(id);
+    }
+  }
+
+  ngOnInit(): void {
+    this.userForm = this.fb.group({
+      id: [this.user?.id, Validators.required],
+      name: [this.user?.name, Validators.required],
+      surname: [this.user?.surname, Validators.required]
+    });
+  }
+
+  loadUser(id: string): void {
+    this.serviceUser.getUserDetails(id).subscribe({
+      next: (user: ModelUser) => {
+        this.user = user;
+        this.userForm.patchValue(user);
+      },
+      error: (error) => {
+        this.appMonitor.logException(this, error);
+      }
+    })
+  }
+
+
+  onSubmit(): void {
+    if (this.userForm.valid) {
+      console.log('User Data:', this.userForm.value);
+      // Handle form submission, e.g., call a service to save the data
+      this.router.NavigateTo.UserList();
+    }
+  }
+
+}

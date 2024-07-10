@@ -1,0 +1,40 @@
+
+import { NavigationRoutes } from './app.routes.definition';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { UserDetailsComponent } from './components/user-details/user-details.component';
+import { UserListComponent } from './components/user-list/user-list.component';
+import { ModelRouteExtended } from './models/router/route-extended.model';
+
+/**
+ * This class is added to provide strongly typed routes in the application
+ * The routes are defined in the NavigationRoutes class
+ * The routes are then mapped to the components in the RoutesProvider class
+ * The reason the routes is not defined here is because it creates a circular dependency
+ */
+export class RoutesProvider {
+    // This property is used in the 'provideRouter(routes)' method in the app.config.ts
+    private static _routesArray: ModelRouteExtended[] = [];
+    public static get routes(): ModelRouteExtended[] {
+        if (this._routesArray.length === 0) {
+            const properties = Object.keys(NavigationRoutes)
+            properties.forEach(prop => {
+                const navigationRoute = NavigationRoutes[prop as (keyof typeof NavigationRoutes)] as ModelRouteExtended;
+                switch (navigationRoute.navigationPath) {
+                    case NavigationRoutes.UserList.navigationPath:
+                        navigationRoute.component = UserListComponent;
+                        break;
+                    case NavigationRoutes.UserDetails.navigationPath:
+                        navigationRoute.component = UserDetailsComponent;
+                        break;
+                    case NavigationRoutes.NotFound.navigationPath:
+                        navigationRoute.component = PageNotFoundComponent;
+                        break;
+                    default:
+                        break;
+                }
+                this._routesArray.push(navigationRoute)
+            });
+        }
+        return this._routesArray;
+    }
+}

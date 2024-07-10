@@ -1,0 +1,17 @@
+import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { AbstractRouteGuard } from './route-guard.abstract';
+
+export class MockRouteGuard implements AbstractRouteGuard {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
+        return true;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
+        return true;
+    }
+    canMatch(): Observable<boolean | UrlTree> {
+        return of(true);
+    }
+}
