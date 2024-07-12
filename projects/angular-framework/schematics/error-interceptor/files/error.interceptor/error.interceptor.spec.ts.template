@@ -40,7 +40,9 @@ describe('InterceptorError', () => {
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         interceptor.intercept(new HttpRequest<any>('GET', '/api/data'), httpHandlerSpy).subscribe({
-            next: () => { },
+            next: () => {
+                fail('Expected an error, but got a response');
+            },
             error: (error: HttpErrorResponse) => {
                 const status = RegExp(/Status:\s(\d+)/).exec(error.message);
                 const message = RegExp(/Message:\s(.+)/).exec(error.message);

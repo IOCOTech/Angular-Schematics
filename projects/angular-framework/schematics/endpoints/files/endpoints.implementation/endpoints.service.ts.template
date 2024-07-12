@@ -3,9 +3,12 @@ import { AbstractEndpoints, IAuthorizationEndpoints, IUserEndpoints } from "./en
 
 export class Endpoints implements AbstractEndpoints {
 
-    constructor(private config: AppConfig) { }
+    authorization: IAuthorizationEndpoints;
+    user: IUserEndpoints;
 
-    authorization: IAuthorizationEndpoints = {
+    constructor(config: AppConfig) {       
+
+    this.authorization = {
         login: 'https://{tenant-name}.b2clogin.com/{tenantId}/B2C_1A_signin',
         passwordReset: 'https://{tenant-name}.b2clogin.com/{tenantId}/B2C_1A_password_reset',
         profileEdit: 'https://{tenant-name}.b2clogin.com/{tenantId}/B2C_1A_profile_edit',
@@ -14,9 +17,11 @@ export class Endpoints implements AbstractEndpoints {
         registerRedirect: 'http://localhost:4200/new-user-wizard'
     };
 
-    user: IUserEndpoints = {
-        getUserByUserId: (userId: string) => `${this.config.apiBaseURL}/api/user/${userId}`,
-        getUserList: `${this.config.apiBaseURL}/api/Users/`,
-        saveUser: `${this.config.apiBaseURL}/api/Users/`
+    this.user = {
+        getUserByUserId: (userId: string) => `${config.apiBaseURL}/api/user/${userId}`,
+        getUserList: `${config.apiBaseURL}/api/Users/`,
+        saveUser: `${config.apiBaseURL}/api/Users/`
     };
+
+     }
 }

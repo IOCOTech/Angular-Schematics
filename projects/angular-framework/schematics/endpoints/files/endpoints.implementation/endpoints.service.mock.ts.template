@@ -3,22 +3,25 @@ import { AbstractEndpoints, IAuthorizationEndpoints, IUserEndpoints } from "./en
 
 
 export class EndpointsMock implements AbstractEndpoints {
-
-    constructor(private config: AppConfig) { }
-
-
-    authorization: IAuthorizationEndpoints = {
-        login: `${this.config.apiBaseURL}/accountsFromB2C`,
-        passwordReset: 'NA',
-        profileEdit: 'NA',
-        signup: `${this.config.apiBaseURL}/accountsFromB2C`,
-        loginRedirect: 'http://localhost:4200/',
-        registerRedirect: 'http://localhost:4200/new-user-wizard'
-    };
     
-    user: IUserEndpoints = {
-        getUserByUserId: (userId: string) => `${this.config.apiBaseURL}/users/${userId}`,
-        getUserList: `${this.config.apiBaseURL}/users`,
-        saveUser: `${this.config.apiBaseURL}/users`,
-    };
+    authorization: IAuthorizationEndpoints;
+    user: IUserEndpoints;
+
+    constructor(config: AppConfig) {
+
+        this.authorization = {
+            login: `${config.apiBaseURL}/accountsFromB2C`,
+            passwordReset: 'NA',
+            profileEdit: 'NA',
+            signup: `${config.apiBaseURL}/accountsFromB2C`,
+            loginRedirect: 'http://localhost:4200/',
+            registerRedirect: 'http://localhost:4200/new-user-wizard'
+        };
+        
+        this.user = {
+            getUserByUserId: (userId: string) => `${config.apiBaseURL}/users/${userId}`,
+            getUserList: `${config.apiBaseURL}/users`,
+            saveUser: `${config.apiBaseURL}/users`,
+        };
+    }
 }

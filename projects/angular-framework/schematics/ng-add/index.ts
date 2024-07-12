@@ -1,12 +1,11 @@
-import { Rule, SchematicContext, SchematicsException, Tree, chain } from '@angular-devkit/schematics';
+import { Rule, SchematicContext, SchematicsException, Tree, chain, externalSchematic } from '@angular-devkit/schematics';
 import { NodePackageInstallTask, RunSchematicTask } from "@angular-devkit/schematics/tasks";
-import { externalSchematic } from '@angular-devkit/schematics';
 
-const appConfigPath = '/src/app/app.config.ts';
 const angularJsonPath = 'angular.json';
-const tsConfigAppPath = 'tsconfig.json';
 const angularVersion = '17.x.x'
+const appConfigPath = '/src/app/app.config.ts';
 const msalVersion = '3.x.x'
+const tsConfigAppPath = 'tsconfig.json';
 let projectName = '';
 
 export function ngAdd(): Rule {
@@ -20,7 +19,10 @@ export function ngAdd(): Rule {
 
         updateTsConfigAppJson(tree, context);
 
-
+        // THERE IS CURRENTLY A ISSUE WHERE MATERIAL INSTALLS VERSION 17 OF CDK, THIS IS A WORKAROUND
+        // REMOVE THIS WHEN THE ISSUE IS FIXED
+        context.logger.info('Adding Dependency: angular/cdk.....');
+        context.addTask(new NodePackageInstallTask({ packageName: '@angular/cdk@latest' }));
         // Create a chain of tasks to be executed sequentially
         return chain([
             externalSchematic('@angular-eslint/schematics', 'ng-add', {}),
@@ -47,6 +49,7 @@ export function ngAdd(): Rule {
                 context.addTask(new RunSchematicTask('enums', { tree, context }));
                 context.addTask(new RunSchematicTask('error-dialog-box', { tree, context }));
                 context.addTask(new RunSchematicTask('error-interceptor', { tree, context }));
+                context.addTask(new RunSchematicTask('eslint-rules', {  }));
                 context.addTask(new RunSchematicTask('extension-methods', { tree, context }));
                 context.addTask(new RunSchematicTask('helpers', { tree, context }));
                 context.addTask(new RunSchematicTask('karma-config', {}));
