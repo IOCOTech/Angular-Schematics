@@ -1,16 +1,17 @@
 {
   "name": "@ioco-dev/angular-framework",
-  "version": "17.3.2",
+  "version": "18.1.0",
   "scripts": {
     "build": "tsc -p tsconfig.schematics.json",
     "postbuild": "copyfiles \"schematics/collection.json\" \"schematics/*/files/**\"  \"../../dist/angular-framework\""
   },
   "schematics": "./schematics/collection.json",
   "peerDependencies": {
-    "@angular/common": "^17.3.0",
-    "@angular/core": "^17.3.0",
-    "@angular/material": "^17.3.10",
-    "@angular-eslint/schematics": "17.5.2"
+    "@angular/common": "^18.1.0",
+    "@angular/core": "^18.1.0",
+    "@angular/cdk": "^18.1.0",
+    "@angular/material": "^18.1.0",
+    "@angular-eslint/schematics": "18.1.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"

@@ -70,10 +70,12 @@ describe('AppComponent', () => {
     expect(appMonitoring.logEvent).toHaveBeenCalledWith(component, 'Snackbar service registered');
   });
 
-  it('should open a snackbar with correct details', () => {
+  it('should open a snackbar with correct details', () => {    
     const snackbarDetails = new ModelSnackBarDetails(
       AppComponent,
-      () => { }
+      () => { 
+        console.log('callback called');
+      }
     );
 
     component.snackBar = snackBar;

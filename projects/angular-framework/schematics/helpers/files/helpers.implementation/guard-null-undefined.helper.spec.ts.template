@@ -13,7 +13,7 @@ describe('GuardNullOrUndefined', () => {
     });
 
     it('should not throw an error when object is defined', () => {
-        const obj: string = 'defined';
+        const obj = 'defined';
         expect(() => GuardNullOrUndefined(obj)).not.toThrow();
     });
 
@@ -24,7 +24,7 @@ describe('GuardNullOrUndefined', () => {
     });
 
     it('should not throw an error with custom error message when object is defined', () => {
-        const obj: string = 'defined';
+        const obj = 'defined';
         const customErrorMessage = 'Custom error message';
         expect(() => GuardNullOrUndefined(obj, customErrorMessage)).not.toThrow();
     });

@@ -31,7 +31,6 @@ describe('AppSnackBar', () => {
     });
 
     it('should set callbackOnAction and call callbackFunction when dismissing snackbar', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const callbackFunction = jasmine.createSpy('callbackFunction');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         service.showSnackbar({} as ComponentType<any>, callbackFunction);
@@ -43,7 +42,6 @@ describe('AppSnackBar', () => {
     });
 
     it('should emit onDismissSnackbar event when dismissing snackbar', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const callbackFunction = jasmine.createSpy('callbackFunction');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         service.showSnackbar({} as ComponentType<any>, callbackFunction);

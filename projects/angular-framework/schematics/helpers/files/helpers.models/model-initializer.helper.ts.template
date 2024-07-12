@@ -7,9 +7,9 @@ export class ModelInitializer {
 
     static readonly ErrorDialog = class {
         static readonly ErrorDialogConfig = (
-            errorMessage: string, header: string = 'Error',
+            errorMessage: string, header = 'Error',
             icon: MaterialIcons = Enums.MaterialIcons.Error,
-            displayReportIssueButton: boolean = false): ModelErrorDialogConfig => {
+            displayReportIssueButton = false): ModelErrorDialogConfig => {
             return {
                 errorMessage
                 , header

@@ -53,6 +53,10 @@
       "description": "Add error interceptor.",
       "factory": "./error-interceptor/index#addErrorInterceptor"
     },
+    "eslint-rules": {
+      "description": "Update ESLint rules",
+      "factory": "./eslintRules/index#updateESLint"
+    },
     "extension-methods": {
       "description": "Add extension methods.",
       "factory": "./extension-methods/index#addExtensionMethods"

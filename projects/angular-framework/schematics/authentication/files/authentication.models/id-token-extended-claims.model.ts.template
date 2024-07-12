@@ -1,5 +1,3 @@
-// import { ModelOrganization } from '../organizations/organization.model';
-
 export interface ModelIdTokenExtendedClaims {
-    // organizations: ModelOrganization[];
+    organizations: unknown[]; // Replace with a model that makes sense if used e.g. ModelOrganization[]
 }

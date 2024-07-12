@@ -1,24 +1,21 @@
-# AngularFramework
+# IOCO Angular Framework
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.0.
+This project is an Angular framework that provides a set of reusable components, services, and utilities to accelerate the development of Angular applications. It aims to simplify common tasks and promote best practices in Angular development.
 
-## Code scaffolding
+## Features
 
-Run `ng generate component component-name --project angular-framework` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project angular-framework`.
-> Note: Don't forget to add `--project angular-framework` or else it will be added to the default project in your `angular.json` file. 
+- Error handling
+- Monitoring
+- Examples of services
+- Strongly typed Navigation
+- Modals
+- Complex snackbar
 
-## Build
+## Getting started
 
-Run `ng build angular-framework` to build the project. The build artifacts will be stored in the `dist/` directory.
+To get started with the IOCO Angular Framework, follow these steps:
 
-## Publishing
-
-After building your library with `ng build angular-framework`, go to the dist folder `cd dist/angular-framework` and run `npm publish`.
-
-## Running unit tests
-
-Run `ng test angular-framework` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+1. Create a new angular project: `ng new <Angular-project>`
+2. Add the IOCO angular framework: `ng add @ioco-dev/angular-framework`
+3. Start the development server: `npm start`
+4. Open your browser and navigate to `http://localhost:4200`

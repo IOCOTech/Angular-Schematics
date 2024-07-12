@@ -29,7 +29,7 @@ export function MSALInstanceFactory(appConfig: AppConfig): IPublicClientApplicat
 }
 
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
-  const protectedResourceMap = new Map<string, Array<string>>();
+  const protectedResourceMap = new Map<string, string[]>();
   protectedResourceMap.set("https://graph.microsoft.com/v1.0/me", ["user.read"]);
   // THE SCOPES BELOW NEEDS TO BE CREATED IN THE OAUTH PROVIDER
   // Get token for functions
