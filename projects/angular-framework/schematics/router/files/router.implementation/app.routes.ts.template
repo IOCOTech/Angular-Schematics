@@ -19,14 +19,14 @@ export class RoutesProvider {
             const properties = Object.keys(NavigationRoutes)
             properties.forEach(prop => {
                 const navigationRoute = NavigationRoutes[prop as (keyof typeof NavigationRoutes)] as ModelRouteExtended;
-                switch (navigationRoute.navigationPath) {
-                    case NavigationRoutes.UserList.navigationPath:
+                switch (navigationRoute.path) {
+                    case NavigationRoutes.UserList.path:
                         navigationRoute.component = UserListComponent;
                         break;
-                    case NavigationRoutes.UserDetails.navigationPath:
+                    case NavigationRoutes.UserDetails.path:
                         navigationRoute.component = UserDetailsComponent;
                         break;
-                    case NavigationRoutes.NotFound.navigationPath:
+                    case NavigationRoutes.NotFound.path:
                         navigationRoute.component = PageNotFoundComponent;
                         break;
                     default:
