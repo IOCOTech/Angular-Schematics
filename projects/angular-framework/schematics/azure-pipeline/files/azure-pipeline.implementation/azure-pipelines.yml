@@ -16,7 +16,7 @@ variables:
   containerRegistry: 'oldmutualdevsanorth001.azurecr.io'
   dockerRegistryServiceConnection: 'Old Mutual - Automation'
   dockerFilePath: '$(Build.SourcesDirectory)/dockerfile'
-  tag: '$(Build.BuildId)-$(Build.SourceVersion)'
+  tag: '$(Build.BuildNumber)'
   dockerImageName: '$(containerRegistry)/$(imageRepository):$(tag)'
   dockerBuildConfiguration: 'production'
   sonarQubeServiceConnectionName: 'IOCO-SonarQube'
