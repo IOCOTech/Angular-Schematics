@@ -3,25 +3,25 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-  - main
+  - development
   
 resources:
   containers:
     - container: node
-      image: ' node:14'
+      image: ' node:22.0.0'
 
 variables:
   # Docker Container registry variables
-  imageRepository: '360review'
-  containerRegistry: 'cr360reviewkdevsanorth001.azurecr.io'
-  dockerRegistryServiceConnection: 'Container-Registry-360-Review'
+  imageRepository: 'human-in-the-loop'
+  containerRegistry: 'oldmutualdevsanorth001.azurecr.io'
+  dockerRegistryServiceConnection: 'Old Mutual - Automation'
   dockerFilePath: '$(Build.SourcesDirectory)/dockerfile'
   tag: '$(Build.BuildId)-$(Build.SourceVersion)'
   dockerImageName: '$(containerRegistry)/$(imageRepository):$(tag)'
   dockerBuildConfiguration: 'production'
-  sonarQubeServiceConnectionName: 'SonarQube-360-Review'
-  sonarQubeProjectKey: '360-review-web'
-  sonarQubeProjectName: '360-Review'
+  sonarQubeServiceConnectionName: 'IOCO-SonarQube'
+  sonarQubeProjectKey: 'Old-mutual-human-in-the-loop'
+  sonarQubeProjectName: 'Old Mutual:Human in the loop'
 
 stages:
 - stage: Build
@@ -71,7 +71,7 @@ stages:
         displayName: Stop docker container
         continueOnError: true
 
-      - task: PublishCodeCoverageResults@1
+      - task: PublishCodeCoverageResults@2
         inputs:
           codeCoverageTool: 'Cobertura'
           summaryFileLocation: $(System.DefaultWorkingDirectory)/analytics/cobertura-coverage.xml
@@ -85,7 +85,7 @@ stages:
           failTaskOnFailedTests: true
         displayName: Publish unit test results
       
-      - task: SonarQubePrepare@5
+      - task: SonarQubePrepare@6
         displayName: SonarQube prepare stage
         inputs:
           SonarQube: $(sonarQubeServiceConnectionName)
@@ -120,11 +120,13 @@ stages:
         displayName: Remove parameter "sonar.pullrequest.base" required for licensed SonarQube editions
         continueOnError: true
 
-      - task: SonarQubeAnalyze@5
+      - task: SonarQubeAnalyze@6
         displayName: SonarQube analyze stage
-        continueOnError: true
+        inputs:
+          jdkversion: 'JAVA_HOME_17_X64'
+        continueOnError: true        
 
-      - task: SonarQubePublish@5
+      - task: SonarQubePublish@6
         displayName: SonarQube publish stage
         inputs:
           pollingTimeoutSec: '300'
