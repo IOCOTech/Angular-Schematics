@@ -199,7 +199,7 @@ export function ngAdd(): Rule {
             const serveConfiguration = JSON.parse(
                 `
             {
-                "browserTarget": "${projectName}:build:mock"
+                "buildTarget": "${projectName}:build:mock"
             }
             `
             )

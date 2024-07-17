@@ -49,6 +49,6 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     authRequest: {
       // scopes: ['user.read']
     },
-    loginFailedRoute: NavigationRoutes.UserList.path
+    loginFailedRoute: NavigationRoutes.userList.path
   };
 }

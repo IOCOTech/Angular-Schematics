@@ -41,7 +41,7 @@ class NavigationHelper {
     constructor(private router: Router) { }
 
     UserList(): void {
-        this.router.navigate([`${NavigationRoutes.UserList.navigationPath}`]);
+        this.router.navigate([`${NavigationRoutes.userList.navigationPath}`]);
     }
 
     UserDetails(id: string | number | ModelUser): void {
@@ -49,10 +49,10 @@ class NavigationHelper {
             parameters[nameOf(UserDetailsComponent)] = id;
             id = id.id;
         }
-        this.router.navigate([`${NavigationRoutes.UserDetails.navigationPath}/${id}`]);
+        this.router.navigate([`${NavigationRoutes.userDetails.navigationPath}/${id}`]);
     }
 
     NotFound(): void {
-        this.router.navigate([`${NavigationRoutes.NotFound.navigationPath}`]);
+        this.router.navigate([`${NavigationRoutes.pageNotFound.navigationPath}`]);
     }
 }
