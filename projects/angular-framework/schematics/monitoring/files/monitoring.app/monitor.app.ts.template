@@ -78,10 +78,12 @@ export class AppMonitoring {
   ): void {
     const originName = this.getOriginName(origin);
     if (this.logTo.includes('console')) {
-      if (this.loggingLevel === Enums.ErrorSeverityLevel.Info) {
-        console.log(`${originName}: `, descriptionOfEvent);
+      if (this.loggingLevel === Enums.ErrorSeverityLevel.Info) {        
         if (properties) {
-          console.log('properties', properties);
+          console.log(`${originName}: `, descriptionOfEvent, properties);
+        }
+        else {
+          console.log(`${originName}: `, descriptionOfEvent);
         }
       }
     }
