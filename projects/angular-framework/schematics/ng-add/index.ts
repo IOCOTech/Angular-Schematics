@@ -49,7 +49,7 @@ export function ngAdd(): Rule {
                 context.addTask(new RunSchematicTask('enums', { tree, context }));
                 context.addTask(new RunSchematicTask('error-dialog-box', { tree, context }));
                 context.addTask(new RunSchematicTask('error-interceptor', { tree, context }));
-                context.addTask(new RunSchematicTask('eslint-rules', {  }));
+                context.addTask(new RunSchematicTask('eslint-rules', {}));
                 context.addTask(new RunSchematicTask('extension-methods', { tree, context }));
                 context.addTask(new RunSchematicTask('helpers', { tree, context }));
                 context.addTask(new RunSchematicTask('karma-config', {}));
@@ -163,6 +163,23 @@ export function ngAdd(): Rule {
             "glob": "config.json"
         }]`
         )
+        const budgetsProd = JSON.parse(
+            `[
+                {
+                  "type": "initial",
+                  "maximumWarning": "1500kB",
+                  "maximumError": "2MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ]`
+        )
+
+
+
         const testOptionsReplacements = JSON.parse(
             `{
             "polyfills": [
@@ -210,6 +227,7 @@ export function ngAdd(): Rule {
             });
             json['projects'][projectName]['architect']['build']['options'] = optionsJson;
 
+            json['projects'][projectName]['architect']['build']['configurations']['production']['budgets'] = budgetsProd;
 
             const configurationDevJson = json['projects'][projectName]['architect']['build']['configurations']['development'];
             json['projects'][projectName]['architect']['build']['configurations']['mock'] = JSON.parse(JSON.stringify(configurationDevJson));
