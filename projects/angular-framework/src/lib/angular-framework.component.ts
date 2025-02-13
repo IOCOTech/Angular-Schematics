@@ -1,15 +1,14 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'lib-angular-framework',
-  standalone: true,
-  imports: [],
-  template: `
+    selector: 'lib-angular-framework',
+    imports: [],
+    template: `
     <p>
       angular-framework works!
     </p>
   `,
-  styles: ``
+    styles: ``
 })
 export class AngularFrameworkComponent {
 

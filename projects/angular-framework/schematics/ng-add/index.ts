@@ -2,9 +2,9 @@ import { Rule, SchematicContext, SchematicsException, Tree, chain, externalSchem
 import { NodePackageInstallTask, RunSchematicTask } from "@angular-devkit/schematics/tasks";
 
 const angularJsonPath = 'angular.json';
-const angularVersion = '17.x.x'
+const angularVersion = '19'
 const appConfigPath = '/src/app/app.config.ts';
-const msalVersion = '3.x.x'
+const msalVersion = '4'
 const tsConfigAppPath = 'tsconfig.json';
 let projectName = '';
 
