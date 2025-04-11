@@ -40,7 +40,9 @@ RUN chmod +x /usr/bin/jq
 
 ## Copy the Run.sh into container and give execute permission
 COPY /run.sh /run.sh
-RUN chmod +x /run.sh
+RUN apt-get update && apt-get install -y dos2unix \
+  && dos2unix /run.sh \
+  && chmod +x /run.sh
 
 # Expose port 80
 EXPOSE 80
